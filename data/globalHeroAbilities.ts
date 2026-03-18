@@ -32,10 +32,10 @@ export const GLOBAL_HERO_ABILITIES: Ability[] = [
   {
     id: "unlock_the_hope_alux",
     trigger: "battleEnd",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     condition: {
     type: "boardCost",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     min: 15                  // 合計で 6 体以上
   },
     effects: [{ type: "CLAIM_HERO", heroId: "the_hope_alux" }]
@@ -43,7 +43,7 @@ export const GLOBAL_HERO_ABILITIES: Ability[] = [
  {
   id: "unlock_hero_nightsteel_guard",
   trigger: "battleEnd",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   condition: {
     type: "counter",
     key: "damageReduce",
@@ -55,7 +55,7 @@ export const GLOBAL_HERO_ABILITIES: Ability[] = [
   {
     id: "unlock_hero_nightsteel_swift",
     trigger: "battleEnd",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     condition: { type: "counter", key: "as_stack", scope: "match", min: 18 },
     effects: [{ type: "CLAIM_HERO", heroId: "hero_nightsteel_swift" }]
   },

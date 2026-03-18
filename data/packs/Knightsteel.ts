@@ -2,7 +2,7 @@
 import { Unit } from "@/types";
 import { ensureAbilityIds } from "@/lib/utils/autoAbilityId"
 
-export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
+export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
    /* =====================================================
      1コスト
@@ -16,7 +16,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "未来の要",
   name: "未来の要",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 1,
 
   hp: 5,
@@ -103,7 +103,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "仲間思いの大楯持ち",
     name: "仲間思いの大楯持ち",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 1,
 
     hp: 6,
@@ -162,7 +162,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "王都の斥候",
     name: "王都の斥候",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 1,
 
     hp: 2,
@@ -239,7 +239,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "見習い槍兵",
     name: "見習い槍兵",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 1,
 
     hp: 2,
@@ -305,7 +305,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "働き者の補給兵",
     name: "働き者の補給兵",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 1,
 
     hp: 4,
@@ -383,7 +383,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "認められた弓手",
     name: "認められた弓手",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 1,
 
     hp: 1,
@@ -463,7 +463,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "機密を知る者",
     name: "機密を知る者",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 2,
 
     hp: 5,
@@ -540,7 +540,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "母思いの炊き出し係",
     name: "母思いの炊き出し係",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 2,
 
     hp: 8,
@@ -611,7 +611,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "血豆だらけの見習い職人",
     name: "血豆だらけの見習い職人",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 2,
 
     hp: 5,
@@ -670,7 +670,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "戦場の嫌われ者",
     name: "戦場の嫌われ者",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 2,
 
     hp: 3,
@@ -757,7 +757,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     baseName: "戦いを告げる鐘鳴らし",
     name: "戦いを告げる鐘鳴らし",
     mode: "unit",
-    pack: "Nightsteel",
+    pack: "Knightsteel",
     cost: 2,
 
     hp: 6,
@@ -836,7 +836,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "古参の門番",
   name: "古参の門番",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 2,
 
   hp: 7,
@@ -915,7 +915,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "決闘場のチャンピオン",
   name: "決闘場のチャンピオン",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 3,
 
   hp: 9,
@@ -997,7 +997,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "王族直属密偵",
   name: "王族直属密偵",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 3,
 
   hp: 8,
@@ -1085,7 +1085,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "流浪の吟遊詩人",
   name: "流浪の吟遊詩人",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 3,
 
   hp: 9,
@@ -1173,7 +1173,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "権力好きの内部調査官",
   name: "権力好きの内部調査官",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 3,
 
   hp: 12,
@@ -1265,7 +1265,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "即答の測量士",
   name: "即答の測量士",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 3,
 
   hp: 9,
@@ -1349,7 +1349,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "戦旗将校",
   name: "戦旗将校",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 4,
 
   hp: 9,
@@ -1432,7 +1432,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "王国一の重装兵",
   name: "王国一の重装兵",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 4,
 
   hp: 15,
@@ -1520,7 +1520,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "危険な突撃隊長",
   name: "危険な突撃隊長",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 4,
 
   hp: 13,
@@ -1595,7 +1595,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "伝説を語る司祭",
   name: "伝説を語る司祭",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 4,
 
   hp: 12,
@@ -1671,7 +1671,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "不滅の騎士",
   name: "不滅の騎士",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 5,
 
   hp: 18,
@@ -1743,7 +1743,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "勝利の軍師",
   name: "勝利の軍師",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 5,
 
   hp: 14,
@@ -1826,7 +1826,7 @@ export const NIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   baseName: "戦場を乱す者",
   name: "戦場を乱す者",
   mode: "unit",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 5,
 
   hp: 12,

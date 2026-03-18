@@ -129,27 +129,39 @@ export default function GameView() {
      Pack確定 → GameState生成
   ========================= */
   useEffect(() => {
-    if (preBattle.p1Pack && preBattle.p2Pack) {
-      // GameStateを作る（createGameを使う）
-      const g = createGame(preBattle.p1Pack, preBattle.p2Pack)
+  if (preBattle.p1Pack && preBattle.p2Pack) {
+    setPreBattle(prev => ({
+      ...prev,
+      phase: "fusion"
+    }))
+  }
+}, [preBattle.p1Pack, preBattle.p2Pack])
+useEffect(() => {
+  if (preBattle.phase !== "fusion") return
 
-      // UI phase 初期化
-      setPhase("setup")
-      setGameOver(null)
-      setShowEnemyBoard(false)
-      setSelectedBoardIndex(null)
-      setSelectedHandIndex(null)
-      setBattleBoard(null)
-      setBattleLogs([])
+  const timer = setTimeout(() => {
 
-      setGame(g)
+    const g = createGame(preBattle.p1Pack!, preBattle.p2Pack!)
 
-      setPreBattle((prev) => ({
-        ...prev,
-        phase: "ready",
-      }))
-    }
-  }, [preBattle.p1Pack, preBattle.p2Pack])
+    setPhase("setup")
+    setGameOver(null)
+    setShowEnemyBoard(false)
+    setSelectedBoardIndex(null)
+    setSelectedHandIndex(null)
+    setBattleBoard(null)
+    setBattleLogs([])
+
+    setGame(g)
+
+    setPreBattle(prev => ({
+      ...prev,
+      phase: "ready"
+    }))
+
+  }, 2000) // ←ここが演出時間
+
+  return () => clearTimeout(timer)
+}, [preBattle.phase])
 
   useEffect(() => {
     if (preBattle.phase === "p2Selecting" && preBattle.p1Pack && !preBattle.p2Pack) {
@@ -595,19 +607,71 @@ if (
   /* =========================
      パック選択フェーズ
   ========================= */
-  if (preBattle.phase !== "ready") {
-    return (
-      <PackSelectScreen
-        selectedPack={preBattle.p1Pack}
-        disabledPacks={preBattle.p1Pack ? [preBattle.p1Pack] : []}
-        onSelect={selectP1Pack}
-      />
-    )
-  }
-
-  if (!game) {
-  return null
+  /* =========================
+   パック選択フェーズ
+========================= */
+if (preBattle.phase === "packSelect" || preBattle.phase === "p2Selecting") {
+  return (
+    <PackSelectScreen
+      selectedPack={preBattle.p1Pack}
+      enemyPack={preBattle.p2Pack}
+      disabledPacks={preBattle.p1Pack ? [preBattle.p1Pack] : []}
+      onSelect={selectP1Pack}
+    />
+  )
 }
+
+/* =========================
+   フュージョン演出
+========================= */
+if (preBattle.phase === "fusion") {
+  return (
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background:
+          "radial-gradient(circle at center, #1a1a1a, #000)",
+        color: "#fff",
+        gap: 24,
+      }}
+    >
+      <div style={{ fontSize: 28, opacity: 0.8 }}>
+        Fusing Packs...
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+        <img
+          src={`/packs/${preBattle.p1Pack}.jpg`}
+          style={{ width: 140, height: 180, borderRadius: 10 }}
+        />
+
+        <div style={{ fontSize: 36, fontWeight: 800 }}>+</div>
+
+        <img
+          src={`/packs/${preBattle.p2Pack}.jpg`}
+          style={{ width: 140, height: 180, borderRadius: 10 }}
+        />
+      </div>
+
+      <div style={{ fontSize: 20, fontWeight: 700 }}>
+        {preBattle.p1Pack} × {preBattle.p2Pack}
+      </div>
+
+      <div style={{ opacity: 0.7 }}>
+        Shared Card Pool Created
+      </div>
+    </div>
+  )
+}
+
+/* =========================
+   ready以降
+========================= */
+if (!game) return null
 
 const player: PlayerState = game.p1
 const enemy: PlayerState = game.p2

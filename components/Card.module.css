@@ -412,7 +412,7 @@
     );
 }
 
-.packNightsteel {
+.packKnightsteel {
   --card-color:
     radial-gradient(
       circle at 50% 18%,
@@ -443,6 +443,6 @@
   border-color: #b03b3b;
 }
 
-.packNightsteel {
+.packKnightsteel {
   border-color: #5a7bd6;
 }

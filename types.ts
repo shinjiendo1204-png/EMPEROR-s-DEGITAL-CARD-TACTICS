@@ -226,7 +226,7 @@ export type Skill = {
 ==========================*/
 export type PackId =
   | "Varkesh"
-  | "Nightsteel"
+  | "Knightsteel"
   | "Antiqua"
 
 /* =========================
@@ -592,7 +592,7 @@ export type PreBattlePhase =
 export type PreBattleState = {
   p1Pack: PackId | null
   p2Pack: PackId | null
-  phase: "packSelect" | "p2Selecting" | "ready"
+  phase: "packSelect" | "p2Selecting" | "fusion" | "ready"
 }
 
 export type CombatTelemetry = {

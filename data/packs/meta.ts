@@ -1,4 +1,4 @@
-export type PackID = "Antiqua" | "Varkesh" | "Nightsteel"
+export type PackID = "Antiqua" | "Varkesh" | "Knightsteel"
 
 export type PackMeta = {
   id: PackID
@@ -14,12 +14,12 @@ export const PACKS: PackMeta[] = [
   },
   {
     id: "Varkesh",
-    name: "パック",
+    name: "狂気パック",
     description: "高火力・自己犠牲"
   },
   {
-    id: "Nightsteel",
-    name: "忍者と侍の国",
+    id: "Knightsteel",
+    name: "王国パック",
     description: "高耐久・回復"
   },
 ]

@@ -7,7 +7,7 @@ export const HERO_UNITS: Unit[] = [
   baseName: "希望の勇者 アルクス",
   name: "希望の勇者 アルクス",
   mode: "hero",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 0,
 
   hp: 20,
@@ -87,7 +87,7 @@ export const HERO_UNITS: Unit[] = [
   baseName: "国繋ぐ守護者 バルガン",
   name: "国繋ぐ守護者 バルガン",
   mode: "hero",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 0,
 
   hp: 30,
@@ -181,7 +181,7 @@ export const HERO_UNITS: Unit[] = [
   baseName: "蒼嵐の速射手 シルヴァ",
   name: "蒼嵐の速射手 シルヴァ",
   mode: "hero",
-  pack: "Nightsteel",
+  pack: "Knightsteel",
   cost: 0,
 
   hp: 18,
