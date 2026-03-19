@@ -619,12 +619,12 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "varkesh_warden_synergy",
           scope: "team",
-          trigger: "onDamageTaken",
+          trigger: "battleStart",
           effects: [
             {
               type: "ADD_STATE",
               stateType: "curse_stack",
-              value: 1,
+              value: 2,
               target: "random_enemy"
             }
           ]
