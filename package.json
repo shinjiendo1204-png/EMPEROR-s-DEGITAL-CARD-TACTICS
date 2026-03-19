@@ -32,7 +32,7 @@
   },
 "build": {
   "appId": "com.yourgame.autobattler",
-  "mac": {
-    "target": "zip"
+  "win": {
+    "target": "nsis"
   }
 }}
