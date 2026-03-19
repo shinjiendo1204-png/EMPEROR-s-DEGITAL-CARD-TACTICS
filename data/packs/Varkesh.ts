@@ -625,7 +625,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
               type: "ADD_STATE",
               stateType: "curse_stack",
               value: 1,
-              target: "target"
+              target: "random_enemy"
             }
           ]
         }
