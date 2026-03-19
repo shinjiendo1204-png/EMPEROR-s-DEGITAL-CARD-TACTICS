@@ -68,6 +68,7 @@ export type SemanticEffect =
       multiplier: number
       target?: AbilityTarget
       maxStack: number
+      scope?: "battle" | "match" | "turn" 
     }
 
   /* =========================
@@ -124,6 +125,7 @@ export type SemanticEffect =
       multiplier: number
       target?: AbilityTarget
       duration?: Duration
+      scope?: "battle" | "match" | "turn"
     }
 
   /* =========================

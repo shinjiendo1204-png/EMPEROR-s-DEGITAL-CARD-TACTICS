@@ -5,7 +5,6 @@ import type {
   SemanticCondition,
 } from "./types"
 import { Ability } from "@/types"
-import { abilityToLine } from "@/lib/ui/abilityText"
 
 /* =========================================================
    Tone
@@ -64,13 +63,15 @@ export function renderAbilityEN(
 
         const groupedByTarget = new Map<string, SemanticEffect[]>()
 
-        for (const e of effects) {
-          const t = (e as any).target ?? "__no_target__"
-          if (!groupedByTarget.has(t)) {
-            groupedByTarget.set(t, [])
+          for (const e of effects) {
+            const scope = (e as any).scope ?? "none"
+            const t = `${(e as any).target ?? "__no_target__"}|${scope}`
+
+            if (!groupedByTarget.has(t)) {
+              groupedByTarget.set(t, [])
+            }
+            groupedByTarget.get(t)!.push(e)
           }
-          groupedByTarget.get(t)!.push(e)
-        }
 
         return (
           <div key={gi} style={{ marginBottom: 6 }}>
@@ -113,7 +114,8 @@ export function renderAbilityEN(
           e2.kind === "mod_stat_from_counter" &&
           e2.key === e.key &&
           e2.multiplier === e.multiplier &&
-          e2.target === e.target
+          e2.target === e.target &&
+          e2.scope === e.scope
         ) {
           group.push(e2)
           used.add(j)
@@ -197,7 +199,9 @@ export function renderAbilitiesENFromRaw(
         const groupedByTarget = new Map<string, SemanticEffect[]>()
 
         for (const e of effects) {
-          const t = (e as any).target ?? "__no_target__"
+          const scope = (e as any).scope ?? "none"
+          const t = `${(e as any).target ?? "__no_target__"}|${scope}`
+
           if (!groupedByTarget.has(t)) {
             groupedByTarget.set(t, [])
           }
@@ -324,11 +328,18 @@ function buildHeader(s: SemanticAbility): string {
 
   const once = (s as any).once ? " (once per battle)" : ""
 
+  if (cond.includes("after forging")) {
+  return `On equip ${cond}`
+}
+
   if (s.trigger === "onDeath") {
-    if (cond === "When an ally dies") return `When an ally dies${once}`
-    if (cond === "When an enemy dies") return `When an enemy dies${once}`
-    return `On death${once}`
+  if (cond.startsWith("when an allied")) {
+    return capitalize(cond) + once
   }
+  if (cond === "When an ally dies") return `When an ally dies${once}`
+  if (cond === "When an enemy dies") return `When an enemy dies${once}`
+  return `On death${once}`
+}
 
   const parts: string[] = []
 
@@ -386,6 +397,7 @@ function convertEffect(e: any): SemanticEffect {
         key: e.key,
         multiplier: e.multiplier,
         target: e.target,
+        scope: (e as any).scope,
       }
 
       case "MOD_STAT_FROM_COUNTER":
@@ -396,6 +408,7 @@ function convertEffect(e: any): SemanticEffect {
         multiplier: e.ratio ?? e.multiplier,
         target: e.target,
         maxStack: e.maxStack,
+        scope: (e as any).scope,
       }
 
     case "SET_ATTACK_RANGE":
@@ -405,6 +418,11 @@ function convertEffect(e: any): SemanticEffect {
         target: e.target,
       }
     
+      case "CREATE_ANCIENT_WEAPON":
+  return {
+    kind: "create_ancient_weapon",
+  }
+
     case "HEAL_PERCENT":
       return {
         kind: "heal",
@@ -712,7 +730,7 @@ function damageFromCounterLine(
 ): EffectLine {
   const dur = durationPrefix(e.duration)
   const tgt = targetShort(e.target) || "All enemy units"
-  const key = counterShort((e as any).key, (e as any).scope)
+  const key = counterShort((e as any).key, e.scope)
   const multi = safeNumber((e as any).multiplier)
 
   return {
@@ -1061,7 +1079,7 @@ function createAncientWeaponLine(
   _e: Extract<SemanticEffect, { kind: "create_ancient_weapon" }>
 ): EffectLine {
   return {
-    segments: [{ text: "Create an Ancient Weapon", tone: TONE.buff }],
+    segments: [{ text: "Forge an Ancient Weapon", tone: TONE.buff }],
   }
 }
 
@@ -1111,20 +1129,25 @@ function guardAdjacentLine(
 
 function counterShort(key?: string, scope?: string): string {
   const map: Record<string, string> = {
-    teamSelfDamage: "Self-damage count",
-    dig: "dig",
-    teamCurseApplied: "Curse applications",
-    teamOnDeathTriggerCount: "OnDeath Trigger count",
-    swiftVolley: "Volley count",
-    corpseCount: "Corpse count",
-    equipmentDestroyed: "Equipment destroyed",
-    equipmentForged: "Equipment forged",
-    selfDamage: "Self-damage count",
-    selfEquip: "Equip count",
-    devour: "Devour count"
+    dig: "Dig",
+    teamCurseApplied: "Curse",
+    teamOnDeathTriggerCount: "OnDeath",
+    swiftVolley: "Volley",
+    corpseCount: "Corpses",
+    equipmentDestroyed: "Destroyed",
+    equipmentForged: "Forged",
+    selfDamage: "Self-damage",
+    selfEquip: "Equip",
+    devour: "Devour"
   }
 
-  return map[key ?? ""] ?? key ?? "?"
+  const base = map[key ?? ""] ?? key ?? "?"
+
+  if (scope === "battle") return `${base} (battle)`
+  if (scope === "match") return `${base} (match)`
+  if (scope === "turn") return `${base} (turn)`
+
+  return base
 }
 
 function safeNumber(v: unknown): number {
@@ -1145,7 +1168,17 @@ function durationPrefix(d?: any): string {
   return ""
 }
 
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 function triggerShort(t?: string, ability?: any): string {
+
+  if (t?.startsWith("onAbsorb_")) {
+  const role = t.replace("onAbsorb_", "")
+  return `When absorbing ${capitalize(role)}`
+}
+
   if (t === "auraTick") {
     const tick = ability?.tick
     if (tick?.type === "everySeconds" && typeof tick.seconds === "number") {
@@ -1165,9 +1198,8 @@ function triggerShort(t?: string, ability?: any): string {
     firstDeath: "On the first death",
   }
 
-  return map[t ?? ""] ?? ""
+  return map[t ?? ""] ?? t ?? "" // ← fallbackも修正
 }
-
 /* =========================================================
    Condition
 ========================================================= */
@@ -1219,8 +1251,8 @@ function conditionShort(
   }
 
   if (cond.type === "forgeEquipCount") {
-    return `if equipment count is ${cond.value} or higher`
-  }
+  return `after forging ${cond.value} equipment`
+}
 
   if (cond.type === "equip_count_at_least") {
     return `if equipment count is at least ${cond.value}`
@@ -1278,10 +1310,10 @@ function conditionShort(
     return "When an enemy dies"
   }
 
-  if (cond.type === "deadRoleIs") {
-    return `when an allied ${cond.role} dies`
-  }
-
+  if ((cond as any).type === "deadRoleIs" || (cond as any).kind === "dead_role_is") {
+  const role = (cond as any).role ?? (cond as any).value
+  return `when an allied ${capitalize(role)} dies`
+}
   /* =========================
      配置系
   ========================= */
@@ -1548,9 +1580,22 @@ function digRelicLine(
 function convertAbility(a: Ability): SemanticAbility {
   return {
     trigger: a.trigger,
-    condition: a.condition,
+    condition: convertCondition(a.condition),
     tick: (a as any).tick,   // ←これ追加
     delay: (a as any).delay, // ついでに
     effects: (a.effects ?? []).map(convertEffect),
   } as any
+}
+function convertCondition(c: any): SemanticCondition {
+  if (!c) return c
+
+  // deadRoleIs 正規化
+  if (c.type === "deadRoleIs") {
+    return {
+      kind: "dead_role_is",
+      role: c.value,
+    }
+  }
+
+  return c
 }

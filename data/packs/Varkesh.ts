@@ -1582,7 +1582,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       effects: [
         {
           type: "DAMAGE_FROM_COUNTER",
-          key: "teamSelfDamage",
+          key: "selfDamage",
           scope: "battle",
           multiplier: 2,
           target: "all_enemies"

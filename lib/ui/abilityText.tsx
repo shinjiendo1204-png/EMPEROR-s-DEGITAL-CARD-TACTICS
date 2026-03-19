@@ -15,24 +15,3 @@ export function abilityToLine(
   const semantic = interpretAbility(a)
   return renderAbilityEN(semantic, ctx)
 }
-function getUICounter(
-  ctx: any,
-  key: string,
-  scope: "battle" | "match" | "turn" = "match"
-) {
-  if (!ctx) return 0
-
-  if (scope === "battle") {
-    return ctx.battleState?.counters?.[ctx.side ?? "p1"]?.[key] ?? 0
-  }
-
-  if (scope === "match") {
-    return ctx.playerState?.counters?.match?.[key] ?? 0
-  }
-
-  if (scope === "turn") {
-    return ctx.playerState?.counters?.turn?.[key] ?? 0
-  }
-
-  return 0
-}

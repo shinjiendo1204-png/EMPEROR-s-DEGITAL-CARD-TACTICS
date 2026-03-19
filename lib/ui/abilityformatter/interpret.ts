@@ -42,7 +42,8 @@ export function interpretAbility(a: Ability): SemanticAbility {
             key: (e as any).key,
             multiplier: (e as any).multiplier,
             target: e.target,
-            maxStack: (e as any).maxStack ?? 999
+            maxStack: (e as any).maxStack ?? 999,
+            scope: e.scope
           }
 
         /* =========================
@@ -85,7 +86,9 @@ export function interpretAbility(a: Ability): SemanticAbility {
             key: (e as any).key,
             multiplier: (e as any).multiplier,
             target: e.target,
-            duration: convertDuration(e.duration)
+            duration: convertDuration(e.duration),
+            scope: e.scope,
+
           }
 
         /* =========================
@@ -217,7 +220,12 @@ function convertCondition(c: any): SemanticCondition | undefined {
 
     case "allyHpBelowPercent":
       return { kind: "ally_hp_below", percent: Number(c.value) }
-
+    
+      case "forgeEquipCount":
+        return {
+          kind: "equip_count_at_least",
+          value: Number(c.value)
+        }
     case "counter":
       return {
         kind: "counter_at_least",
