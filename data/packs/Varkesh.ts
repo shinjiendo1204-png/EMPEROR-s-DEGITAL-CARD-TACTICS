@@ -803,11 +803,10 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   abilities: [
     {
       trigger: "onKill",
-      scope: "team",
       effects: [
         {
           type: "HEAL",
-          value: 1,
+          value: 2,
           target: "all_other_allies"
         }
       ]
@@ -1170,8 +1169,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   pack: "Varkesh",
   cost: 3,
 
-  hp: 8,
-  atk: 1,
+  hp: 7,
+  atk: 2,
   attackRange: 3,
   role: "support",
 
@@ -1193,9 +1192,9 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       {
         type: "ADD_STATE",
         stateType: "as_stack",
-        value: 0.05,
+        value: 0.1,
         maxStack: 4,
-        maxTotalValue: 0.2,
+        maxTotalValue: 0.4,
         target: "all_allies",
       }
     ]
