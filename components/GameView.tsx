@@ -26,7 +26,7 @@ import { BATTLE_COLS } from "@/lib/battle/boardsize"
 
 export default function GameView() {
   /* =========================
-     GameState（唯一の正）
+     GameState
   ========================= */
   const [game, setGame] = useState<GameState | null>(null)
   const [battleCounters, setBattleCounters] = useState<Record<string, number>>({})
@@ -723,6 +723,7 @@ const damageStats = damageSide === "p1"
         overflow: "hidden",
       }}
     >
+   
       {/* =========================
          上部バー
       ========================= */}
@@ -810,8 +811,9 @@ const damageStats = damageSide === "p1"
           position: "absolute",
           left: 20,
           top: 80,
-          width: 220,
+          width: 320,
           bottom: 240,
+          zIndex: 10,
 
           display: "flex",
           flexDirection: "column",
@@ -869,7 +871,7 @@ const damageStats = damageSide === "p1"
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(2, 48px)",
-        gap: 10,
+        gap: 12,
       }}
     >
       {player.synergies.map((s, i) => {
@@ -895,8 +897,8 @@ const damageStats = damageSide === "p1"
               })
             }}
             style={{
-              width: 52,
-              height: 52,
+              width: 60,
+              height: 58,
 
               clipPath:
                 "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)",
@@ -995,66 +997,104 @@ Stored here when sold. Reuse for free.
         !showEnemyBoard
 
       return (
-        <div
-          key={i}
-          draggable={!disabled}
-          onDragStart={() =>
-            !disabled &&
-            setDragItem({ type: "stock", stockIndex: i })
-          }
-          onClick={() => {
-            if (!canEquip) return
-            if (!game) return
+  <div
+    key={i}
+    draggable={!disabled}
+    onDragStart={(ev) => {
+      if (disabled) return
 
-            const g = structuredClone(game)
-            equipFromStock(g.p1, i, selectedBoardIndex!)
-            setGame(g)
-          }}
-          onContextMenu={(ev) => {
-            ev.preventDefault()
+      // 元の処理
+      setDragItem({ type: "stock", stockIndex: i })
 
-            setDetailOverlay({
-              target: { kind: "equipment", equipment: e as any },
-              mode: "equipment",
-              x: ev.clientX,
-              y: ev.clientY,
-            })
-          }}
-          style={{
-            width: 52,
-            height: 52,
-            clipPath:
-              "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)",
-            background:
-              "linear-gradient(180deg,#d8b15a,#6a4d18)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 13,
-            fontWeight: "bold",
-            color: "#fff",
-            textShadow: "0 2px 6px rgba(0,0,0,0.9)",
-            cursor: canEquip ? "pointer" : "default",
-            opacity: canEquip ? 1 : 0.5,
-            transition: "transform 0.1s",
-          }}
-        >
-          <img
-            src={`./units/${e.id}.jpg`}
-            draggable={false}
-            onError={(ev) => {
-              ;(ev.currentTarget as HTMLImageElement).src =
-                "./units/_placeholder.jpg"
-            }}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              pointerEvents: "none"
-            }}
-          />
-        </div>
-      )
+      // ===== カスタムドラッグ画像 =====
+      const img = new Image()
+      img.src = `./units/${e.id}.jpg`
+
+      img.onload = () => {
+        const size = 52
+
+        const canvas = document.createElement("canvas")
+        canvas.width = size
+        canvas.height = size
+
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return
+
+        // 🔥 影（任意）
+        ctx.shadowColor = "rgba(0,0,0,0.5)"
+        ctx.shadowBlur = 8
+
+        // 🔷 六角形クリップ
+        ctx.beginPath()
+        ctx.moveTo(size * 0.25, size * 0.06)
+        ctx.lineTo(size * 0.75, size * 0.06)
+        ctx.lineTo(size, size * 0.5)
+        ctx.lineTo(size * 0.75, size * 0.94)
+        ctx.lineTo(size * 0.25, size * 0.94)
+        ctx.lineTo(0, size * 0.5)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.drawImage(img, 0, 0, size, size)
+
+        ev.dataTransfer.setDragImage(canvas, size / 2, size / 2)
+      }
+    }}
+    onClick={() => {
+      if (!canEquip) return
+      if (!game) return
+
+      const g = structuredClone(game)
+      equipFromStock(g.p1, i, selectedBoardIndex!)
+      setGame(g)
+
+      // （任意）選択維持したいならこれ
+      setSelectedBoardIndex(selectedBoardIndex)
+    }}
+    onContextMenu={(ev) => {
+      ev.preventDefault()
+
+      setDetailOverlay({
+        target: { kind: "equipment", equipment: e as any },
+        mode: "equipment",
+        x: ev.clientX,
+        y: ev.clientY,
+      })
+    }}
+    style={{
+      width: 52,
+      height: 52,
+      clipPath:
+        "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)",
+      background: "linear-gradient(180deg,#d8b15a,#6a4d18)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 13,
+      fontWeight: "bold",
+      color: "#fff",
+      textShadow: "0 2px 6px rgba(0,0,0,0.9)",
+      cursor: canEquip ? "pointer" : "default",
+      opacity: canEquip ? 1 : 0.5,
+      transition: "transform 0.1s",
+    }}
+  >
+    <img
+      src={`./units/${e.id}.jpg`}
+      draggable={false}
+      onError={(ev) => {
+        ;(ev.currentTarget as HTMLImageElement).src =
+          "./units/_placeholder.jpg"
+      }}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        pointerEvents: "none",
+      }}
+    />
+  </div>
+)
     })}
   </div>
 

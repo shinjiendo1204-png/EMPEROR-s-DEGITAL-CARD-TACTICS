@@ -31,7 +31,6 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     {
       id: "future_core_self_shield",
       trigger: "battleStart",
-      once:true,
 
       condition: "isFront",
       effects: [

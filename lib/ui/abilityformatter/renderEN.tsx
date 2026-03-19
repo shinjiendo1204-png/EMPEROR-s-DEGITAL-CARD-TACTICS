@@ -474,6 +474,7 @@ function convertEffect(e: any): SemanticEffect {
         target: e.target,
         duration: e.duration,
         maxStack: e.maxStack,
+        consumeOn: e.consumeOn,
       }
 
     /* =========================
@@ -881,6 +882,12 @@ function addStateLine(
     e.maxTotalValue,
     (e as any).maxTriggers
   )
+
+  const consume = (e as any).consumeOn
+    ? consumeMeaning(e.stateType, (e as any).consumeOn, e.value ?? 0, duration, tgt)
+    : null
+
+  if (consume) return consume
 
   return {
   target: tgt,

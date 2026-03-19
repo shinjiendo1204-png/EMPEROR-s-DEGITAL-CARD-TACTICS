@@ -3,8 +3,8 @@ import { DragItem } from "@/types/drag"
 import { PLAYER_ROWS, BATTLE_COLS } from "@/lib/battle/boardsize"
 import { calculateFinalStats } from "@/lib/battle/statCalculator"
 
-const CELL_WIDTH = 64
-const CELL_HEIGHT = 62
+const CELL_WIDTH = 62
+const CELL_HEIGHT = 58
 
 type VisualEvent = {
   id: string
