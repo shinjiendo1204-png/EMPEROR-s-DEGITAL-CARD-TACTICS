@@ -811,13 +811,12 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
           {
             id: "warbell_ringer_synergy",
             scope: "team",
-            trigger: "onKill",
+            trigger: "battleStart",
             effects: [
               {
                 type: "ADD_STATE",
                 stateType: "as_stack",
-                value: 0.15,
-                maxStack: 1,
+                value: 0.10,
                 target: "all_allies"
               }
             ],
@@ -1804,15 +1803,15 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
           id: "victory_strategist_synergy",
           scope: "team",
           trigger: "auraTick",
-          tick: { type: "everySeconds", seconds: 3 },
+          tick: { type: "everySeconds", seconds: 4 },
           effects: [
             {
               type: "ADD_STATE",
               stateType: "as_stack",
-              value: 0.1,
-              maxStack: 5,
-              maxTotalValue: 0.5,
-              target: "all_allies",
+              value: -0.15,
+              maxStack: 3,
+              maxTotalValue: -0.45,
+              target: "all_enemies",
             },
           ],
         },
@@ -1870,9 +1869,9 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           id: "battle_field_disrupter_synergy",
             scope: "team",
-          trigger: "onKill",
+          trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
+            { type: "MOD_STAT", stat: "atk", value: 3, target: "all_allies" },
           ],
         },
       ],
