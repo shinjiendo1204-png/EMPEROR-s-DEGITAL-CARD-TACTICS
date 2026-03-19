@@ -7,7 +7,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 {
   id: "ancient_weapon_pluto",
   baseName: "天下の冥砲 プルートゥ",
-  name: "天下の冥砲 プルートゥ",
+  name: "Pluto, Abyssal Worldcannon",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -21,7 +21,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "天下の冥砲 プルートゥ",
+      name: "Pluto, Abyssal Worldcannon",
       baseStats: { atk: 16, hp: 8, },
       effects: [],
       abilities: [
@@ -56,7 +56,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 {
   id: "ancient_weapon_epsilon",
   baseName: "星喰らう衣 エプシロン",
-  name: "星喰らう衣 エプシロン",
+  name: "Epsilon, Star-Eater Mantle",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -70,7 +70,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "星喰らう衣 エプシロン",
+      name: "Epsilon, Star-Eater Mantle",
       baseStats: { atk: 10, hp: 20},
       effects: [],
       abilities: [
@@ -96,7 +96,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 {
   id: "ancient_weapon_atom",
   baseName: "調和の天秤 アトム",
-  name: "調和の天秤 アトム",
+  name: "Atom, Scales of Equilibrium",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -110,7 +110,7 @@ export const ANCIENT_WEAPONS: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "調和の天秤 アトム",
+      name: "Atom, Scales of Equilibrium",
       baseStats: { atk: 14, hp: 12 },
       effects: [],
       abilities: [

@@ -4,7 +4,6 @@ import { BattleState } from "./state"
 import { BattleLog, BattleUnit } from "@/types"
 import { runAbilities } from "./abilityRunner"
 
-import { GLOBAL_HERO_ABILITIES } from "@/data/globalHeroAbilities"
 
 /* =========================
    Utility
@@ -105,7 +104,7 @@ for (const side of ["p1", "p2"] as const) {
 
 
   battleLogs.push({
-    text: "✨ battleStart 完了"
+    text: "✨ battleStart"
   } as BattleLog)
 }
 

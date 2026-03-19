@@ -22,7 +22,7 @@ export function BattleLogPlayer({ logs }: Props) {
   })
 
   if (!logs || logs.length === 0) {
-    return <div>ログがありません</div>
+    return <div>No Logs</div>
   }
 
   return (

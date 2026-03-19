@@ -163,7 +163,7 @@ export function UnitDetailModel({
           marginBottom: 10,
         }}
       >
-        <div>{unit.cost}コスト</div>
+        <div>{unit.cost}Cost</div>
         <div>{unit.role}</div>
         <div>{rangeLabel}</div>
       </div>

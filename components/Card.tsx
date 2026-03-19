@@ -46,7 +46,7 @@ export function Card({
 
       {/* ART */}
      <div className={styles.artWrapper}>
-  <img src={`/units/${unit.id}.jpg`} draggable={false} />
+  <img src={`./units/${unit.id}.jpg`} draggable={false} />
 </div>
 
       {/* NAME */}

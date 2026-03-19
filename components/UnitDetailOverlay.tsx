@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Unit, Ability, BattleUnit, PlayerState } from "@/types"
-import { abilityToLine } from "@/lib/ui/abilityText"
 import { resolveFinalStats } from "@/lib/ui/resolveFinalStats"
 import { ROLE_AS } from "@/lib/battle/constants"
 import { calculateFinalStats } from "@/lib/battle/statCalculator"
 import { BattleState } from "@/lib/battle/state"
+import { renderAbilitiesENFromRaw } from "@/lib/ui/abilityformatter/renderEN"
 
 export type DetailMode = "hand" | "board" | "equipment" | "synergy"
 
@@ -43,11 +43,11 @@ function roleToText(role?: string) {
   if (!role) return ""
 
   const map: Record<string, string> = {
-    tank: "タンク",
-    bruiser: "ブルーザー",
-    skirmisher: "スカーミッシャー",
-    support: "サポート",
-    ranged: "レンジ",
+    tank: "tank",
+    bruiser: "bruiser",
+    skirmisher: "skirmisher",
+    support: "support",
+    ranged: "ranged",
   }
 
   return map[role] ?? role
@@ -118,33 +118,29 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
 
   const AbilityList = ({
   abilities,
-
 }: {
   abilities?: Ability[]
 }) => {
-    if (!abilities || abilities.length === 0) {
-      return <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
-    }
-
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        {abilities.map((a, i) => (
-          <div
-            key={i}
-            style={{
-              padding: "6px 8px",
-              borderRadius: 8,
-              background: "rgba(255,255,255,0.06)",
-              fontSize: 12,
-              lineHeight: 1.4,
-            }}
-          >
-            {abilityToLine(a)}
-          </div>
-        ))}
-      </div>
-    )
+  if (!abilities || abilities.length === 0) {
+    return <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
   }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div
+        style={{
+          padding: "6px 8px",
+          borderRadius: 8,
+          background: "rgba(255,255,255,0.06)",
+          fontSize: 12,
+          lineHeight: 1.4,
+        }}
+      >
+        {renderAbilitiesENFromRaw(abilities)}
+      </div>
+    </div>
+  )
+}
 
   /* =========================
      Unit 表示（変更なし）
@@ -194,17 +190,17 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
           <div>ATK {baseATK}</div>
           {baseAS !== null && <div>AS {baseAS}</div>}
           {baseAS !== null && (<div>DPS {dps.toFixed(2)}</div>)}
-          {attackRange && <div>射程 {attackRangeToText(attackRange)}</div>}
+          {attackRange && <div>Range {attackRangeToText(attackRange)}</div>}
           
           
         </div>
 
-        <SectionTitle>アビリティ</SectionTitle>
+        <SectionTitle>Ability</SectionTitle>
         <AbilityList abilities={(unit as any).abilities} />
 
         {mode === "hand" && (
           <>
-            <SectionTitle>装備</SectionTitle>
+            <SectionTitle>Equip</SectionTitle>
             {variants?.equipment ? (
   <>
     <div style={{ fontSize: 12, opacity: 0.8 }}>
@@ -256,7 +252,7 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
       <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
     )}
 
-            <SectionTitle>シナジー</SectionTitle>
+            <SectionTitle>Synergy</SectionTitle>
             {variants?.synergy ? (
               <>
                 <div style={{ fontSize: 12, opacity: 0.8 }}>
@@ -367,10 +363,10 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
               {finalStats.damageReduce}
             </span>
           </div>
-          <div>射程 {attackRangeToText(unit.attackRange)}</div>
+          <div>AttackRange {attackRangeToText(unit.attackRange)}</div>
         </div>
 
-        <SectionTitle>アビリティ</SectionTitle>
+        <SectionTitle>Ability</SectionTitle>
         <AbilityList abilities={unit.abilities}/>
 
         {unit.states && unit.states.length > 0 && (
@@ -393,7 +389,7 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
     <>
       <div style={{ fontSize: 18, fontWeight: 800 }}>{s.name}</div>
       <div style={{ fontSize: 12, opacity: 0.75 }}>Synergy</div>
-      <SectionTitle>アビリティ</SectionTitle>
+      <SectionTitle>Ability</SectionTitle>
       <AbilityList abilities={s.abilities}/>
     </>
   )
@@ -443,7 +439,7 @@ const renderEquipment = (e: EquipmentLike & {
         </div>
       )}
 
-      <SectionTitle>アビリティ</SectionTitle>
+      <SectionTitle>Ability</SectionTitle>
       <AbilityList abilities={e.abilities} />
     </>
   )

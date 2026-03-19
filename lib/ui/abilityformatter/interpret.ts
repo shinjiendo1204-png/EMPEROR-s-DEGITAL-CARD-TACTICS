@@ -1,15 +1,15 @@
-import { Ability, AbilityEffect } from "@/types"
-import type { SemanticAbility, SemanticEffect, SemanticCondition } from "./types"
-
-/* =========================================================
-   interpret（完全版）
-========================================================= */
+import { Ability, AbilityEffect, Stat } from "@/types"
+import type {
+  SemanticAbility,
+  SemanticEffect,
+  SemanticCondition
+} from "./types"
 
 export function interpretAbility(a: Ability): SemanticAbility {
 
   const effects: SemanticEffect[] = (a.effects ?? [])
     .filter((e): e is AbilityEffect => !!e && !!e.type)
-    .map((e: AbilityEffect): SemanticEffect => {
+    .map((e): SemanticEffect => {
 
       switch (e.type) {
 
@@ -19,30 +19,30 @@ export function interpretAbility(a: Ability): SemanticAbility {
         case "MOD_STAT":
           return {
             kind: "stat_mod",
-            stat: e.stat,
+            stat: e.stat as Stat,
             value: e.value,
             percent: false,
             target: e.target,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
         case "MOD_STAT_PERCENT":
           return {
             kind: "stat_mod",
-            stat: e.stat,
+            stat: e.stat as Stat,
             value: e.value,
             percent: true,
             target: e.target,
-            duration: e.duration
-          }
+            duration: convertDuration(e.duration)}
 
         case "MOD_STAT_FROM_COUNTER":
           return {
             kind: "mod_stat_from_counter",
-            stat: (e as any).stat,
+            stat: e.stat as Stat,
             key: (e as any).key,
             multiplier: (e as any).multiplier,
-            target: e.target
+            target: e.target,
+            maxStack: (e as any).maxStack ?? 999
           }
 
         /* =========================
@@ -57,7 +57,7 @@ export function interpretAbility(a: Ability): SemanticAbility {
             consumeOn: e.consumeOn,
             maxStack: e.maxStack,
             maxTotalValue: e.maxTotalValue,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
         case "REMOVE_STATE":
@@ -76,11 +76,8 @@ export function interpretAbility(a: Ability): SemanticAbility {
             value: e.value,
             target: e.target,
             ignoreDR: (e as any).ignoreDR,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
-
-        
-  
 
         case "DAMAGE_FROM_COUNTER":
           return {
@@ -88,7 +85,7 @@ export function interpretAbility(a: Ability): SemanticAbility {
             key: (e as any).key,
             multiplier: (e as any).multiplier,
             target: e.target,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
         /* =========================
@@ -100,7 +97,7 @@ export function interpretAbility(a: Ability): SemanticAbility {
             value: e.value,
             target: e.target,
             percent: false,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
         case "HEAL_PERCENT":
@@ -109,11 +106,11 @@ export function interpretAbility(a: Ability): SemanticAbility {
             value: e.value,
             target: e.target,
             percent: true,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
         /* =========================
-           SPECIAL DAMAGE
+           SPECIAL
         ========================= */
         case "SELF_DAMAGE":
           return {
@@ -121,16 +118,14 @@ export function interpretAbility(a: Ability): SemanticAbility {
             value: e.value
           }
 
-        /* =========================
-           RANGE
-        ========================= */
         case "SET_ATTACK_RANGE":
           return {
             kind: "set_attack_range",
             value: e.value,
             target: e.target,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
+
         /* =========================
            SUMMON
         ========================= */
@@ -138,6 +133,7 @@ export function interpretAbility(a: Ability): SemanticAbility {
           return {
             kind: "summon",
             unitId: (e as any).unitId,
+            count: (e as any).count ?? 1,
             target: e.target
           }
 
@@ -182,15 +178,12 @@ export function interpretAbility(a: Ability): SemanticAbility {
           return {
             kind: "guard_adjacent",
             target: e.target,
-            duration: e.duration
+            duration: convertDuration(e.duration)
           }
 
-        /* =========================
-           FALLBACK
-        ========================= */
         default:
           console.error("Unknown ability effect:", e)
-          return { kind: "unknown" } as any
+          return { kind: "unknown" }
       }
     })
 
@@ -198,32 +191,24 @@ export function interpretAbility(a: Ability): SemanticAbility {
     trigger: a.trigger,
     effects,
     condition: convertCondition(a.condition),
-    once: a.once,
+    once: (a as any).once,
     delay: (a as any).delay,
     aura: (a as any).aura,
     tick: (a as any).tick,
     scope: (a as any).scope
   }
 }
-
 /* =========================================================
    Condition変換
 ========================================================= */
 function convertCondition(c: any): SemanticCondition | undefined {
-
   if (!c) return undefined
-
-  if (typeof c === "string") {
-    if (c === "deadAlly") return { kind: "dead_ally" }
-    if (c === "deadEnemy") return { kind: "dead_enemy" }
-    return undefined
-  }
 
   switch (c.type) {
 
     case "unitCost":
-  return { type: "unitCost", value: Number(c.value) } as any
-  
+      return { kind: "unit_cost", value: Number(c.value) }
+
     case "selfHpBelowPercent":
       return { kind: "self_hp_below", percent: Number(c.value) }
 
@@ -232,12 +217,6 @@ function convertCondition(c: any): SemanticCondition | undefined {
 
     case "allyHpBelowPercent":
       return { kind: "ally_hp_below", percent: Number(c.value) }
-
-    case "enemyHasCurse":
-      return { kind: "enemy_has_curse", value: Number(c.value) }
-
-    case "targetHasCurse":
-      return { kind: "target_has_curse", value: Number(c.value) }
 
     case "counter":
       return {
@@ -250,19 +229,27 @@ function convertCondition(c: any): SemanticCondition | undefined {
     case "onEquipCount":
       return { kind: "equip_count_at_least", value: Number(c.value) }
 
-    case "deadRoleIs":
-      return { kind: "dead_role_is", role: c.value }
-
     case "hasAbsorbedAllRoles":
       return { kind: "has_absorbed_all_roles" }
 
-    case "boardCount":
+    default:
+      return undefined
+  }
+}
+
+function convertDuration(d?: any): any {
+  if (!d) return undefined
+
+  switch (d.type) {
+    case "time":
+      return { type: "time", value: d.value }
+
+    case "turn":
+      // 🔥 UIにはturn概念がないので変換
       return {
-        kind: "board_count_at_least",
-        pack: c.pack,
-        role: c.role,
-        min: Number(c.min)
-      } as any
+        type: "time",
+        value: d.value * 1 // ← とりあえず1ターン=1秒扱い
+      }
 
     default:
       return undefined

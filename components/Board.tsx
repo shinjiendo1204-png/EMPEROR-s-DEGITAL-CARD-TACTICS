@@ -12,10 +12,6 @@ type VisualEvent = {
   value?: number
 }
 
-function getUnitIconText(name: string) {
-  return name.slice(0, 1)
-}
-
 type Props = {
   board: (BattleUnit | null)[]
   onPlace: (index: number) => void
@@ -23,6 +19,7 @@ type Props = {
   isBattle?: boolean
   onSell?: (index: number) => void
   canSell?: boolean
+  now?: number
 
   onSelectUnit?: (index: number) => void
   selectedBoardIndex?: number | null
@@ -59,6 +56,7 @@ export function Board({
   flipVertical = false,
   onRightClickUnit,
   visualEvents,
+  now,
 }: Props) {
 
   const rows = Array.from(
@@ -192,7 +190,7 @@ export function Board({
             </defs>
 
             <image
-              href="/units/${unit.unitId}.jpg"
+              href="./units/${unit.unitId}.jpg"
               width="100"
               height="100"
               preserveAspectRatio="xMidYMid slice"
@@ -306,12 +304,12 @@ export function Board({
               }}
             >
               <img
-                src={`/units/${unit.unitId}.jpg`}
+                src={`./units/${unit.unitId}.jpg`}
                 alt={unit.unitName}
                 draggable={false}
                 onError={(ev) => {
                   ;(ev.currentTarget as HTMLImageElement).src =
-                    "/units/_placeholder.jpg"
+                    "./units/_placeholder.jpg"
                 }}
                 style={{
                   width: "100%",
@@ -344,10 +342,10 @@ export function Board({
                 {unit.equipments.map((eq: any, index: number) => (
                   <img
                     key={index}
-                    src={`/units/${eq.id}.jpg`}
+                    src={`./units/${eq.id}.jpg`}
                     onError={(ev) => {
                       ;(ev.currentTarget as HTMLImageElement).src =
-                        "/units/_placeholder.jpg"
+                        "./units/_placeholder.jpg"
                     }}
                     style={{
                       width: 14,
@@ -364,15 +362,15 @@ export function Board({
             {(() => {
 
               const stats = calculateFinalStats(unit, 0)
-
+              
               const atkColor =
-                stats.atk > unit.atk ? "#6bff8a" :
-                stats.atk < unit.atk ? "#ff6b6b" :
+                stats.atk > unit.baseAtk ? "#6bff8a" :
+                stats.atk < unit.baseAtk ? "#ff6b6b" :
                 "#ffffff"
 
               const hpColor =
-                stats.maxHp > unit.maxHp ? "#6bff8a" :
-                stats.maxHp < unit.maxHp ? "#ff6b6b" :
+                stats.maxHp > unit.baseMaxHp ? "#6bff8a" :
+                stats.maxHp < unit.baseMaxHp ? "#ff6b6b" :
                 "#ffffff"
 
               return (
@@ -397,7 +395,7 @@ export function Board({
                   <span style={{ color: "#aaa" }}>/</span>
 
                   <span style={{ color: hpColor }}>
-                    {Math.round(stats.maxHp)}
+                    {Math.round(unit.hp)}
                   </span>
                 </div>
               )

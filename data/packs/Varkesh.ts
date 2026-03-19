@@ -14,7 +14,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "young_oni_general",
     baseName: "鬼軍の若大将",
-    name: "鬼軍の若大将",
+    name: "Young Oni Warlord",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -37,7 +37,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "鬼の金棒",
+        name: "Oni Warclub",
         baseStats: { 
           atk: 2,
         
@@ -51,7 +51,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "血の渇望",
+        name: "Bloodlust",
         effects: [],
         abilities: [
           {
@@ -75,7 +75,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "varkesh_rift_berserker",
     baseName: "血吸いの徘徊者",
-    name: "血吸いの徘徊者",
+    name: "Blooddrinker Stalker",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -99,7 +99,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "赤き牙",
+        name: "Crimson Fang",
         baseStats: { 
           hp: 2,
           atk: 1
@@ -115,7 +115,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "飢餓連鎖",
+        name: "Chain of Hunger",
         effects: [],
         abilities: [
           {
@@ -139,7 +139,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "varkesh_grave_forager",
     baseName: "裏街の屍肉あさり",
-    name: "裏街の屍肉あさり",
+    name: "Backstreet Corpse Forager",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -163,7 +163,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "腐肉の欠片",
+        name: "Rotting Flesh Shard",
         baseStats: { 
           hp: 2,
           atk: 1
@@ -181,7 +181,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "屍の宴",
+        name: "Feast of the Dead",
         effects: [],
         abilities: [
           {
@@ -201,7 +201,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "varkesh_blood_oni",
     baseName: "烈傷の鬼童",
-    name: "裂傷の鬼童",
+    name: "Rift-Torn Oni Child",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -227,7 +227,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "裂界の大鎌",
+        name: "Riftreaper Scythe",
         baseStats: {  
           atk: 2
         },
@@ -240,7 +240,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "痛覚共鳴",
+        name: "Pain Resonance",
         effects: [],
         abilities: [
           {
@@ -261,7 +261,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "varkesh_hex_priestess",
     baseName: "呪姫",
-    name: "呪姫",
+    name: "Hex Maiden",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -290,7 +290,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "ガラスの仮面",
+        name: "Glass Mask",
         baseStats: { hp: 3 },
         effects: [],
         abilities: [
@@ -309,7 +309,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "刻印拡散",
+        name: "Curse Spread",
         effects: [],
         abilities: [
           {
@@ -339,7 +339,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     id: "varkesh_rift_whisperer",
     baseName: "友を呪う者",
-    name: "友を呪う者",
+    name: "CurseBound Whisperer",
     mode: "unit",
     pack: "Varkesh",
     cost: 1,
@@ -369,7 +369,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "呪いの言葉",
+        name: "Cursed Words",
         baseStats: { hp: 2, atk: 1},
         effects: [],
         abilities: [
@@ -383,7 +383,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "友は一人ではない。",
+        name: "Not Just One Person.",
         effects: [],
         abilities: [
           {
@@ -407,7 +407,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
   id: "varkesh_blood_vanguard",
   baseName: "先陣鬼",
-  name: "先陣鬼",
+  name: "Vanguard Oni",
   mode: "unit",
   pack: "Varkesh",
   cost: 2,
@@ -439,7 +439,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "血染めの鎧",
+      name: "Bloodstained Armor",
       baseStats: { hp: 3, atk: 2 },
       effects: [],
       abilities: [
@@ -459,7 +459,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "戦端の咆哮",
+      name: "Opening Warcry",
       effects: [],
       abilities: [
         {
@@ -486,7 +486,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_bloodshot_archer",
   baseName: "ブラッドバレットガンマン",
-  name: "ブラッドバレットガンマン",
+  name: "Bloodshot Gunslinger",
   mode: "unit",
   pack: "Varkesh",
   cost: 2,
@@ -516,7 +516,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "赤血の弾丸",
+      name: "Crimson Bullet",
       baseStats: { hp: 3, atk: 2 },
       effects: [],
       abilities: [
@@ -535,7 +535,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "血の代償",
+      name: "Blood Price",
       effects: [],
       abilities: [
         {
@@ -560,7 +560,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_curse_warden",
   baseName: "呪いの器",
-  name: "呪いの器",
+  name: "Vessel of Curses",
   mode: "unit",
   pack: "Varkesh",
   cost: 2,
@@ -589,7 +589,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "首元の印",
+      name: "Neckmark Sigil",
       baseStats: { hp: 4, atk: 1 },
       effects: [],
       abilities: [
@@ -613,7 +613,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 ]
     },
     synergy: {
-      name: "撒き散る邪悪",
+      name: "Spreading Corruption",
       effects: [],
       abilities: [
         {
@@ -637,7 +637,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_curse_priest",
   baseName: "時占いの呪術師",
-  name: "時占いの呪術師",
+  name: "Chrono Hexer",
   mode: "unit",
   pack: "Varkesh",
   cost: 2,
@@ -667,7 +667,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "命の砂時計",
+      name: "Hourglass of Life",
       baseStats: { hp: 4, atk: 1 },
       effects: [],
       abilities: [
@@ -686,7 +686,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "呪潮",
+      name: "Curse Tide",
       effects: [],
       abilities: [
         {
@@ -707,7 +707,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     {
       id: "varkesh_death_pulser",
       baseName: "死線の鼓動者",
-      name: "死線の鼓動者",
+      name: "Deathline Pulsar",
       mode: "unit",
       pack: "Varkesh",
       cost: 2,
@@ -738,7 +738,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
       variants: {
         equipment: {
-          name: "乾いた心臓",
+          name: "Dried Heart",
           baseStats: { hp: 4, atk: 2},
           effects: [],
           abilities: [
@@ -758,7 +758,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           ]
         },
         synergy: {
-          name: "死線をくぐれ。",
+          name: "Walk the Deathline",
           effects: [],
           abilities: [
             {
@@ -783,7 +783,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     {
   id: "varkesh_feast_keeper",
   baseName: "腐宴の導き手",
-  name: "腐宴の導き手",
+  name: "Feastcaller of Rot",
   mode: "unit",
   pack: "Varkesh",
   cost: 2,
@@ -822,7 +822,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
        - 本体より弱い思想（1回復）
     ========================= */
     equipment: {
-      name: "腐宴の盃",
+      name: "Chalice of Rot",
       baseStats: { hp: 4, atk: 1 },
       effects: [],
       abilities: [
@@ -846,7 +846,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
        - グール死亡軸の完成ピース
     ========================= */
     synergy: {
-      name: "屍の再分配",
+      name: "Corpse Redistribution",
       effects: [],
       abilities: [
         {
@@ -874,7 +874,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_blood_tyrant",
   baseName: "修羅の使い",
-  name: "修羅の使い",
+  name: "Avatar of Carnage",
   mode: "unit",
   pack: "Varkesh",
   cost: 3,
@@ -910,7 +910,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "狂戦士の強制",
+      name: "Berserker's Compulsion",
       baseStats: { hp: 4, atk: 2 },
       effects: [],
       abilities: [
@@ -924,7 +924,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "力の増幅",
+      name: "Power Amplification",
       effects: [],
       abilities: [
         {
@@ -948,7 +948,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_ghoul_overlord",
   baseName: "クライ・グール",
-  name: "クライ・グール",
+  name: "Crying Ghoul",
   mode: "unit",
   pack: "Varkesh",
   cost: 3,
@@ -982,7 +982,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "叫ぶ魂",
+      name: "Screaming Soul",
       baseStats: { hp: 5, atk: 1 },
       effects: [],
       abilities: [
@@ -996,7 +996,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "死肉転生",
+      name: "Flesh Rebirth",
       effects: [],
       abilities: [
         {
@@ -1016,7 +1016,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_curse_warlord",
   baseName: "嘲笑う呪詛師",
-  name: "嘲笑う呪詛師",
+  name: "Mocking Hexcaller",
   mode: "unit",
   pack: "Varkesh",
   cost: 3,
@@ -1055,7 +1055,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "呪印の発現",
+      name: "Curse Manifestation",
       baseStats: { hp: 3, atk: 2 },
       effects: [],
       abilities: [
@@ -1069,7 +1069,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "代償の強制",
+      name: "Forced Sacrifice",
       effects: [],
       abilities: [
         {
@@ -1090,7 +1090,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_executioner",
   baseName: "フレンジーフィニッシャー",
-  name: "フレンジーフィニッシャー",
+  name: "Fernzy Finisher",
   mode: "unit",
   pack: "Varkesh",
   cost: 3,
@@ -1121,7 +1121,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "紅の両刃",
+      name: "Crimson Twinblades",
       baseStats: { hp: 2, atk: 3 },
       effects: [],
       abilities: [
@@ -1141,7 +1141,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "公開処刑",
+      name: "Public Excution",
       effects: [],
       abilities: [
         {
@@ -1165,7 +1165,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_feast_lord",
   baseName: "血宴の主宰者",
-  name: "血宴の主宰者",
+  name: "Lord of the Blood Feast",
   mode: "unit",
   pack: "Varkesh",
   cost: 3,
@@ -1204,7 +1204,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "豪血ドリンク",
+      name: "Bloodbrew Elixir",
       baseStats: { hp: 5 },
       effects: [],
       abilities: [
@@ -1222,7 +1222,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "朝まで狂おうぜ",
+      name: "Dance Till Dawn",
       effects: [],
       abilities: [
         {
@@ -1251,7 +1251,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_blood_pact_king",
   baseName: "転生の覇王",
-  name: "転生の覇王",
+  name: "Reincarnated Overlord",
   mode: "unit",
   pack: "Varkesh",
   cost: 4,
@@ -1285,7 +1285,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "転生者の力",
+      name: "Power of Rebirth",
       baseStats: { hp: 3, atk: 2 },
       effects: [],
       abilities: [
@@ -1298,7 +1298,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "高揚する戦い",
+      name: "Battle Frenzy",
       effects: [],
       abilities: [
         {
@@ -1328,7 +1328,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_hex_grand_inquisitor",
   baseName: "パンデミックプリースト",
-  name: "パンデミックプリースト",
+  name: "Pandemic Priest",
   mode: "unit",
   pack: "Varkesh",
   cost: 4,
@@ -1363,7 +1363,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           stat: "attackSpeed",
           value: -0.2,
           target: "all_enemies",
-          duration: { type: "time", value: 1 }   
+
         }
       ]
     },
@@ -1371,7 +1371,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "禁書の鎖",
+      name: "Forbidden Tome Chains",
       baseStats: { hp: 6, atk: 1 },
       effects: [],
       abilities: [
@@ -1384,7 +1384,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "神経衰弱",
+      name: "Nerve Collapse",
       effects: [],
       abilities: [
         {
@@ -1410,7 +1410,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_death_conductor",
   baseName: "牙を剥く臆病者",
-  name: "牙を剥く臆病者",
+  name: "Fanged Coward",
   mode: "unit",
   pack: "Varkesh",
   cost: 4,
@@ -1441,7 +1441,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "拒む意志",
+      name: "Defiant Will",
       baseStats: { hp: 7 },
       effects: [],
       abilities: [
@@ -1461,7 +1461,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "屍を超えていけ",
+      name: "Rise Beyond the Dead",
       effects: [],
       abilities: [
         {
@@ -1486,7 +1486,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "varkesh_lowlife_judge",
   baseName: "マッドサイエンター",
-  name: "マッドサイエンター",
+  name: "Mad Augmenter",
   mode: "unit",
   pack: "Varkesh",
   cost: 4,
@@ -1516,7 +1516,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "超増強剤",
+      name: "Hyper Augment Serum",
       baseStats: { hp: 4, atk: 3 },
       effects: [],
       abilities: [
@@ -1529,7 +1529,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       ]
     },
     synergy: {
-      name: "瀕死のドーパミン",
+      name: "Near-Death Dopamine",
       effects: [],
       abilities: [
         {
@@ -1555,7 +1555,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "blood_realm_oni_god",
   baseName: "鬼神・帝釈",
-  name: "鬼神・帝釈",
+  name: "Oni Deity Taishaku",
   mode: "unit",
   pack: "Varkesh",
   cost: 5,
@@ -1593,7 +1593,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "金剛白象",
+      name: "Diamond White Elephant",
       baseStats: { hp: 2, atk: 6 },
       effects: [],
       abilities: [
@@ -1613,7 +1613,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "鬼軍の進軍",
+      name: "Oni War March",
       effects: [],
       abilities: [
         {
@@ -1637,7 +1637,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "corpse_feast_king",
   baseName: "封印されし屍王",
-  name: "封印されし屍王",
+  name: "Sealed Corpse king",
   mode: "unit",
   pack: "Varkesh",
   cost: 5,
@@ -1752,7 +1752,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 ],
   variants: {
     equipment: {
-      name: "五行封印",
+      name: "Fivefold Seal",
       baseStats: { hp: 10, atk: 2 },
       effects: [],
       abilities: [
@@ -1771,7 +1771,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "死界からの一撃",
+      name: "Strike from the Dead Realm",
       effects: [],
       abilities: [
         {
@@ -1797,7 +1797,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 {
   id: "curse_realm_executioner",
   baseName: "呪界の断罪者",
-  name: "呪界の断罪者",
+  name: "Executioner of the Cursed Realm",
   mode: "unit",
   pack: "Varkesh",
   cost: 5,
@@ -1843,7 +1843,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "呪印コントロール",
+      name: "Curse Control",
       baseStats: { hp:4, atk: 5 },
       effects: [],
       abilities: [
@@ -1864,7 +1864,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "力の代償",
+      name: "Cost of Power",
       effects: [],
       abilities: [
         {

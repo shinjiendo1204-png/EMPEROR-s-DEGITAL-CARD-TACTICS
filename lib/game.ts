@@ -157,7 +157,7 @@ export function createBattleUnit(unit: Unit, boardIndex: number, side: "p1" | "p
     pos: { r: rowIndex, c: colIndex },
 
     nextActionTime: 0,
-    side: "p1",
+    side: side,
 
     damageDealt: 0,
     damageTaken: 0,

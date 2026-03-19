@@ -32,11 +32,11 @@ export function buildDamageStats(logs: BattleLog[]): DamageStat[] {
     // =========================
     if ((log as any).unitId === "team_curse") {
       id = "team_curse"
-      name = "呪いダメージ"
+      name = "Team Damage"
     }
     else if ((log as any).unitId === "team_self_damage") {
       id = "team_self_damage"
-      name = "自傷ダメージ"
+      name = "Team Damage"
     }
 
     // =========================

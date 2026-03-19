@@ -54,7 +54,10 @@ export type AbilityCondition =
   | "hasBackAlly"
   | "isFront"
   | "isBack"
-  | "allyCrossBelow50"
+  | {
+    type: "allyCrossBelow"
+    percent: number
+  }
   | "deadAlly"
   | "deadEnemy"
   | { type: "onEquipCount"; value: number }
@@ -359,6 +362,7 @@ export type AbilityEffect =
       stat: Stat
       key: string
       scope?: "battle" | "match"
+      maxStack?: number 
       multiplier: number
     })
   | (AbilityEffectBase & {
@@ -371,6 +375,7 @@ export type AbilityEffect =
   | (AbilityEffectBase & {
   type: "SUMMON"
   unitId: string
+  count?: number
   maxSummons?: number
 })
 

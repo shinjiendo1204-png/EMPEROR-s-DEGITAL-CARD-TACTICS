@@ -911,7 +911,6 @@ case "MOD_STAT_FROM_COUNTER": {
   }
 
   if (scope === "match") {
-
     const player =
       source.side === "p1"
         ? context.battleState?.p1Player
@@ -920,31 +919,41 @@ case "MOD_STAT_FROM_COUNTER": {
     counter = player?.counters?.match?.[key] ?? 0
   }
 
-  const amount = counter * (effect.multiplier ?? 1)
+  const raw = counter
 
-  switch (effect.stat) {
+const capped = effect.maxStack !== undefined
+  ? Math.min(raw, effect.maxStack)
+  : raw
 
-    case "atk":
-      target.atk += amount
-      break
+const amount = capped * (effect.multiplier ?? 1)
+  if (amount === 0) break
 
-    case "hp":
-      target.hp += amount
-      target.maxHp += amount
-      break
-
-    case "attackSpeed":
-      target.attackSpeed += amount
-      break
-
-    case "damageReduce":
-      addState(source, {
-        id: `counter_dr_${Date.now()}`,
-        type: "damage_reduce",
-        value: amount
-      })
-      break
+  // ★ ここにそのまま持ってくる
+  const toStateType = (
+    stat: typeof effect.stat
+  ): BattleStateEffect["type"] | null => {
+    switch (stat) {
+      case "atk":
+        return "atk"
+      case "hp":
+        return "hp"
+      case "attackSpeed":
+        return "as_stack"
+      case "damageReduce":
+        return "damage_reduce"
+      default:
+        return null
+    }
   }
+
+  const stateType = toStateType(effect.stat)
+  if (!stateType) break
+
+  addState(target, {
+    id: `counter_${stateType}_${Date.now()}_${Math.random()}`,
+    type: stateType,
+    value: amount
+  })
 
   break
 }

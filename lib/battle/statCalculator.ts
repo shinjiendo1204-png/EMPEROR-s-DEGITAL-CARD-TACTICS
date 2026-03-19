@@ -15,7 +15,10 @@ function sumStates(unit: BattleUnit, type: BattleStateEffect["type"], now: numbe
       (s.expiresAt === undefined || s.expiresAt > now) &&
       (s.consumeOn == null) // ✅ これ追加：一回消費系は常時計上しない
     )
-    .reduce((sum, s) => sum + (s.value ?? 0), 0)
+    .reduce((sum, s) => {
+  const stacks = s.stacks ?? 1
+  return sum + (s.value ?? 0) * stacks
+}, 0)
 }
 
 /* =========================

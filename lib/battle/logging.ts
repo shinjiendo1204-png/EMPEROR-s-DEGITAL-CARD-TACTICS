@@ -31,7 +31,7 @@ export function logAttackEvent(
 ) {
   battleLogs.push({
     action: "attack",
-    text: msg,
+    text: `🗡 ${attacker.unitName} hits ${target.unitName} for ${damage} damage`,
 
     unitId: attacker.unitId,
     unitName: attacker.unitName,
@@ -43,7 +43,6 @@ export function logAttackEvent(
     side: attacker.side
   })
 }
-
 /* =========================
    死亡
 ========================= */
@@ -77,7 +76,7 @@ export function logKillEvent(
 ) {
   battleLogs.push({
     action: "kill",
-    text: `✅ ${attacker.unitName} が ${target.unitName} を倒した`,
+    text: `✅ ${attacker.unitName} kills ${target.unitName} `,
 
     unitId: attacker.unitId,
     unitName: attacker.unitName,
@@ -89,27 +88,5 @@ export function logKillEvent(
     to: target.pos,
 
     time
-  })
-}
-/* =========================
-   呪印
-========================= */
-export function logCurseEvent(
-  logs: BattleLog[],
-  unit: BattleUnit,
-  damage: number,
-  now: number
-) {
-  logs.push({
-    unitId: unit.unitId,
-    unitName: unit.unitName,
-
-    action: "curse",
-    text: `☠ ${unit.unitName} に ${damage} 呪印ダメージ`,
-
-    side: unit.side,
-
-    damage,
-    time: now
   })
 }

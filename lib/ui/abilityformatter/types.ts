@@ -1,5 +1,22 @@
+import type { Stat, BattleTrigger, AbilityTarget} from "@/types"
+
+
+export type CounterScope =
+  | "self"
+  | "team"
+  | "battle"
+  | "match"
+  | "turn"
+
+export type Duration =
+  | { type: "instant" }
+  | { type: "time"; value: number }
+  | { type: "until_death" }
+  | { type: "next_attack" }
+  | { type: "permanent" }
+
 /* =========================================================
-   Semantic Types（完全版）
+   Condition
 ========================================================= */
 
 export type SemanticCondition =
@@ -16,11 +33,19 @@ export type SemanticCondition =
   | { kind: "is_front" }
   | { kind: "is_back" }
   | { kind: "ally_cross_below"; percent: number }
-  | { kind: "counter_at_least"; scope?: string; key: string; min: number }
+  | { kind: "counter_at_least"; scope?: CounterScope; key: string; min: number }
   | { kind: "has_absorbed_all_roles" }
   | { kind: "equip_count_at_least"; value: number }
   | { kind: "board_count_at_least"; pack?: string; role?: string; min: number }
   | { kind: "unknown"; raw: any }
+  | {
+    kind: "unit_cost"
+    value: number
+  }
+
+/* =========================================================
+   Effect
+========================================================= */
 
 export type SemanticEffect =
   /* =========================
@@ -29,19 +54,20 @@ export type SemanticEffect =
 
   | {
       kind: "stat_mod"
-      stat: string
+      stat: Stat
       percent?: boolean
       value: number
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   | {
       kind: "mod_stat_from_counter"
-      stat: string
+      stat: Stat
       key: string
       multiplier: number
-      target?: string
+      target?: AbilityTarget
+      maxStack: number
     }
 
   /* =========================
@@ -52,9 +78,9 @@ export type SemanticEffect =
       kind: "add_state"
       stateType: string
       value?: number
-      target?: string
+      target?: AbilityTarget
       consumeOn?: string
-      duration?: any
+      duration?: Duration
       maxStack?: number
       maxTotalValue?: number
     }
@@ -62,7 +88,7 @@ export type SemanticEffect =
   | {
       kind: "remove_state"
       stateType: string
-      target?: string
+      target?: AbilityTarget
     }
 
   /* =========================
@@ -72,32 +98,32 @@ export type SemanticEffect =
   | {
       kind: "damage"
       value: number
-      target?: string
+      target?: AbilityTarget
       ignoreDR?: boolean
-      duration?: any
+      duration?: Duration
     }
 
   | {
       kind: "damage_percent"
       value: number
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   | {
       kind: "damage_split"
       value: number
       hits?: number
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   | {
       kind: "damage_from_counter"
       key: string
       multiplier: number
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   /* =========================
@@ -107,9 +133,9 @@ export type SemanticEffect =
   | {
       kind: "heal"
       value: number
-      target?: string
+      target?: AbilityTarget
       percent?: boolean
-      duration?: any
+      duration?: Duration
     }
 
   /* =========================
@@ -128,8 +154,8 @@ export type SemanticEffect =
   | {
       kind: "set_attack_range"
       value: number | "next"
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   /* =========================
@@ -139,7 +165,8 @@ export type SemanticEffect =
   | {
       kind: "summon"
       unitId?: string
-      target?: string
+      target?: AbilityTarget
+      count?: number
     }
 
   | {
@@ -157,8 +184,8 @@ export type SemanticEffect =
 
   | {
       kind: "guard_adjacent"
-      target?: string
-      duration?: any
+      target?: AbilityTarget
+      duration?: Duration
     }
 
   /* =========================
@@ -169,7 +196,7 @@ export type SemanticEffect =
       kind: "increment_counter"
       key: string
       value?: number
-      scope?: "self" | "team" | "battle" | "match" | "turn"
+      scope?: CounterScope
     }
 
   | { kind: "taunt_all" }
@@ -189,7 +216,7 @@ export type SemanticEffect =
 
   | {
       kind: "destroy_equipment"
-      target?: string
+      target?: AbilityTarget
     }
 
   /* =========================
@@ -200,13 +227,24 @@ export type SemanticEffect =
       kind: "unknown"
     }
 
+/* =========================================================
+   Ability
+========================================================= */
+
 export type SemanticAbility = {
-  trigger?: string
+  trigger?: BattleTrigger
+
   effects: SemanticEffect[]
+
   condition?: SemanticCondition
+
   once?: boolean
-  delay?: any
+
+  delay?: Duration
+
   aura?: boolean
-  tick?: any
-  scope?: string
+
+  tick?: { type: "everySeconds"; seconds: number }
+
+  scope?: "self" | "team"
 }

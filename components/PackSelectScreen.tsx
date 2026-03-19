@@ -91,10 +91,10 @@ export function PackSelectScreen({
             >
               {/* IMAGE */}
               <img
-                src={`/packs/${packId}.jpg`}
+                src={`./packs/${packId}.jpg`}
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src =
-                    "/units/_placeholder.jpg"
+                    "./units/_placeholder.jpg"
                 }}
                 style={{
                   width: "100%",
@@ -164,7 +164,7 @@ export function PackSelectScreen({
             }}
           >
             <img
-              src={`/packs/${selectedPack}.jpg`}
+              src={`./packs/${selectedPack}.jpg`}
               style={{
                 width: 120,
                 height: 160,
@@ -186,7 +186,7 @@ export function PackSelectScreen({
             </div>
 
             <img
-              src={`/packs/${enemyPack}.jpg`}
+              src={`./packs/${enemyPack}.jpg`}
               style={{
                 width: 120,
                 height: 160,

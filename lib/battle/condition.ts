@@ -27,6 +27,16 @@ export function checkCondition(
       )
     }
 
+    if (condition.type === "allyCrossBelow") {
+  const t = context?.target
+  if (!t) return false
+
+  const percent = condition.percent ?? 0.5
+  const prev = (t as any).prevHp ?? t.hp
+
+  return prev > t.maxHp * percent && t.hp <= t.maxHp * percent
+}
+
     if (condition.type === "onEquipCount") {
 
       if (context?.isTeam) {
@@ -226,13 +236,6 @@ if (condition.type === "customBoardCount") {
       return (
         context?.allies.some(u => u.row === "back" && u.hp > 0) ?? false
       )
-
-    case "allyCrossBelow50": {
-      const t = context?.target
-      if (!t) return false
-      const prev = (t as any).prevHp ?? t.hp
-      return prev > t.maxHp * 0.5 && t.hp <= t.maxHp * 0.5
-    }
 
     case "deadAlly":
   if (!context?.deadUnit) return false

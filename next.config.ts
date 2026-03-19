@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  output: "export",
 
-export default nextConfig;
+  images: {
+    unoptimized: true,   // ← これ重要
+  },
+
+  assetPrefix: "./",     // ← これ最重要
+}
+
+export default nextConfig

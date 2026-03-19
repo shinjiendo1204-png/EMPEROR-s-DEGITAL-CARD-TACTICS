@@ -30,7 +30,6 @@ export default function GameView() {
   ========================= */
   const [game, setGame] = useState<GameState | null>(null)
   const [battleCounters, setBattleCounters] = useState<Record<string, number>>({})
-
   const [battleBoard, setBattleBoard] = useState<BattleUnit[] | null>(null)
   const [damageSide, setDamageSide] = useState<"p1" | "p2">("p1")
   const [detailOverlay, setDetailOverlay] = useState<{
@@ -380,16 +379,18 @@ u.prevPos = { ...u.pos }
   p1.battleResult = null
   p2.battleResult = null
 
-  // 戦闘
+
   const result = startBattleVs(g, p1, p2)
 
   setBattleBoard(
-  structuredClone(result.initialBoard ?? []).filter(
-    (u): u is BattleUnit => !!u
+  (result.initialBoard ?? []).filter(
+    (u): u is BattleUnit => u !== null
   )
 )
   // 反映
   setGame(g)
+
+
 
 
   setPhase("battle")
@@ -427,6 +428,17 @@ u.prevPos = { ...u.pos }
 
   function handleNextTurn() {
     const ng = structuredClone(g)
+
+     // 🔥 ここ追加（HPリセット）
+  ng.p1.board.forEach(u => {
+    if (!u) return
+    u.hp = u.maxHp
+  })
+
+  ng.p2.board.forEach(u => {
+    if (!u) return
+    u.hp = u.maxHp
+  })
 
     // 次ターン処理（両者）
     startTurn(ng, ng.p1)
@@ -597,6 +609,7 @@ if (
   unit.prevPos = next.from
   unit.pos = next.to
 
+
   return b
 })
 }
@@ -645,14 +658,14 @@ if (preBattle.phase === "fusion") {
 
       <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
         <img
-          src={`/packs/${preBattle.p1Pack}.jpg`}
+          src={`./packs/${preBattle.p1Pack}.jpg`}
           style={{ width: 140, height: 180, borderRadius: 10 }}
         />
 
         <div style={{ fontSize: 36, fontWeight: 800 }}>+</div>
 
         <img
-          src={`/packs/${preBattle.p2Pack}.jpg`}
+          src={`./packs/${preBattle.p2Pack}.jpg`}
           style={{ width: 140, height: 180, borderRadius: 10 }}
         />
       </div>
@@ -758,12 +771,12 @@ const damageStats = damageSide === "p1"
               onClick={handleBattleStart}
               disabled={disabled}
             >
-              戦闘開始
+              BattleStart
             </button>
           )}
 
           <button style={{ marginLeft: 12 }} onClick={() => setShowEnemyBoard((v) => !v)}>
-            {showEnemyBoard ? "自分の盤面" : "相手の盤面"}
+            {showEnemyBoard ? "My Board" : "Enemy's Board"}
           </button>
         </div>
       </div>
@@ -782,7 +795,7 @@ const damageStats = damageSide === "p1"
           overflow: "hidden",
           alignItems: "stretch",
           backgroundImage: `
-            url('/board/arena.png')
+            url('./board/arena.png')
             `,
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -850,7 +863,7 @@ const damageStats = damageSide === "p1"
   </div>
 
   {player.synergies.length === 0 ? (
-    <div style={{ opacity: 0.35, fontSize: 12 }}>なし</div>
+    <div style={{ opacity: 0.35, fontSize: 12 }}>1 Synergy per turn (Free, Max 2)</div>
   ) : (
     <div
       style={{
@@ -905,11 +918,11 @@ const damageStats = damageSide === "p1"
             }}
           >
             <img
-              src={`/units/${s.id}.jpg`}
+              src={`./units/${s.id}.jpg`}
               draggable={false}
               onError={(ev) => {
                 ;(ev.currentTarget as HTMLImageElement).src =
-                  "/units/_placeholder.jpg"
+                  "./units/_placeholder.jpg"
               }}
               style={{
                 width: "100%",
@@ -918,6 +931,7 @@ const damageStats = damageSide === "p1"
                 pointerEvents: "none"
               }}
             />
+            
           </div>
                   )
                 })}
@@ -948,6 +962,23 @@ const damageStats = damageSide === "p1"
   >
     EQUIPMENT
   </div>
+
+  {player.equipmentStock.length === 0 ? (
+
+  <div
+    style={{
+      opacity: 0.4,
+      fontSize: 11,
+      lineHeight: 1.4,
+      textAlign: "center",
+      marginTop: 8,
+    }}
+  >
+    Drag a unit onto another to turn it into equipment.
+Stored here when sold. Reuse for free.
+  </div>
+
+) : (
 
   <div
     style={{
@@ -992,35 +1023,28 @@ const damageStats = damageSide === "p1"
           style={{
             width: 52,
             height: 52,
-
             clipPath:
               "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%)",
-
             background:
               "linear-gradient(180deg,#d8b15a,#6a4d18)",
-
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-
             fontSize: 13,
             fontWeight: "bold",
             color: "#fff",
-
             textShadow: "0 2px 6px rgba(0,0,0,0.9)",
-
             cursor: canEquip ? "pointer" : "default",
             opacity: canEquip ? 1 : 0.5,
-
             transition: "transform 0.1s",
           }}
         >
           <img
-            src={`/units/${e.id}.jpg`}
+            src={`./units/${e.id}.jpg`}
             draggable={false}
             onError={(ev) => {
               ;(ev.currentTarget as HTMLImageElement).src =
-                "/units/_placeholder.jpg"
+                "./units/_placeholder.jpg"
             }}
             style={{
               width: "100%",
@@ -1033,6 +1057,8 @@ const damageStats = damageSide === "p1"
       )
     })}
   </div>
+
+)}
 </div>
           </div>
         </div>
@@ -1063,6 +1089,7 @@ const damageStats = damageSide === "p1"
             <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
               <Board
                 board={showEnemyBoard ? enemy.board : player.board}
+                now={0}
                 isBattle={false}
                 dragItem={dragItem}
                 disabled={showEnemyBoard || disabled}
@@ -1226,7 +1253,7 @@ const damageStats = damageSide === "p1"
   </div>
 
   {damageStats.length === 0 ? (
-    <div style={{ opacity: 0.5 }}>まだダメージなし</div>
+    <div style={{ opacity: 0.5 }}>No Result</div>
   ) : (
     damageStats.map((s) => {
 
@@ -1270,47 +1297,8 @@ const damageStats = damageSide === "p1"
     })
   )}
 </div>
-            <div
-              onClick={() => setShowBattleLog((v) => !v)}
-              style={{
-                cursor: "pointer",
-                padding: "6px 8px",
-                borderRadius: 6,
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.06)",
-                fontSize: 13,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span>Battle Log</span>
-              <span style={{ opacity: 0.6 }}>{showBattleLog ? "▲" : "▼"}</span>
-            </div>
-
-            {showBattleLog && (
-              <div
-                ref={logRef}
-                style={{
-                  marginTop: 8,
-                  height: "100%",
-                  maxHeight: 420,
-                  overflowY: "auto",
-                  background: "#0f0f0f",
-                  border: "1px solid #333",
-                  borderRadius: 6,
-                  padding: 8,
-                  fontSize: 12,
-                  lineHeight: 1.6,
-                }}
-              >
-                {logsToShow.length === 0 ? (
-                  <div style={{ opacity: 0.5 }}>戦闘ログはまだありません</div>
-                ) : (
-                  logsToShow.map((log, i) => <div key={i}>{log.text}</div>)
-                )}
-              </div>
-            )}
+            
+            
           </div>
         </div>
       </div>
@@ -1475,7 +1463,7 @@ const damageStats = damageSide === "p1"
         cursor: "pointer",
       }}
     >
-      パック選択に戻る
+      Rematch
     </button>
   </div>
 )}

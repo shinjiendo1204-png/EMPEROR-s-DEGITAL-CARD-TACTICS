@@ -36,11 +36,6 @@ export function renderAbilityJP(
 
   return (
     <>
-      {header && (
-        <div>
-          <strong>{header}：</strong>
-        </div>
-      )}
 
       {s.effects.map((e, i) => {
         const line = effectLine(e, {

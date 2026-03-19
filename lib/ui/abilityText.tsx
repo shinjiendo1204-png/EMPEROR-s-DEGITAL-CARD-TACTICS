@@ -2,7 +2,7 @@
 
 import { Ability } from "@/types"
 import { interpretAbility } from "./abilityformatter/interpret"
-import { renderAbilityJP } from "./abilityformatter/renderJP"
+import { renderAbilityEN } from "./abilityformatter/renderEN"
 
 export function abilityToLine(
   a: Ability,
@@ -13,7 +13,7 @@ export function abilityToLine(
   }
 ) {
   const semantic = interpretAbility(a)
-  return renderAbilityJP(semantic, ctx)
+  return renderAbilityEN(semantic, ctx)
 }
 function getUICounter(
   ctx: any,

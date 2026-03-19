@@ -57,7 +57,7 @@ export function stepBattle(
     if (state.suddenDeath) {
       state.finished = true
       state.winner = "p1"
-      battleLogs.push({ text: "🏆 P1 勝利" } as BattleLog)
+      battleLogs.push({ text: "🏆 P1 WIN" } as BattleLog)
       return false
     }
   }
@@ -65,14 +65,14 @@ export function stepBattle(
   if (p1Alive.length === 0) {
     state.finished = true
     state.winner = "p2"
-    battleLogs.push({ text: "🏆 P2 勝利" } as BattleLog)
+    battleLogs.push({ text: "🏆 P2 WIN" } as BattleLog)
     return false
   }
 
   if (p2Alive.length === 0) {
     state.finished = true
     state.winner = "p1"
-    battleLogs.push({ text: "🏆 P1 勝利" } as BattleLog)
+    battleLogs.push({ text: "🏆 P1 WIN" } as BattleLog)
     return false
   }
 
@@ -177,7 +177,7 @@ for (const side of ["p1", "p2"] as const) {
   if (enemies.length === 0) {
     state.finished = true
     battleLogs.push(
-      { text: actor.side === "p1" ? "🏆 P1 勝利" : "🏆 P2 勝利" } as BattleLog
+      { text: actor.side === "p1" ? "🏆 P1 WIN" : "🏆 P2 WIN" } as BattleLog
     )
     return false
   }
@@ -284,7 +284,7 @@ for (const side of ["p1", "p2"] as const) {
     logDeathEvent(
       battleLogs,
       realTarget,
-      `${realTarget.unitName} は倒れた`,
+      `${realTarget.unitName} dies`,
       state.now
     )
 

@@ -5,7 +5,7 @@ export const HERO_UNITS: Unit[] = [
   {
   id: "the_hope_alux",
   baseName: "希望の勇者 アルクス",
-  name: "希望の勇者 アルクス",
+  name: "Alux, Hero of Hope",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -41,7 +41,7 @@ export const HERO_UNITS: Unit[] = [
 
   variants: {
     equipment: {
-      name: "伝説の剣 ラージライト",
+      name: "Largelight, Legendary Blade",
       baseStats: {
         atk: 10,
         hp: 10
@@ -63,7 +63,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "舞い降りる光",
+      name: "Descending Light",
       effects: [],
       abilities: [
         {
@@ -85,7 +85,7 @@ export const HERO_UNITS: Unit[] = [
 {
   id: "hero_nightsteel_guard",
   baseName: "国繋ぐ守護者 バルガン",
-  name: "国繋ぐ守護者 バルガン",
+  name: "Balgarn, Realm Guadian",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -128,7 +128,7 @@ export const HERO_UNITS: Unit[] = [
 
   variants: {
     equipment: {
-      name: "白銀の盾 エヴァラック",
+      name: "Evarak, Silver Shield",
       baseStats: {
         hp: 12,
         atk: 3
@@ -151,7 +151,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "鉄壁の陣",
+      name: "Iron Fortress",
       effects: [],
       abilities: [
         {
@@ -179,7 +179,7 @@ export const HERO_UNITS: Unit[] = [
 {
   id: "hero_nightsteel_swift",
   baseName: "蒼嵐の速射手 シルヴァ",
-  name: "蒼嵐の速射手 シルヴァ",
+  name: "Sylva, Stormshot Ranger",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -264,7 +264,7 @@ export const HERO_UNITS: Unit[] = [
   variants: {
 
     equipment: {
-      name: "大長弓 ヴァレスト",
+      name: "Valest, Great Longbow",
       baseStats: {
         atk: 10,
         hp: 6
@@ -288,7 +288,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "風嵐の狩り",
+      name: "Stormhunt",
       effects: [],
       abilities: [
         {
@@ -312,7 +312,7 @@ export const HERO_UNITS: Unit[] = [
 {
   id: "hero_yamato",
   baseName: "白髪の黒王 ヤマト ",
-  name: "白髪の黒王 ヤマト",
+  name: "Yamato, Black Sovereign",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -367,7 +367,7 @@ export const HERO_UNITS: Unit[] = [
     {
       id: "yamato_ability3",
       trigger: "auraTick",
-      delay: { type: "time", value: 10 },
+      tick: { type: "everySeconds", seconds: 10 },
       maxTriggers: 1,
       effects: [
         {
@@ -383,7 +383,7 @@ export const HERO_UNITS: Unit[] = [
   ],
   variants: {
   equipment: {
-  name: "黒を纏う叢雲",
+  name: "Murakumo, Cloaked in Black",
   baseStats: {
     atk: 8,
     hp: 6
@@ -428,7 +428,7 @@ export const HERO_UNITS: Unit[] = [
   ]
 },
 synergy: {
-  name: "神への反乱",
+  name: "Rebellion Against the Gods",
   effects: [],
   abilities: [
     {
@@ -453,7 +453,7 @@ synergy: {
 {
   id: "hero_blood_oni_emperor",
   baseName: "鬼の頭領 酒呑童子",
-  name: "鬼の頭領 酒呑童子",
+  name: "Shuten Doji, Oni Overlord",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -582,7 +582,7 @@ synergy: {
     ========================= */
 
     equipment: {
-      name: "格別の酒 鬼殺し",
+      name: "Onigoroshi, Demon-Slaying Sake",
       baseStats: {
         atk: 10,
         hp: 8
@@ -628,7 +628,7 @@ synergy: {
     ========================= */
 
     synergy: {
-      name: "押し寄せる怒り",
+      name: "Surging Rage",
 
       effects: [],
 
@@ -654,7 +654,7 @@ synergy: {
 {
   id: "hero_shikome",
   baseName: "呪いの女神 シコメ",
-  name: "呪いの女神 シコメ",
+  name: "Shikome, Goddess of Curses",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -734,7 +734,7 @@ synergy: {
     ========================= */
 
     equipment: {
-      name: "呪いの口づけ",
+      name: "Curse Kiss",
 
       baseStats: {
         hp: 10,
@@ -786,7 +786,7 @@ synergy: {
     ========================= */
 
     synergy: {
-      name: "過剰な愛情",
+      name: "Excessive Devotion",
       effects: [],
       abilities: [
 
@@ -826,7 +826,7 @@ synergy: {
 {
   id: "hero_antiqua_dig_relic",
   baseName: "秘宝 アースレリック",
-  name: "秘宝 アースレリック",
+  name: "Earth Relic",
   mode: "hero",
   pack: "Antiqua",
   cost: 0,
@@ -861,7 +861,7 @@ synergy: {
   variants: {
 
     equipment: {
-      name: "光輝く魂",
+      name: "Radiant Soul",
 
       baseStats: {
         atk: 4,
@@ -946,7 +946,7 @@ synergy: {
     },
 
     synergy: {
-      name: "伝承を超えた戦い",
+      name: "Beyond Legacy",
 
       effects: [],
 
@@ -975,7 +975,7 @@ synergy: {
 {
  id: "hero_antiqua_devourer",
  baseName: "過ちの先 テンタクル",
- name: "過ちの先 テンタクル",
+ name: "Tentacle, Beyond the Error",
  mode: "hero",
  pack: "Antiqua",
  cost: 0,
@@ -1023,15 +1023,17 @@ synergy: {
     {
       type: "ADD_STATE",
       stateType: "atk",
-      value: -4,
-      maxStack: -12,
+      value: -5,
+      maxStack: 3,
+      maxTotalValue: -15,
       target: "equipped_enemy"
     },
     {
       type: "ADD_STATE",
       stateType: "as_stack",
-      value: -0.15,
-      maxStack: -0.45,
+      value: -0.2,
+      maxStack: 3,
+      maxTotalValue: -0.6,
       target: "equipped_enemy"
     }
   ]
@@ -1042,7 +1044,7 @@ synergy: {
  variants: {
 
     equipment: {
-      name: "漆黒のレリック",
+      name: "Abyssal Relic",
 
       baseStats: {
         atk: 15,
@@ -1055,7 +1057,7 @@ synergy: {
     },
 
     synergy: {
-      name: "覆い尽くす闇",
+      name: "All-Consuming Darkness",
 
       effects: [],
 
@@ -1088,7 +1090,7 @@ synergy: {
  {
   id: "hero_antiqua_overlord",
   baseName: "辿り着いた未来 ルクタンテ",
-  name: "辿り着いた未来 ルクタンテ",
+  name: "Luctante, Reached Bright Future",
   mode: "hero",
   pack: "Antiqua",
   cost: 0,
@@ -1125,7 +1127,7 @@ synergy: {
    variants: {
 
     equipment: {
-      name: "希望のレリック",
+      name: "Relic of Hope",
 
       baseStats: {
         atk: 15,
@@ -1138,7 +1140,7 @@ synergy: {
     },
 
     synergy: {
-      name: "一寸先の光",
+      name: "Glimmer Ahead",
 
       effects: [],
 

@@ -1,19 +1,20 @@
 import { useState } from "react"
 import { PlayerState } from "@/types"
 
-const LABEL: Record<string, string> = {
-  dig: "探求",
-  teamCurseApplied: "呪印付与数",
-  teamOnDeathTriggerCount: "味方死亡数",
-  swiftVolley: "連射カウント",
-  corpseCount: "死体数",
-  equipmentDestroyed: "装備破壊数",
-  equipmentForged: "装備数",
-  selfDamage: "自傷回数",
-  selfEquip: "装備カウント",
-  damageReduce: "ダメージ軽減回数",
-  onDeath: "死亡時効果回数",
-  as_stack:"AS上昇回数",
+export const LABEL: Record<string, string> = {
+  dig: "dig",
+  devour: "devour",
+  teamCurseApplied: "Curse Applied",
+  teamOnDeathTriggerCount: "Ally Deaths",
+  swiftVolley: "Volley Count",
+  corpseCount: "Corpses",
+  equipmentDestroyed: "Equipment Destroyed",
+  equipmentForged: "Equipment Crafted",
+  selfDamage: "Self Damage",
+  selfEquip: "Equip Count",
+  damageReduce: "Damage Reduced",
+  onDeath: "On-Death Triggers",
+  as_stack: "AS Stacks",
 }
 
 export function CounterPanel({
@@ -38,17 +39,21 @@ const entries = Object.entries(counters)
   return (
     <div
       style={{
-        position: "absolute",
-        right: 12,
-        bottom: 12,
-        background: "rgba(0,0,0,0.6)",
-        padding: "8px 12px",
-        borderRadius: 8,
-        fontSize: 12,
-        color: "white",
-        zIndex: 20,
-        minWidth: 140
-      }}
+  position: "absolute",
+  right: 12,
+  bottom: 12,
+
+  background: "rgba(0,0,0,0.6)",
+
+  padding: "10px 14px",   // ← 少し広げる
+  borderRadius: 8,       // ← 少し丸く
+
+  fontSize: 11,           // ← メイン
+
+  color: "white",
+  zIndex: 20,
+  minWidth: 120           // ← 横も少し広げる
+}}
     >
       {/* 切り替え */}
       <div style={{ display: "flex", gap: 4, marginBottom: 6 }}>
@@ -85,7 +90,7 @@ const entries = Object.entries(counters)
 
       {/* 中身 */}
       {entries.length === 0 ? (
-        <div style={{ opacity: 0.5 }}>なし</div>
+        <div style={{ opacity: 0.5 }}>No Stacks</div>
       ) : (
         entries.map(([key, val]) => (
           <div key={key}>

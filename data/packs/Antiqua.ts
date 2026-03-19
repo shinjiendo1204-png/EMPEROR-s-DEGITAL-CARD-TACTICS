@@ -11,7 +11,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ruin_explorer",
   baseName: "父を追う冒険家",
-  name: "父を追う冒険家",
+  name: "Fatherbound Explorer",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -48,7 +48,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "採掘スコップ",
+      name: "Mining Shovel",
       baseStats: { hp: 1, atk: 1 },
       effects: [],
       abilities: [
@@ -67,7 +67,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "好かれる才能",
+      name: "Natural Charisma",
       effects: [],
       abilities: [
         {
@@ -96,7 +96,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "relic_bearer",
   baseName: "夢見る精霊使い",
-  name: "夢見る精霊使い",
+  name: "Dreaming Spiritcaller",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -134,7 +134,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "レリックグローブ",
+      name: "Relic Gloves",
       baseStats: { hp: 2 },
       effects: [],
 
@@ -154,7 +154,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "里からの教え",
+      name: "Village Teachings",
       effects: [],
       abilities: [
         {
@@ -183,7 +183,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ancient_engineer",
   baseName: "怪しげな研究家",
-  name: "怪しげな研究家",
+  name: "Eccentric Researcher",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -218,7 +218,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "ふわっと浮かべる靴",
+      name: "Levitation Boots",
       baseStats: { atk: 1 },
       effects: [],
       abilities: [
@@ -237,7 +237,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "レリック研究所",
+      name: "Relic Lab",
       effects: [],
       abilities: [
         {
@@ -265,7 +265,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "relic_salvager",
   baseName: "襲い来る曲芸師",
-  name: "襲い来る曲芸師",
+  name: "Ambush Trickster",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -297,7 +297,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "ハートの4",
+      name: "Four of Hearts",
       baseStats: { atk: 2 },
       effects: [],
       abilities: [
@@ -316,7 +316,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "君のものは僕のもの",
+      name: "What's Yours is Mine",
       effects: [],
       abilities: [
         {
@@ -344,7 +344,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ancient_furnace_keeper",
   baseName: "忘却の滝の管理人",
-  name: "忘却の滝の管理人",
+  name: "Keeper pf the Forgotten Falls",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -374,7 +374,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "癒しの水",
+      name: "Healing Water",
       baseStats: { hp: 2 },
       effects: [],
       abilities: [
@@ -392,7 +392,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "リラックスモード",
+      name: "Relax Mode",
       effects: [],
       abilities: [
         {
@@ -415,7 +415,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ancient_sentinel",
   baseName: "崩れたゴーレム",
-  name: "崩れたゴーレム",
+  name: "Collapsed Golem",
   mode: "unit",
   pack: "Antiqua",
   cost: 1,
@@ -447,7 +447,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "過去から届いた石ころ",
+      name: "Ancient Pebble",
       baseStats: { hp: 3 },
       effects: [],
       abilities: [
@@ -466,7 +466,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "たとえ主が朽ちようと",
+      name: "Even If the Master Falls",
       effects: [],
       abilities: [
         {
@@ -493,7 +493,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "excavation_captain",
     baseName: "鼓舞する発掘隊長",
-    name: "鼓舞する隊長",
+    name: "Inspiring Captain",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -517,7 +517,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "妻からの手紙",
+        name: "Letter From Home",
         baseStats: { hp: 3, atk: 1 },
         effects: [],
         abilities: [
@@ -531,7 +531,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "探す理由があるならば",
+        name: "A Reason to Search",
         effects: [],
         abilities: [
           {
@@ -553,7 +553,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "ancient_golem",
     baseName: "秘密を埋められた岩石",
-    name: "秘密を埋められた岩石",
+    name: "Buried Secret Golem",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -594,7 +594,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "石核装甲",
+        name: "Corestone Armor",
         baseStats: { hp: 4 },
         effects: [],
         abilities: [
@@ -613,7 +613,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "進化する人類",
+        name: "Evolving Humanity",
         effects: [],
         abilities: [
           {
@@ -646,7 +646,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "relic_analyst",
     baseName: "頼れる解析担当者",
-    name: "頼れる解析担当者",
+    name: "Trusted Analyst",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -686,7 +686,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "解析レンズ",
+        name: "Analysis Lens",
         baseStats: { atk: 2 },
         effects: [],
         abilities: [
@@ -709,7 +709,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "彼女は常に早歩き",
+        name: "Always in a Hurry",
         effects: [],
         abilities: [
           {
@@ -736,7 +736,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "ruin_raider",
     baseName: "付け狙うハンター",
-    name: "付け狙うハンター",
+    name: "Stalking Hunter",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -758,7 +758,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "十年物のライフル",
+        name: "Old Rifle",
         baseStats: { atk: 2 },
         effects: [],
         abilities: [
@@ -770,7 +770,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "狩りの報酬",
+        name: "Hunter's Reward",
         effects: [],
         abilities: [
           {
@@ -792,7 +792,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "ancient_priest",
     baseName: "バーサークヒーラー",
-    name: "バーサークヒーラー",
+    name: "Berserk Healer",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -815,7 +815,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "恵みの庇護",
+        name: "Blessed Guard",
         baseStats: { hp: 3 },
         effects: [],
         abilities: [
@@ -827,7 +827,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "セーブスポット",
+        name: "Save Point",
         effects: [],
         abilities: [
           {
@@ -848,7 +848,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   {
     id: "self_dismantler",
     baseName: "自己分解者",
-    name: "自己分解者",
+    name: "Self Dismantler",
     mode: "unit",
     pack: "Antiqua",
     cost: 2,
@@ -880,7 +880,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "肉削りの刃",
+        name: "Fleshcarver Blade",
         baseStats: { atk: 2  },
         effects: [],
         abilities: [
@@ -899,7 +899,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       },
 
       synergy: {
-        name: "自己犠牲の錬成",
+        name: "Sacrificial Alchemy",
         effects: [],
         abilities: [
           {
@@ -926,7 +926,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_armorer",
   baseName: "セブンスアクセラレーター",
-  name: "セブンスアクセラレーター",
+  name: "Seventh Acceralator",
   mode: "unit",
   pack: "Antiqua",
   cost: 3,
@@ -951,7 +951,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "加速装置",
+      name: "Acceleration Device",
       baseStats: { atk: 2, hp:1 },
       effects: [],
       abilities: [
@@ -970,7 +970,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "未来からの呼び声",
+      name: "Call from the Future",
       effects: [],
       abilities: [
         {
@@ -999,7 +999,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "excavation_awakened",
   baseName: "模倣を受け入れし存在",
-  name: "模倣を受け入れし存在",
+  name: "Imitation Awakened",
   mode: "unit",
   pack: "Antiqua",
   cost: 3,
@@ -1035,7 +1035,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "突貫作業",
+      name: "Rush Operation",
       baseStats: { hp: 3, atk: 1 },
       effects: [],
       abilities:[
@@ -1051,7 +1051,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "描かれた真実",
+      name: "Drawn Truth",
       effects: [],
       abilities:[
         {
@@ -1085,7 +1085,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "relic_adapter",
   baseName: "遺物的応体",
-  name: "遺物適応体",
+  name: "Relic Adapter",
   mode: "unit",
   pack: "Antiqua",
   cost: 3,
@@ -1118,7 +1118,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "強化装甲",
+      name: "Reinforced Armor",
       baseStats: { hp: 4 },
       effects: [],
       abilities: [
@@ -1133,7 +1133,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "守護の記憶",
+      name: "Memory of Protection",
       effects: [],
       abilities: [
         {
@@ -1158,7 +1158,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ruin_marksman",
   baseName: "ポックル族の狙撃手",
-  name: "ポックル族の吹き狙撃手",
+  name: "Pokkuru Blowgun Sniper",
   mode: "unit",
   pack: "Antiqua",
   cost: 3,
@@ -1190,7 +1190,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "誰でも使える粘土玉",
+      name: "Clay Ammo",
       baseStats: { atk: 3 },
       effects: [],
       abilities: [
@@ -1204,7 +1204,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "ポックル族の秘技",
+      name: "Pokkru Technique",
       effects: [],
       abilities: [
         {
@@ -1233,7 +1233,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "ancient_guardian",
   baseName: "古代守護巨兵",
-  name: "古代守護巨兵",
+  name: "Ancient Guadian Colossus",
   mode: "unit",
   pack: "Antiqua",
   cost: 3,
@@ -1274,7 +1274,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   variants: {
 
     equipment: {
-      name: "巨兵装甲",
+      name: "Titan Armor",
       baseStats: { hp: 5 },
       effects: [],
       abilities: [
@@ -1294,7 +1294,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "防衛前線",
+      name: "Defensive Line",
       effects: [],
       abilities: [
         {
@@ -1317,7 +1317,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_blade_reclaimer",
   baseName: "蘇った剣聖",
-  name: "蘇った剣聖",
+  name: "Revived Sword Saint",
   mode: "unit",
   pack: "Antiqua",
   cost: 4,
@@ -1342,7 +1342,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "マガタナブレード",
+      name: "Magatana Blade",
       baseStats: { atk: 4 },
       effects: [],
       abilities: [
@@ -1356,7 +1356,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "振れば振るほど思い出す",
+      name: "Muscle Memory",
       effects: [],
       abilities: [
         {
@@ -1380,7 +1380,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_relic_collector",
   baseName: "器用な武器使い",
-  name: "器用な武器使い",
+  name: "Versatile Weapon Master",
   mode: "unit",
   pack: "Antiqua",
   cost: 4,
@@ -1405,7 +1405,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "人間武器庫",
+      name: "Living Arsenal",
       baseStats: { hp: 5 },
       effects: [],
       abilities: [
@@ -1421,7 +1421,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "持てば何でも武器になる",
+      name: "Everything is a Weapon",
       effects: [],
       abilities: [
         {
@@ -1439,7 +1439,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_relic_ascendant",
   baseName: "レリックソルジャー",
-  name: "レリックソルジャー",
+  name: "Relic Soldier",
   mode: "unit",
   pack: "Antiqua",
   cost: 4,
@@ -1466,7 +1466,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "起動ボタン",
+      name: "Activation Switch",
       baseStats: { atk: 3, hp: 3 },
       effects: [],
       abilities: [
@@ -1480,7 +1480,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-        name: "レリックの危険性",
+        name: "Relic Hazard",
         effects: [],
         abilities: [
           {
@@ -1518,7 +1518,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_relic_digger",
   baseName: "謎を知る者",
-  name: "謎を知る者",
+  name: "Knower of Secrets",
   mode: "unit",
   pack: "Antiqua",
   cost: 4,
@@ -1554,7 +1554,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "戦いの石板",
+      name: "War Tablet",
       baseStats: { atk: 2, hp: 4 },
       effects: [],
       abilities: [
@@ -1573,7 +1573,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "過去が語る未来",
+      name: "Past Reveals Future",
       effects: [],
       abilities: [
         {
@@ -1597,7 +1597,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_relic_tempest",
   baseName: "グランドテンペスター",
-  name: "グランドテンペスター",
+  name: "Grand Tempester",
   mode: "unit",
   pack: "Antiqua",
   cost: 5,
@@ -1626,7 +1626,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
 {
  trigger:"auraTick",
- tick:{ type:"everySeconds", seconds:6 },
+ tick:{ type:"everySeconds", seconds:4 },
  effects:[
   {
    type:"DAMAGE_FROM_COUNTER",
@@ -1642,7 +1642,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "嵐を呼ぶ声",
+      name: "Stormcaller Voice",
       baseStats: { atk: 3, hp: 4 },
       effects: [],
       abilities: [
@@ -1656,7 +1656,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "地を割る戦い",
+      name: "Earthshatter Battle",
       effects: [],
       abilities: [
         {
@@ -1685,7 +1685,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_master_excavator",
   baseName: "伝説の冒険家",
-  name: "伝説の冒険家",
+  name: "Legendary Adventurer",
   mode: "unit",
   pack: "Antiqua",
   cost: 5,
@@ -1718,7 +1718,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "穏やかに怒る拳",
+      name: "Calm Fury Fist",
       baseStats: { atk: 2, hp: 5 },
       effects: [],
       abilities: [
@@ -1736,7 +1736,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "光と闇の伝承",
+      name: "Legacy of Light and Dark",
       effects: [],
       abilities: [
         {
@@ -1759,7 +1759,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
   id: "antiqua_relic_devourer",
   baseName: "夢を喰らう邪",
-  name: "夢を喰らう邪",
+  name: "Dream Devourer",
   mode: "unit",
   pack: "Antiqua",
   cost: 5,
@@ -1773,33 +1773,45 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   equipments: [],
 
   abilities: [
-    {
-      trigger: "onEquip",
-      condition:{ type:"onEquipCount", value:1 },
-      effects: [
-        {
-          type: "DESTROY_EQUIPMENT",
-          target: "self"
-        },
-        {
-          type: "MOD_STAT",
-          stat: "atk",
-          value: 2,
-          target: "self"
-        },
-        {
-          type: "MOD_STAT",
-          stat: "hp",
-          value: 4,
-          target: "self"
-        }
-      ]
-    }
-  ],
+  {
+    trigger: "onEquip",
+    condition: { type: "onEquipCount", value: 1 },
+    effects: [
+      {
+        type: "DESTROY_EQUIPMENT",
+        target: "self"
+      },
+    ]
+  },
+
+  {
+    trigger: "battleStart",
+    effects: [
+      {
+        type: "MOD_STAT_FROM_COUNTER",
+        stat: "atk",
+        key: "equipmentDestroyed",
+        scope: "match",
+        multiplier: -1,
+        maxStack: 3,
+        target: "all_enemies"
+      },
+      {
+        type: "MOD_STAT_FROM_COUNTER",
+        stat: "hp",
+        key: "equipmentDestroyed",
+        scope: "match",
+        multiplier: -1,
+        maxStack: 3,
+        target: "all_enemies"
+      }
+    ]
+  }
+],
 
   variants: {
     equipment: {
-      name: "邪同化",
+      name: "Corrupt Assimilation",
       baseStats: { atk: 4, hp: 4 },
       effects: [],
       abilities: [
@@ -1824,7 +1836,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "目覚めの前兆",
+      name: "Awakening Omen",
       effects: [],
       abilities: [
         {
