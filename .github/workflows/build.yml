@@ -23,4 +23,4 @@ jobs:
         run: npm run build
 
       - name: Build Electron
-        run: npx electron-builder --win
+        run: npx electron-builder --win --publish=never
