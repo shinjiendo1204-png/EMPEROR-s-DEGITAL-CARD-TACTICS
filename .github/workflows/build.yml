@@ -24,3 +24,9 @@ jobs:
 
       - name: Build Electron
         run: npx electron-builder --win --publish=never
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: dist/*.exe
