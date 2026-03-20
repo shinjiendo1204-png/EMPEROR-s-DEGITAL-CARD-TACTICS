@@ -591,11 +591,10 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     {
       id: "soup_kitchen_once",      // ★必須（teamAbilityUsedのキー）
       scope: "team",               // ★必須
-      trigger: "onDamageTaken",
-      condition: {type: "allyCrossBelow", percent: 0.5},
-      once: true,
+      trigger: "auraTick",
+      tick: {type: "everySeconds", seconds: 1},
       effects: [
-        { type: "HEAL_PERCENT", value: 1.0, target: "target" },
+        { type: "HEAL", value: 1, target: "random_ally" },
       ],
     },
   ],
@@ -979,10 +978,9 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           id: "arena_champion_synergy",
             scope: "team",
-          trigger: "onAttack",
-          once: true,
+          trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "atk", value: 2, target: "self" },
+            { type: "MOD_STAT", stat: "atk", value: 4, target: "self" },
             { type: "MOD_STAT", stat: "damageReduce", value: -2, target: "self" },
           ],
         },
@@ -1159,7 +1157,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
           trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "hp", value: 3, target: "all_allies" },
+            { type: "MOD_STAT", stat: "hp", value: 2, target: "all_allies" },
           ],
         },
       ],
@@ -1650,11 +1648,11 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           id: "legendary_priest_synergy",
           scope: "team",
-          trigger: "battleStart",
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 3 },
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "HEAL",
               value: 3,
               target: "all_allies",
             },
