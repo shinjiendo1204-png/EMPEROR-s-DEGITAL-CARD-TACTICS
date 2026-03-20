@@ -14,12 +14,13 @@ import { getRowByIndex, canPlaceAt } from "./board"
 import { runBattle } from "./battle/engine"
 import { BattleState } from "./battle/state"
 import { ROLE_AS, BASE_INTERVAL } from "./battle/constants"
-import { BATTLE_COLS, PLAYER_ROWS, COMBAT_ROWS, BATTLE_SIZE } from "./battle/boardsize"
+import { BATTLE_COLS, PLAYER_ROWS, BATTLE_SIZE } from "./battle/boardsize"
 import { PACK_UNITS } from "@/data/packs"
 import { addState } from "./battle/stateEffects"
 import { createSharedCardPool } from "@/lib/battle/createSharedPool"
 import { runAbilities } from "./battle/abilityRunner"
 import { HERO_UNITS } from "@/data/heroes"
+import { calculateFinalStats } from "./battle/statCalculator"
 
 /* =========================
    GameState（物理在庫）
@@ -366,6 +367,10 @@ export function placeUnit(player: PlayerState, handIndex: number, boardIndex: nu
 
   const battleUnit = createBattleUnit(unit, boardIndex, "p1")
 
+  for (const synergy of player.synergies) {
+    applySynergyAuraToSingleUnit(battleUnit, synergy)
+  }
+
   player.board[boardIndex] = battleUnit
   player.pp -= unit.cost
 
@@ -414,6 +419,13 @@ export function sellUnit(game: GameState, player: PlayerState, boardIndex: numbe
   return true
 }
 
+function applySynergyAuraToSingleUnit(unit: BattleUnit, synergy: Unit) {
+  for (const e of synergy.effects ?? []) {
+    if (e.kind === "aura") {
+      if (e.stat === "atk") unit.atk += e.value;
+      if (e.stat === "hp") { unit.hp += e.value; unit.maxHp += e.value; }
+    }}}
+
 export const sellUnitWithEquipments = sellUnit
 export const sellUnitToEquipmentStock = sellUnit
 
@@ -452,15 +464,6 @@ export function createBattleBoard(
     const rowIndex = Math.floor(i / BATTLE_COLS)
     const colIndex = i % BATTLE_COLS
 
-    // =========================
-    // 戦闘時の統合盤面
-    // 上側: p2 (0..3)
-    // 下側: p1 (4..7)
-    //
-    // 前列が中央寄りになるように配置
-    // p2: 3..0
-    // p1: 4..7
-    // =========================
     const finalR =
       side === "p1"
         ? PLAYER_ROWS + rowIndex          // 4..7
@@ -470,13 +473,19 @@ export function createBattleBoard(
 
     const cloned: BattleUnit = structuredClone(u)
 
+    const final = calculateFinalStats(cloned, 0)
     cloned.index = i
     cloned.side = side
 
     cloned.states = structuredClone(u.states ?? [])
 cloned.timedModifiers = []
 
-cloned.hp = cloned.maxHp
+    cloned.atk = u.atk
+    cloned.maxHp = u.maxHp
+    cloned.hp = u.maxHp
+
+    cloned.baseAtk = u.baseAtk 
+    cloned.baseMaxHp = u.baseMaxHp
 
     // front/back は元の盤面意味を維持
     cloned.row = u.row ?? getRowByIndex(i)
@@ -542,19 +551,36 @@ function collectSynergyTeamAbilities(player: PlayerState): Ability[] {
 /* =========================
    バトル開始（最新版）
 ========================= */
+
 export function startBattleVs(game: GameState, p1: PlayerState, p2: PlayerState) {
   p1.phase = "battle"
   p2.phase = "battle"
 
+  // 1. まずボードを生成
   const p1BattleBoard = createBattleBoard(p1, "p1")
   const p2BattleBoard = createBattleBoard(p2, "p2")
 
+  // 🔥【最重要】すべてのユニットのステータスを、今この瞬間の states から再計算して固定する
+  // これにより、配置フェーズで積んだバフが「看板の数値(atk)」として確定します
+  const allUnits = [...p1BattleBoard, ...p2BattleBoard]
+  allUnits.forEach(u => {
+    if (!u) return
+    const final = calculateFinalStats(u, 0) // 現在時刻 0 で計算
+    u.atk = final.atk
+    u.maxHp = final.maxHp
+    u.hp = final.maxHp // 戦闘開始時は全回復
+    
+    // Pixiでの比較用（緑色表示）に baseAtk が正しく入っているか確認
+    if (!u.baseAtk) u.baseAtk = u.atk 
+  })
+
+  // 2. 「確定した数値」のコピーを Pixi 表示用の初期盤面として保存
+  // 以前は p1BattleBoard をそのまま参照していましたが、念のためディープコピーします
   const battleLogs: BattleLog[] = []
   const initialBattleBoard: (BattleUnit | null)[] = [
-  ...p2BattleBoard.map((u) => (u ? structuredClone(u) : null)),
-  ...p1BattleBoard.map((u) => (u ? structuredClone(u) : null)),
-]
-
+    ...structuredClone(p2BattleBoard),
+    ...structuredClone(p1BattleBoard),
+  ]
 
   const battleState: BattleState = {
     p1Units: p1BattleBoard,
@@ -571,20 +597,17 @@ export function startBattleVs(game: GameState, p1: PlayerState, p2: PlayerState)
     now: 0,
     suddenDeath: false,
     winner: null,
-    counters: {
-      p1: {},
-      p2: {},
-    },
+    counters: { p1: {}, p2: {} },
     abilityTriggerCounts: {},
     firstDeathResolved: false,
-
     teamAbilities: {
       p1: collectSynergyTeamAbilities(p1),
       p2: collectSynergyTeamAbilities(p2),
     },
   }
 
-const result = runBattle(battleState, battleLogs, p1, p2)
+  // 3. シミュレーション実行
+  const result = runBattle(battleState, battleLogs, p1, p2)
 
   p1.lastBattleLogs = result.logs
   p2.lastBattleLogs = result.logs
@@ -593,13 +616,13 @@ const result = runBattle(battleState, battleLogs, p1, p2)
     p1: p1BattleBoard.filter((u) => u !== null),
     p2: p2BattleBoard.filter((u) => u !== null),
   }
-
   p2.battleResult = p1.battleResult
 
+  // 4. 計算済みの initialBoard を返す
   return {
-  ...result,
-  initialBoard: initialBattleBoard,
-}
+    ...result,
+    initialBoard: initialBattleBoard,
+  }
 }
 
 /* =========================
@@ -804,6 +827,12 @@ function applySynergyAura(player: PlayerState, synergy: Unit) {
 
     for (const unit of player.board) {
       if (!unit) continue
+      
+      if (e.stat === "atk") unit.atk += e.value;
+      if (e.stat === "hp") {
+        unit.hp += e.value;
+        unit.maxHp += e.value;
+      }
 
       switch (e.stat) {
         case "hp":

@@ -9,10 +9,11 @@
     "start": "next start",
     "lint": "eslint",
     "electron": "electron .",
-  "dist": "electron-builder"
+    "dist": "electron-builder"
   },
   "dependencies": {
     "next": "16.1.6",
+    "pixi.js": "^8.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -30,9 +31,10 @@
     "tsx": "^4.21.0",
     "typescript": "^5"
   },
-"build": {
-  "appId": "com.yourgame.autobattler",
-  "win": {
-    "target": "nsis"
+  "build": {
+    "appId": "com.yourgame.autobattler",
+    "win": {
+      "target": "nsis"
+    }
   }
-}}
+}

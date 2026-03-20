@@ -1610,7 +1610,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
       effects: [
         {
           type: "HEAL",
-          value: 10,
+          value: 5,
           target: "front_allies",
         },
       ],

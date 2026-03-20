@@ -1,4 +1,5 @@
 "use client"
+import BattleCanvas from "@/components/pixi/BattleCanvas"
 import { buildDamageStats } from "@/lib/battle/buildDamageStats"
 import { useEffect, useRef, useState } from "react"
 import { CounterPanel } from "@/components/CounterPanel"
@@ -12,6 +13,7 @@ import {
   equipUnitWithCost,
   createGame,
   rerollHand,
+  createBattleBoard
 } from "@/lib/game"
 import { PlayerState, BattleLog, PackId, Unit, PreBattleState, GameState, BattleUnit} from "@/types"
 import { Hand } from "@/components/Hand"
@@ -23,7 +25,7 @@ import { UnitDetailOverlay, DetailTarget, DetailMode } from "@/components/UnitDe
 import { PACK_UNITS } from "@/data/packs"
 import { cpuTakeSetupTurn } from "@/lib/cpu/cpu"
 import { BATTLE_COLS } from "@/lib/battle/boardsize"
-
+import { calculateFinalStats } from "@/lib/battle/statCalculator"
 export default function GameView() {
   /* =========================
      GameState
@@ -337,98 +339,79 @@ if (b) {
      戦闘開始
   ========================= */
 function handleBattleStart() {
-
   if (!game) return
 
+  // 🚩 【最重要】前回の戦闘の重複チェック記録をリセット
+  // これにより、2戦目以降で同じバフ（ログ）が来ても無視されずに処理されます
+  processedIds.current.clear()
 
+  // 1. ゲーム状態のコピーとリセット
   const g = structuredClone(game)
-
   setBattleCounters({})
+  const p1 = g.p1
+  const p2 = g.p2
 
-    const p1 = g.p1
-    const p2 = g.p2
-
-     // 🔥 CPUがこのターンのsetupを実行
+  // 2. CPUのセットアップ実行
   cpuTakeSetupTurn(g, g.p2, g.p1)
 
-// ★ここ追加
-for (let i = 0; i < p1.board.length; i++) {
-  const u = p1.board[i]
-  if (!u) continue
+  // 3. ユニット座標の同期
+  const updateUnitPos = (player: any) => {
+    for (let i = 0; i < player.board.length; i++) {
+      const u = player.board[i]
+      if (!u) continue
+      u.pos = {
+        r: Math.floor(i / BATTLE_COLS),
+        c: i % BATTLE_COLS
+      }
+      u.prevPos = { ...u.pos }
+    }
+  }
+  updateUnitPos(p1)
+  updateUnitPos(p2)
 
-  u.pos = {
-  r: Math.floor(i / BATTLE_COLS),
-  c: i % BATTLE_COLS
-}
-
-// 🔥 stateリセット（これ超重要）
-g.p1.board.forEach(u => {
-  if (!u) return
-  u.states = []
-})
-
-g.p2.board.forEach(u => {
-  if (!u) return
-  u.states = []
-})
-
-u.prevPos = { ...u.pos }
-}
-
-for (let i = 0; i < p2.board.length; i++) {
-  const u = p2.board[i]
-  if (!u) continue
-
-  u.pos = {
-  r: Math.floor(i / BATTLE_COLS),
-  c: i % BATTLE_COLS
-}
-
-u.prevPos = { ...u.pos }
-}
-  
-
-  // 戦闘前リセット
+  // 4. 戦闘前リセット
   p1.battleResult = null
   p2.battleResult = null
 
-
+  // 5. シミュレーション実行
   const result = startBattleVs(g, p1, p2)
 
-  setBattleBoard(
-  (result.initialBoard ?? []).filter(
-    (u): u is BattleUnit => u !== null
-  )
-)
-  // 反映
+  // 6. Pixi表示用の初期ボード確定
+  if (result.initialBoard) {
+    const finalizedBoard = structuredClone(result.initialBoard)
+    // 初期表示時も計算機を通してバフを反映
+    finalizedBoard.forEach(u => {
+      if (u) {
+        const final = calculateFinalStats(u, 0)
+        u.atk = final.atk
+        u.maxHp = final.maxHp
+      }
+    })
+    setBattleBoard(finalizedBoard.filter((u): u is BattleUnit => u !== null))
+  }
+
+  // 7. Reactステート更新
   setGame(g)
-
-
-
-
   setPhase("battle")
   setResultSide("p1")
 
+  // 8. 既存タイマークリア
   if (battleTimerRef.current !== null) {
     clearInterval(battleTimerRef.current)
     battleTimerRef.current = null
   }
 
   setBattleLogs([])
-
   const sourceLogs = p1.lastBattleLogs ?? []
-
   let i = 0
-
   if (sourceLogs.length === 0) return
 
+  // 9. ダメージ適用処理
   function applyBattleDamage() {
     const baseTurn = p1.turn
-
-    const damage =
-      result.winner === "p1"
-        ? result.p1Survivors + baseTurn
-        : result.p2Survivors + baseTurn
+    const damage = result.winner === "p1"
+      ? result.p1Survivors + baseTurn
+      : result.p2Survivors + baseTurn
 
     if (result.winner === "p1") {
       p2.hp -= damage
@@ -440,28 +423,27 @@ u.prevPos = { ...u.pos }
     if (p2.hp <= 0) setGameOver("win")
   }
 
+  // 10. 次のターン（配置フェーズ）への移行
   function handleNextTurn() {
     const ng = structuredClone(g)
+    const restoreUnitAfterBattle = (board: (BattleUnit | null)[]) => {
+      board.forEach(u => {
+        if (!u) return
+        // 配置フェーズ用の永続ステータスで再計算
+        const permanentStats = calculateFinalStats(u, 0)
+        u.maxHp = permanentStats.maxHp
+        u.hp = u.maxHp
+        u.atk = permanentStats.atk
+      })
+    }
+    restoreUnitAfterBattle(ng.p1.board)
+    restoreUnitAfterBattle(ng.p2.board)
 
-     // 🔥 ここ追加（HPリセット）
-  ng.p1.board.forEach(u => {
-    if (!u) return
-    u.hp = u.maxHp
-  })
-
-  ng.p2.board.forEach(u => {
-    if (!u) return
-    u.hp = u.maxHp
-  })
-
-    // 次ターン処理（両者）
     startTurn(ng, ng.p1)
     startTurn(ng, ng.p2)
-
     cpuTakeSetupTurn(ng, ng.p2, ng.p1)
 
     setGame(ng)
-
     setBattleBoard(null)
     setPhase("setup")
 
@@ -469,18 +451,18 @@ u.prevPos = { ...u.pos }
       clearInterval(battleTimerRef.current)
       battleTimerRef.current = null
     }
-
     setBattleLogs([])
   }
 
+  // 11. ログ再生アニメーション
   battleTimerRef.current = window.setInterval(() => {
     if (i >= sourceLogs.length) {
       clearInterval(battleTimerRef.current!)
-
       applyBattleDamage()
       handleNextTurn()
       return
     }
+
     const batch: BattleLog[] = []
     const currentTime = sourceLogs[i].time
     setBattleNow(currentTime)
@@ -493,254 +475,109 @@ u.prevPos = { ...u.pos }
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
-      console.log("APPLY LOG", next)
-  const id = `${next.time}-${next.instanceId}-${next.action}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`
+      const logId = `${next.time}-${next.instanceId}-${next.action}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`
+      if (processedIds.current.has(logId)) return
+      processedIds.current.add(logId)
 
-  if (processedIds.current.has(id)) return
-  processedIds.current.add(id)
- // =========================
-// 🔥 ステータス同期（完全版）
-// =========================
-if (typeof next.instanceId === "string") {
-  setBattleBoard(prev => {
-    if (!prev) return prev
+      if (typeof next.instanceId === "string") {
+        const targetId = next.instanceId
 
-    const b = [...prev]
-    const unit = b.find(u => u.instanceId === next.instanceId)
-    if (!unit) return b
+        setBattleBoard((prev) => {
+          if (!prev) return prev
+          
+          const unitIndex = prev.findIndex(u => u.instanceId === targetId)
+          if (unitIndex === -1) return prev
 
-    // ===== ダメージ =====
-    if (next.action === "attack" || next.action === "damage") {
-      const dmg = (next as any).damage ?? (next as any).value
-      if (typeof dmg === "number") {
-        unit.hp -= dmg
-      }
-    }
+          // 🚩 ユニットを新しく作り直し、オブジェクトの参照を更新する（再描画・バフ更新を強制）
+          const unit = { ...prev[unitIndex] }
+          const b = [...prev]
 
-    // ===== 回復 =====
-    if ((next as any).action === "heal") {
-      const heal = (next as any).value
-      if (typeof heal === "number") {
-        unit.hp += heal
-      }
-    }
+          // 1. 【移動】
+          if (next.action === "move" && (next as any).from && (next as any).to) {
+            const from = (next as any).from
+            const to = (next as any).to
+            unit.prevPos = { r: from.r ?? 0, c: from.c ?? 0 }
+            unit.pos = { r: to.r ?? 0, c: to.c ?? 0 }
+            ;(unit as any).lastMoveTime = next.time
+          }
 
-    // =========================
-    // 🔥 add_stat//
-    if ((next as any).action === "add_state") {
-      const type = (next as any).stateType
-      const value = (next as any).value ?? 0
+          // 2. 【バフ・ステータス更新】
+          if ((next as any).action === "mod_stat" || (next as any).action === "add_state") {
+            const stat = (next as any).stat
+            const value = (next as any).value
+            const map: Record<string, string> = {
+              atk: "atk", hp: "hp", maxHp: "hp",
+              attackSpeed: "as_stack", damageReduce: "damage_reduce"
+            }
+            const stateType = map[stat] || (next as any).stateType
+            
+            if (stateType && typeof value === "number") {
+              unit.states = unit.states ? [...unit.states] : []
+              const idx = unit.states.findIndex(s => s.type === stateType)
+              if (idx !== -1) {
+                unit.states[idx] = { ...unit.states[idx], value }
+              } else {
+                unit.states.push({ id: crypto.randomUUID(), type: stateType, value, stacks: 1 })
+              }
+            }
+            // 🚩 数値を再計算して unit に反映
+            const final = calculateFinalStats(unit, next.time)
+            unit.atk = final.atk
+            unit.maxHp = final.maxHp
+            if (stat === "hp") unit.hp = value 
+          }
 
-      if (type) {
-        unit.states = unit.states ?? []
-        
-        // 🔥 全く同じ ID や内容のステータスが既にないかチェック
-        const isAlreadyAdded = unit.states.some(s => s.type === type && s.value === value);
-        if (isAlreadyAdded) return b; // 既に反映済みなら何もしない
+          // 3. 【ダメージ反映】
+          if (next.action === "attack" || next.action === "damage") {
+            const dmg = (next as any).damage ?? (next as any).value
+            if (typeof dmg === "number") {
+              unit.hp = Math.max(0, unit.hp - dmg)
+            }
+          }
 
-        unit.states.push({
-          id: crypto.randomUUID(),
-          type,
-          value,
-          stacks: 1
+          // 4. 【回復】
+          if ((next as any).action === "heal") {
+            const heal = (next as any).value
+            if (typeof heal === "number") unit.hp += heal
+          }
+
+          // 5. 【最終死亡判定】
+          // HPが0以下で、かつ「回復ログ」や「バフログ」ではないことを確認
+          if (unit.hp <= 0 && next.action !== "heal" && (next as any).action !== "mod_stat") {
+            return b.filter(u => u.instanceId !== targetId)
+          }
+
+          b[unitIndex] = unit
+          return b
         })
+
+        // 視覚演出
+        if (next.action === "attack" || next.action === "damage") {
+          const dmg = next.action === "attack" ? next.damage : ((next as any).damage ?? (next as any).value)
+          if (typeof dmg === "number") {
+            setVisualEvents(prev => [...prev, { id: targetId, type: "damage", value: dmg } as any])
+            setTimeout(() => setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "damage"))), 400)
+          }
+        }
+
+        if (next.action === "death") {
+          setVisualEvents(prev => [...prev, { id: targetId, type: "death" } as any])
+          // 🚩 death ログでも即時削除を走らせる
+          setBattleBoard(prev => prev ? prev.filter(u => u.instanceId !== targetId) : prev)
+          setTimeout(() => {
+            setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "death")))
+          }, 400)
+        }
       }
-    }
-    // =========================
-    // 🔥 mod_stat（merge型）
-    // =========================
-    // =========================
-// 🔥 mod_stat（上書き型に修正）
-// =========================
-if ((next as any).action === "mod_stat") {
-  const stat = (next as any).stat
-  const value = (next as any).value
 
-  const map: Record<string, any> = {
-    atk: "atk",
-    hp: "hp",
-    attackSpeed: "as_stack",
-    damageReduce: "damage_reduce"
-  }
-
-  const stateType = map[stat]
-
-  if (stateType && typeof value === "number") {
-    unit.states = unit.states ?? []
-    
-    // 🔥 重要：同じ type のステータスがあるか探す
-    const existingIndex = unit.states.findIndex(s => s.type === stateType)
-
-    if (existingIndex !== -1) {
-      // 既にある場合は、新しい値で「上書き」する（pushしないので2倍にならない）
-      unit.states[existingIndex] = {
-        ...unit.states[existingIndex],
-        value: value 
+      if ((next as any).action === "counter" && next.side === "p1") {
+        const key = (next as any).key
+        const val = (next as any).value ?? 1
+        setBattleCounters(prev => ({ ...prev, [key]: (prev[key] ?? 0) + val }))
       }
-    } else {
-      // ない場合だけ新しく追加
-      unit.states.push({
-        id: crypto.randomUUID(),
-        type: stateType,
-        value,
-        stacks: 1
-      })
-    }
-  }
-}
-
-    // =========================
-    // 🔥 state削除
-    // =========================
-    if ((next as any).action === "remove_state") {
-      const type = (next as any).stateType
-
-      if (type && unit.states) {
-        unit.states = unit.states.filter(s => s.type !== type)
-      }
-    }
-
-    return b
-  })
-}
-  /* =========================
-     ダメージ表示（汎用）
-  ========================= */
-  if ((next as any).action === "counter") {
-
-  // 🔥 これ追加
-  if (next.side !== "p1") return
-
-  const key = (next as any).key
-  const value = (next as any).value ?? 1
-
-  setBattleCounters(prev => ({
-    ...prev,
-    [key]: (prev[key] ?? 0) + value
-  }))
-}
-
-  if (
-  typeof next.instanceId === "string" &&
-  (
-    (next.action === "attack" && typeof next.damage === "number") ||
-    (
-      next.action === "damage" &&
-      (
-        typeof (next as any).damage === "number" ||
-        typeof (next as any).value === "number"
-      )
-    )
-  )
-) {
-  const targetId = next.instanceId
-
-  const dmg =
-    next.action === "attack"
-      ? next.damage
-      : (
-          typeof (next as any).damage === "number"
-            ? (next as any).damage
-            : (next as any).value
-        )
-
-  setVisualEvents((prev) => [
-    ...prev,
-    { id: targetId, type: "damage", value: dmg } as any,
-  ])
-
-  setTimeout(() => {
-    setVisualEvents((prev) =>
-      prev.filter((v) => !(v.id === targetId && v.type === "damage"))
-    )
-  }, 400)
-}
-
-/* =========================
-   回復表示
-========================= */
-
-if (
-  (next as any).action === "heal" &&
-  typeof next.instanceId === "string"
-) {
-
-  const heal = (next as any).value
-
-  if (typeof heal === "number") {
-
-    const targetId = next.instanceId
-
-    setVisualEvents((prev) => [
-      ...prev,
-      { id: targetId, type: "heal", value: heal } as any,
-    ])
-
-    setTimeout(() => {
-      setVisualEvents((prev) =>
-        prev.filter((v) => !(v.id === targetId && v.type === "heal"))
-      )
-    }, 400)
-  }
-}
-  /* =========================
-     death
-  ========================= */
-
-  if (next.action === "death" && typeof next.instanceId === "string") {
-
-    const deadId = next.instanceId
-
-    setVisualEvents((prev) => [
-      ...prev,
-      { id: deadId, type: "death" },
-    ])
-
-    setTimeout(() => {
-
-      setBattleBoard((prev) => {
-        if (!prev) return prev
-        return prev.filter((u) => u && u.instanceId !== deadId)
-      })
-
-      setVisualEvents((prev) =>
-        prev.filter((v) => !(v.id === deadId && v.type === "death"))
-      )
-
-    }, 400)
-  }
-      if (
-  next.action === "move" &&
-  next.instanceId &&
-  next.from &&
-  next.to
-) {
-
-  const from = next.from
-  const to = next.to
-
-  setBattleBoard((prev) => {
-  if (!prev) return prev
-
-  const b = [...prev]
-
-  const unit = b.find(
-    u => u.instanceId === next.instanceId
-  )
-
-  if (!unit) return b
-
-  unit.prevPos = next.from
-  unit.pos = next.to
-
-
-  return b
-})
-}
     })
   }, 300)
 }
-
   /* =========================
    パック選択フェーズ
 ========================= */
@@ -1224,27 +1061,25 @@ Stored here when sold. Reuse for free.
           </div>
         </div>
         {/* =========================
-   中央：盤面
-========================= */}
-        <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: "40%",
-          transform: "translate(-50%, -50%)",
+          中央：盤面
+        ========================= */}
+                <div
+          style={{
+            position: "relative",
 
-          width: "68vw",
-          maxWidth: 1050,
+            width: "68vw",
+            maxWidth: 1050,
+            height: "70vh",   
 
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+            margin: "0 auto",
 
-          padding: 20,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
 
-          borderRadius: 24,
-        }}
-      >
+            borderRadius: 24,
+          }}
+        >
           {/* Setup */}
           {phase === "setup" && (
             <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
@@ -1291,52 +1126,12 @@ Stored here when sold. Reuse for free.
           )}
 
           {/* Battle */}
-          {phase === "battle" && (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  maxWidth: 960,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  perspective: "1200px",
-                  gap: 0,
-                }}
-              >
-                <div style={{ opacity: 0.85, filter: "brightness(0.9)" }}>
-                  <Board
-                    board={(battleBoard ?? []).filter(
-                      (u): u is BattleUnit => u !== null
-                    )}
-                    isBattle
-                    disabled
-                    now={battleNow}
-                    visualEvents={visualEvents}
-                    onPlace={() => {}}
-                    onDropAt={() => {}}
-                    onMove={() => {}}
-                    onDragStart={() => {}}
-                    onSell={() => {}}
-                    onSelectUnit={() => {}}
-                    selectedHandIndex={null}
-                    selectedBoardIndex={null}
-                    canPlace={() => false}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+               {phase === "battle" && (
+                <BattleCanvas
+                  board={battleBoard ?? []}
+                  logs={battleLogs}
+                />
+              )}
         </div>
 
         {/* =========================
