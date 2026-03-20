@@ -734,7 +734,7 @@ if (effect.maxTotalValue !== undefined) {
   valueToAdd = Math.min(valueToAdd, remain)
 }
 
-// 値が0なら意味ないので終了
+
 if (valueToAdd <= 0) break
 
       const isAbsorbState =
@@ -757,6 +757,11 @@ if (valueToAdd <= 0) break
         targetId: context.target?.instanceId,
         consumeOn: (effect as any).consumeOn ?? null,
       })
+
+      if (stateType === "hp") {
+        target.maxHp += valueToAdd
+        target.hp += valueToAdd
+      }
       if (stateType === "damage_reduce" && target.side === source.side) {
     incrementCounter(context, source.side, "damageReduce", "match")
   }

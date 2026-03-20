@@ -199,15 +199,14 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   abilities: [
       {
         trigger: "onEquip",
-        condition:{ type:"onEquipCount", value: 1 },
         effects: [
         {
           type: "DESTROY_EQUIPMENT",
           target: "self"
         },
         {
-          type: "MOD_STAT",
-          stat: "hp",
+          type: "ADD_STATE",
+          stateType: "hp",
           value: 2,
           target: "self"
         },
