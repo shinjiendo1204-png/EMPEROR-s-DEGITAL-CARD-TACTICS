@@ -770,7 +770,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "ruin_raider_synergy",
-            scope: "global",
+            scope: "team",
             trigger: "battleStart",
             effects: [
               { type: "ADD_STATE", stateType: "hp", value: 3, target: "random_ally" },
@@ -900,7 +900,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "self_dismantler_synergy",
-            scope: "global",
+            scope: "team",
             trigger: "battleStart",
             effects: [
               { type: "DAMAGE", value: 2, target: "all_enemies",  },

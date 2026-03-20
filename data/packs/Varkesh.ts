@@ -311,7 +311,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "varkesh_hex_priestess_synergy",
-            scope: "global",
+            scope: "team",
             trigger: "auraTick",
             tick: { type: "everySeconds", seconds: 2},
             effects: [
@@ -385,7 +385,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "varkesh_rift_whisperer_synergy",
-            scope: "global",
+            scope: "team",
             trigger: "battleStart",
             effects: [
               {
@@ -461,7 +461,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "varkesh_vanguard_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -614,7 +614,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "varkesh_warden_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -843,7 +843,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "varkesh_feast_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -1072,7 +1072,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "curse_warlord_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "auraTick",
           tick: { type: "everySeconds", seconds: 2 },
           condition: { type: "enemyHasCurse", value: 1 },
@@ -1225,7 +1225,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "feast_lord_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -1300,7 +1300,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "blood_pact_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "auraTick",
           tick: { type: "everySeconds", seconds: 3 },
           effects: [
@@ -1386,7 +1386,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "hex_domination_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "auraTick",
           tick: { type: "everySeconds", seconds: 3 },
           condition: { type: "enemyHasCurse", value: 5 },
@@ -1615,7 +1615,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "blood_dance_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -1866,7 +1866,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "curse_isolation",
-          scope: "global",
+          scope: "team",
           trigger: "auraTick",
           tick: { type: "everySeconds", seconds: 3 },
           condition: { type: "enemyHasCurse", value: 5 },

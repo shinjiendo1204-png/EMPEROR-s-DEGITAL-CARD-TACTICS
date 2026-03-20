@@ -1060,7 +1060,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "royal_interigence__synergy",
-            scope: "global",
+            scope: "team",
           trigger: "battleStart",
           effects: [
             {
@@ -1240,7 +1240,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
       abilities: [
         {
           id: "power_hungry_investigator_synergy",
-          scope: "global",
+          scope: "team",
           trigger: "battleStart",
           effects: [
             {
