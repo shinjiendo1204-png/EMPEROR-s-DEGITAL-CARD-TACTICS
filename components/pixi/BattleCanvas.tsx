@@ -134,8 +134,8 @@ export default function BattleCanvas({ board, logs }: Props) {
       // --- 3. 装備アイコン ---
       if (u.equipments && u.equipments.length > 0) {
         const eqContainer = new PIXI.Container()
-        const EQ_SIZE = 14
-        const EQ_GAP = 3
+        const EQ_SIZE = 18
+        const EQ_GAP = 4
         const totalW = (u.equipments.length * EQ_SIZE) + ((u.equipments.length - 1) * EQ_GAP)
 
         // 装備アイコンをループで追加
@@ -148,13 +148,13 @@ export default function BattleCanvas({ board, logs }: Props) {
             
             const eqBg = new PIXI.Graphics()
               .lineStyle(1, 0xffffff, 0.6).beginFill(0x000000)
-              .drawRoundedRect(eqSp.x, 0, EQ_SIZE, EQ_SIZE, 3).endFill()
+              .drawRoundedRect(eqSp.x, 0, EQ_SIZE, EQ_SIZE, 4).endFill()
             
             eqContainer.addChild(eqBg, eqSp)
           } catch (e) { console.error(e) }
         }
         eqContainer.x = (CELL_W - totalW) / 2
-        eqContainer.y = -14
+        eqContainer.y = -18
         container.addChild(eqContainer)
       }
 

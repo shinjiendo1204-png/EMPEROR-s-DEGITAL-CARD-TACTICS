@@ -327,38 +327,52 @@ export function Board({
 
         {unit && (
           <>
-            {unit.equipments && unit.equipments.length > 0 && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: -14,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  display: "flex",
-                  gap: 3,
-                  zIndex: 6
-                }}
-              >
-                {unit.equipments.map((eq: any, index: number) => (
-                  <img
-                    key={index}
-                    src={`./units/${eq.id}.jpg`}
-                    onError={(ev) => {
-                      ;(ev.currentTarget as HTMLImageElement).src =
-                        "./units/_placeholder.jpg"
-                    }}
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: 3,
-                      border: "1px solid rgba(255,255,255,0.6)",
-                      background: "#000"
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-
+       
+{unit.equipments && unit.equipments.length > 0 && (
+  <div
+    style={{
+      position: "absolute",
+      top: -18, // 戦闘中と同じ高さ
+      left: "50%",
+      transform: "translateX(-50%)",
+      display: "flex",
+      gap: 4,   // EQ_GAP = 3
+      zIndex: 6
+    }}
+  >
+    {unit.equipments.map((eq: any, index: number) => (
+      <div
+        key={index}
+        style={{
+          width: 18,  // EQ_SIZE = 14
+          height: 18,
+          position: "relative",
+          background: "#000",
+          borderRadius: 4,
+          border: "1px solid rgba(255,255,255,0.6)", // 戦闘中の枠線設定
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <img
+          src={`./units/${eq.id}.jpg`}
+          alt={eq.id}
+          onError={(ev) => {
+            ;(ev.currentTarget as HTMLImageElement).src =
+              "./units/_placeholder.jpg"
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </div>
+    ))}
+  </div>
+)}
       
 
               {/* --- スタッツ表示 (戦闘中デザインに統一) --- */}
