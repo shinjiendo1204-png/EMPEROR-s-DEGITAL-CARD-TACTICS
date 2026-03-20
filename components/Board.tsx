@@ -361,7 +361,7 @@ export function Board({
 
             {(() => {
 
-              const stats = calculateFinalStats(unit, 0)
+              const stats = calculateFinalStats(unit, now ?? 0)
               
               const atkColor =
                 stats.atk > unit.baseAtk ? "#6bff8a" :
@@ -395,7 +395,7 @@ export function Board({
                   <span style={{ color: "#aaa" }}>/</span>
 
                   <span style={{ color: hpColor }}>
-                    {Math.round(unit.hp)}
+                  {Math.round(unit.hp)}
                   </span>
                 </div>
               )

@@ -40,7 +40,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
  trigger:"battleStart",
  condition:{ type:"counter", key:"dig", scope:"match", min:3 },
  effects:[
-  { type:"MOD_STAT", stat:"atk", value:2, target:"self" }
+  { type:"ADD_STATE", stateType:"atk", value:2, target:"self" }
  ]
 }
 ],
@@ -304,8 +304,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger:"onKill",
           effects:[
             {
-            type:"MOD_STAT",
-            stat:"atk",
+            type:"ADD_STATE",
+            stateType:"atk",
             value:1,
             target:"self"
             }
@@ -324,8 +324,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger:"battleStart",
           effects:[
             {
-            type:"MOD_STAT",
-            stat:"atk",
+            type:"ADD_STATE",
+            stateType:"atk",
             value:2,
             target:"random_ally"
             }
@@ -509,7 +509,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       {
         trigger: "onEquip",
         effects: [
-          { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
+          { type: "ADD_STATE", stateType: "atk", value: 1, target: "all_allies" },
         ],
       },
     ],
@@ -523,7 +523,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           {
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "equipped_allies" },
+              { type: "ADD_STATE", stateType: "atk", value: 1, target: "equipped_allies" },
             ],
           },
         ],
@@ -538,7 +538,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "hp", value: 2, target: "equipped_allies" },
+              { type: "ADD_STATE", stateType: "hp", value: 2, target: "equipped_allies" },
             ],
           },
         ],
@@ -621,14 +621,14 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             trigger: "battleStart",
             effects: [
               {
-            type: "MOD_STAT",
-            stat: "hp",
+            type: "ADD_STATE",
+            stateType: "hp",
             value: 1,
             target: "equipped_allies"
           },
            {
-            type: "MOD_STAT",
-            stat: "atk",
+            type: "ADD_STATE",
+            stateType: "atk",
             value: 1,
             target: "equipped_allies"
           },
@@ -674,8 +674,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           target: "self"
         },
         {
-          type: "MOD_STAT",
-          stat: "atk",
+          type: "ADD_STATE",
+          stateType: "atk",
           value: 3,
           target: "self"
         },
@@ -747,7 +747,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     abilities: [
       {
         trigger: "onKill",
-        effects: [{ type: "MOD_STAT", stat: "atk", value: 1, target: "self" }],
+        effects: [{ type: "ADD_STATE", stateType: "atk", value: 1, target: "self" }],
       },
     ],
 
@@ -773,7 +773,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             scope: "global",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "hp", value: 3, target: "random_ally" },
+              { type: "ADD_STATE", stateType: "hp", value: 3, target: "random_ally" },
             ],
           },
         ],
@@ -976,8 +976,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "attackSpeed",
+              type: "ADD_STATE",
+              stateType: "as_stack",
               value: 0.20,
               target: "random_ally"
             }
@@ -1015,8 +1015,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
  trigger:"battleStart",
  condition:{ type:"counter", key:"dig", scope:"match", min:6 },
  effects:[
-  { type:"MOD_STAT", stat:"atk", value:4, target:"self"},
-  { type:"MOD_STAT", stat:"hp", value:4, target:"self"}
+  { type:"ADD_STATE", stateType:"atk", value:4, target:"self"},
+  { type:"ADD_STATE", stateType:"hp", value:4, target:"self"}
  ]
 },
 {
@@ -1040,7 +1040,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         trigger: "onDeath",
         condition: "deadAlly",
         effects:[
-          { type:"MOD_STAT", stat:"atk", value:1, target:"self"},
+          { type:"ADD_STATE", stateType:"atk", value:1, target:"self"},
           { type:"INCREMENT_COUNTER", key:"dig", scope:"match", value:1}
         ]
         }
@@ -1057,7 +1057,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         trigger:"battleStart",
         condition:{ type:"counter", key:"dig", scope:"match", min:3 },
         effects:[
-          { type:"MOD_STAT", stat:"hp", value:2, target:"all_allies"}
+          { type:"ADD_STATE", stateType:"hp", value:2, target:"all_allies"}
         ]
         },
         {
@@ -1065,8 +1065,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         trigger:"battleStart",
         condition:{ type:"counter", key:"dig", scope:"match", min:6 },
         effects:[
-          { type:"MOD_STAT", stat:"hp", value:2, target:"all_allies"},
-          { type:"MOD_STAT", stat:"atk", value:1, target:"all_allies"}
+          { type:"ADD_STATE", stateType:"hp", value:2, target:"all_allies"},
+          { type:"ADD_STATE", stateType:"atk", value:1, target:"all_allies"}
         ]
         }
         ]
@@ -1099,7 +1099,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     {
       trigger: "onEquip",
       effects: [
-        { type: "MOD_STAT",stat: "atk",value: 2,target: "self"},
+        { type:"ADD_STATE",stateType: "atk",value: 2,target: "self"},
         { type:"ADD_STATE", stateType:"as_stack", value:0.1, target:"self"}
       ]
     },
@@ -1107,7 +1107,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       trigger:"battleStart",
       condition:{ type:"onEquipCount", value:2 },
       effects:[
-        { type:"MOD_STAT", stat:"hp", value:3, target:"self"}
+        { type:"ADD_STATE", stateType:"hp", value:3, target:"self"}
       ]
       }
   ],
@@ -1122,7 +1122,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           trigger:"onDamageTaken",
           effects:[
-            { type:"MOD_STAT", stat:"atk", value:1, target:"self"},
+            { type:"ADD_STATE", stateType:"atk", value:1, target:"self"},
             { type:"ADD_STATE", stateType:"as_stack", value:0.05, target:"self"}
           ]
           }
@@ -1138,7 +1138,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           scope:"team",
           trigger:"battleStart",
           effects:[
-            { type:"MOD_STAT", stat:"hp", value:5, target:"random_ally"},
+            { type:"ADD_STATE", stateType:"hp", value:5, target:"random_ally"},
             { type:"ADD_STATE", stateType:"as_stack", value:0.1, target:"random_ally"}
           ]
           }
@@ -1194,7 +1194,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           trigger:"onAttack",
           effects:[
-            { type:"MOD_STAT", stat:"atk", value:2, target:"self"}
+            { type: "ADD_STATE", stateType:"atk", value:2, target:"self"}
           ]
           }
       ]
@@ -1210,8 +1210,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "attackSpeed",
+              type: "ADD_STATE",
+              stateType: "as_stack",
               value: -0.15,
               target: "random_enemy"
             }
@@ -1394,8 +1394,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     {
       trigger: "onEquip",
       effects: [
-        { type: "MOD_STAT", stat: "atk", value: 2, target: "self" },
-        { type: "MOD_STAT", stat: "hp", value: 2, target: "self" },
+        { type: "ADD_STATE", stateType: "atk", value: 2, target: "self" },
+        { type: "ADD_STATE", stateType: "hp", value: 2, target: "self" },
       ]
     }
   ],
@@ -1410,8 +1410,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "onDeath",
           condition: "deadAlly",
           effects: [
-            { type: "MOD_STAT", stat: "atk", value: 2, target: "self" },
-            { type: "MOD_STAT", stat: "hp", value: 2, target: "self" }
+            { type: "ADD_STATE", stateType: "atk", value: 2, target: "self" },
+            { type: "ADD_STATE", stateType: "hp", value: 2, target: "self" }
           ]
         }
       ]
@@ -1426,7 +1426,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           scope: "team",
           trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "atk", value: 2, target: "all_allies"}
+            { type: "ADD_STATE", stateType: "atk", value: 2, target: "all_allies"}
           ]
         }
       ]
@@ -1454,9 +1454,9 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       trigger: "battleStart",
       condition: { type: "onEquipCount", value: 3 },
       effects: [
-        { type: "MOD_STAT", stat: "atk", value: 4, target: "self" },
-        { type: "MOD_STAT", stat: "attackSpeed", value: 0.3, target: "self" },
-        { type: "MOD_STAT", stat: "damageReduce", value: 2, target: "self" }
+        { type: "ADD_STATE", stateType: "atk", value: 4, target: "self" },
+        { type: "ADD_STATE", stateType: "as_stack", value: 0.3, target: "self" },
+        { type: "ADD_STATE", stateType: "damage_reduce", value: 2, target: "self" }
       ]
     }
   ],
@@ -1470,7 +1470,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "attackSpeed", value: 0.15, target: "self" }
+            { type: "ADD_STATE", stateType: "as_stack", value: 0.15, target: "self" }
           ]
         }
       ]
@@ -1487,8 +1487,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             condition: { type: "onEquipCount", value: 1 },
             effects: [
               {
-                type: "MOD_STAT",
-                stat: "atk",
+                type: "ADD_STATE",
+                stateType: "atk",
                 value: 1,
                 target: "all_allies"
               }
@@ -1501,8 +1501,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             condition: { type: "onEquipCount", value: 3 },
             effects: [
               {
-                type: "MOD_STAT",
-                stat: "atk",
+                type: "ADD_STATE",
+                stateType: "atk",
                 value: 3,
                 target: "all_allies"
               }
@@ -1816,14 +1816,14 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "onKill",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 3,
               target: "self"
             },
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "ADD_STATE",
+              stateType: "hp",
               value: 3,
               target: "self"
             },
@@ -1842,8 +1842,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "ADD_STATE",
+              stateType: "hp",
               value: 5,
               target: "all_allies"
             }

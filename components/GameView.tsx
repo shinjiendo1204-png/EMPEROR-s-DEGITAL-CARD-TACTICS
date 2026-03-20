@@ -39,6 +39,7 @@ export default function GameView() {
     y: number
   } | null>(null)
 
+  const processedIds = useRef<Set<string>>(new Set())
   const [visualEvents, setVisualEvents] = useState<
     {
       id: string
@@ -112,11 +113,10 @@ export default function GameView() {
 
   const [phase, setPhase] = useState<"setup" | "battle">("setup")
   const [showEnemyBoard, setShowEnemyBoard] = useState(false)
-  const [showBattleLog, setShowBattleLog] = useState(false)
 
   const [selectedBoardIndex, setSelectedBoardIndex] = useState<number | null>(null)
   const [selectedHandIndex, setSelectedHandIndex] = useState<number | null>(null)
-
+  const [battleNow, setBattleNow] = useState(0)
   const [gameOver, setGameOver] = useState<null | "win" | "lose">(null)
   const disabled = gameOver !== null
 
@@ -337,7 +337,9 @@ if (b) {
      戦闘開始
   ========================= */
 function handleBattleStart() {
+
   if (!game) return
+
 
   const g = structuredClone(game)
 
@@ -358,6 +360,17 @@ for (let i = 0; i < p1.board.length; i++) {
   r: Math.floor(i / BATTLE_COLS),
   c: i % BATTLE_COLS
 }
+
+// 🔥 stateリセット（これ超重要）
+g.p1.board.forEach(u => {
+  if (!u) return
+  u.states = []
+})
+
+g.p2.board.forEach(u => {
+  if (!u) return
+  u.states = []
+})
 
 u.prevPos = { ...u.pos }
 }
@@ -404,6 +417,7 @@ u.prevPos = { ...u.pos }
   setBattleLogs([])
 
   const sourceLogs = p1.lastBattleLogs ?? []
+
   let i = 0
 
   if (sourceLogs.length === 0) return
@@ -467,8 +481,9 @@ u.prevPos = { ...u.pos }
       handleNextTurn()
       return
     }
-    const currentTime = sourceLogs[i].time
     const batch: BattleLog[] = []
+    const currentTime = sourceLogs[i].time
+    setBattleNow(currentTime)
 
     while (i < sourceLogs.length && sourceLogs[i].time === currentTime) {
       batch.push(sourceLogs[i])
@@ -478,7 +493,116 @@ u.prevPos = { ...u.pos }
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
+      console.log("APPLY LOG", next)
+  const id = `${next.time}-${next.instanceId}-${next.action}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`
 
+  if (processedIds.current.has(id)) return
+  processedIds.current.add(id)
+ // =========================
+// 🔥 ステータス同期（完全版）
+// =========================
+if (typeof next.instanceId === "string") {
+  setBattleBoard(prev => {
+    if (!prev) return prev
+
+    const b = [...prev]
+    const unit = b.find(u => u.instanceId === next.instanceId)
+    if (!unit) return b
+
+    // ===== ダメージ =====
+    if (next.action === "attack" || next.action === "damage") {
+      const dmg = (next as any).damage ?? (next as any).value
+      if (typeof dmg === "number") {
+        unit.hp -= dmg
+      }
+    }
+
+    // ===== 回復 =====
+    if ((next as any).action === "heal") {
+      const heal = (next as any).value
+      if (typeof heal === "number") {
+        unit.hp += heal
+      }
+    }
+
+    // =========================
+    // 🔥 add_stat//
+    if ((next as any).action === "add_state") {
+      const type = (next as any).stateType
+      const value = (next as any).value ?? 0
+
+      if (type) {
+        unit.states = unit.states ?? []
+        
+        // 🔥 全く同じ ID や内容のステータスが既にないかチェック
+        const isAlreadyAdded = unit.states.some(s => s.type === type && s.value === value);
+        if (isAlreadyAdded) return b; // 既に反映済みなら何もしない
+
+        unit.states.push({
+          id: crypto.randomUUID(),
+          type,
+          value,
+          stacks: 1
+        })
+      }
+    }
+    // =========================
+    // 🔥 mod_stat（merge型）
+    // =========================
+    // =========================
+// 🔥 mod_stat（上書き型に修正）
+// =========================
+if ((next as any).action === "mod_stat") {
+  const stat = (next as any).stat
+  const value = (next as any).value
+
+  const map: Record<string, any> = {
+    atk: "atk",
+    hp: "hp",
+    attackSpeed: "as_stack",
+    damageReduce: "damage_reduce"
+  }
+
+  const stateType = map[stat]
+
+  if (stateType && typeof value === "number") {
+    unit.states = unit.states ?? []
+    
+    // 🔥 重要：同じ type のステータスがあるか探す
+    const existingIndex = unit.states.findIndex(s => s.type === stateType)
+
+    if (existingIndex !== -1) {
+      // 既にある場合は、新しい値で「上書き」する（pushしないので2倍にならない）
+      unit.states[existingIndex] = {
+        ...unit.states[existingIndex],
+        value: value 
+      }
+    } else {
+      // ない場合だけ新しく追加
+      unit.states.push({
+        id: crypto.randomUUID(),
+        type: stateType,
+        value,
+        stacks: 1
+      })
+    }
+  }
+}
+
+    // =========================
+    // 🔥 state削除
+    // =========================
+    if ((next as any).action === "remove_state") {
+      const type = (next as any).stateType
+
+      if (type && unit.states) {
+        unit.states = unit.states.filter(s => s.type !== type)
+      }
+    }
+
+    return b
+  })
+}
   /* =========================
      ダメージ表示（汎用）
   ========================= */
@@ -617,9 +741,6 @@ if (
   }, 300)
 }
 
-  /* =========================
-     パック選択フェーズ
-  ========================= */
   /* =========================
    パック選択フェーズ
 ========================= */
@@ -1200,6 +1321,7 @@ Stored here when sold. Reuse for free.
                     )}
                     isBattle
                     disabled
+                    now={battleNow}
                     visualEvents={visualEvents}
                     onPlace={() => {}}
                     onDropAt={() => {}}

@@ -16,8 +16,7 @@ function sumStates(unit: BattleUnit, type: BattleStateEffect["type"], now: numbe
       (s.consumeOn == null) // ✅ これ追加：一回消費系は常時計上しない
     )
     .reduce((sum, s) => {
-  const stacks = s.stacks ?? 1
-  return sum + (s.value ?? 0) * stacks
+  return sum + (s.value ?? 0) 
 }, 0)
 }
 
@@ -70,11 +69,11 @@ export function calculateFinalStats(
      - now は 0.2, 1.0, 2.3 ... のような秒で進んでいる前提
      - 30秒以降、徐々に火力/速度を上げて必ず決着させる
   ========================= */
-  const SUDDEN_DEATH_START = 30000 // ✅ ここが超重要（30000は8時間なのでほぼ発動しない）
+  const SUDDEN_DEATH_START = 30000 
   if (now >= SUDDEN_DEATH_START) {
     const t = now - SUDDEN_DEATH_START
 
-    // 1秒あたり +3% にしたいなら ms を秒換算
+   
     const seconds = t / 1000
     const scale = 1 + seconds * 0.03
 

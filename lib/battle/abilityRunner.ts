@@ -122,33 +122,37 @@ export function runAbilities(
   // 再帰ガード
   // =========================
   ;(unit as any).__abilityDepth = (unit as any).__abilityDepth ?? 0
-  ;(unit as any).__abilityDepth++
+;(unit as any).__abilityDepth++
 
-  try {
-    if ((unit as any).__abilityDepth > 15) {
-      console.log("ABILITY LOOP STOP", unit.unitName)
-      return
-    }
+try {
+  if ((unit as any).__abilityDepth > 3) {
+    console.log("ABILITY LOOP STOP", unit.unitName, (unit as any).__abilityDepth)
+    return
+  }
 
     if (t !== "onDeath" && t !== "battleEnd" && !isAlive(unit)) return
 
     const seen = new Set<string>()
+const firedThisCall = new Set<string>()
 
-    // =========================
-    // main loop
-    // =========================
-    for (let i = 0; i < abilities.length; i++) {
-      const ability = abilities[i]
+for (let i = 0; i < abilities.length; i++) {
+  const ability = abilities[i]
 
-      const key = ability.id ?? `idx_${i}`
-      if (seen.has(key)) continue
-      seen.add(key)
+  const key = ability.id ?? `idx_${i}`
+  if (seen.has(key)) continue
+  seen.add(key)
 
-      // trigger一致
-      if (ability.trigger !== t) continue
+  if (firedThisCall.has(key)) continue
+  firedThisCall.add(key)
 
-      if (ability.trigger !== trigger) continue
+  // trigger一致
+  if (ability.trigger !== t) continue
 
+  if (t === "battleStart" && (unit as any).__abilityDepth > 1) {
+    continue
+  }
+
+  if (ability.trigger !== trigger) continue
       if (ability.scope === "team") {
    
       if (context.leader && unit.instanceId !== context.leader.instanceId) {
@@ -335,7 +339,7 @@ function applyAbilityEffects(
     }
 
     const targets = resolveTargets(effect.target, baseTarget, context, effect)
-
+     
     for (const t of targets) {
       if (!isAlive(t)) continue
       applyAbilityEffect(effect, source, t, context)
@@ -612,7 +616,6 @@ function applyAbilityEffect(
   // 🔥 これを追加
   context.gameState.sharedPool =
     context.gameState.sharedPool.filter(u => u.id !== hero.id)
-
   break
 }
 
@@ -652,6 +655,15 @@ function applyAbilityEffect(
         type: stateType,
         value: v,
         expiresAt,
+      })
+
+      pushLog(context, {
+        action: "add_state",
+        instanceId: target.instanceId,
+        stateType,
+        value: v,
+        time: context.now,
+        side: target.side,
       })
    
 
@@ -786,6 +798,15 @@ if (valueToAdd <= 0) break
           runAbilities("onAllRolesAbsorbed" as BattleTrigger, target, context)
         }
       }
+
+      pushLog(context, {
+        action: "add_state",
+        instanceId: target.instanceId,
+        stateType,
+        value: valueToAdd,
+        time: context.now,
+        side: target.side,
+      })
 
       break
     }

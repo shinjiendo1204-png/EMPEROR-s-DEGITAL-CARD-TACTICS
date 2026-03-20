@@ -21,6 +21,7 @@ export function runBattleStart(
   state: BattleState,
   battleLogs: BattleLog[]
 ) {
+  
 
   const p1Alive = getAlive(state.p1Units)
   const p2Alive = getAlive(state.p2Units)
@@ -69,6 +70,8 @@ for (const unit of [...p1Alive, ...p2Alive]) {
     })
   }
 
+  
+
   // 🔥 これを追加
 for (const side of ["p1", "p2"] as const) {
 
@@ -100,12 +103,6 @@ for (const side of ["p1", "p2"] as const) {
     leader
   })
 }
-
-
-
-  battleLogs.push({
-    text: "✨ battleStart"
-  } as BattleLog)
 }
 
 

@@ -255,8 +255,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         condition: "hasFrontAlly",
         effects: [
           {
-            type: "MOD_STAT",
-            stat: "atk",
+            type: "ADD_STATE",
+            stateType: "atk",
             value: 1,
             target: "self",
           },
@@ -553,8 +553,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     // 戦闘開始から10秒後、最もHPが低い味方を100%回復
     abilities: [
     {
-      trigger: "battleStart",
-      delay: { type: "time", value: 10 },
+      trigger: "auraTick",
+      tick: { type: "everySeconds", seconds: 10 }, 
       once: true,
       effects: [
         {
