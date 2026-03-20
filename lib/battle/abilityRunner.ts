@@ -1212,37 +1212,34 @@ case "SUMMON": {
   if (!context.battleState) break
 
   const state = context.battleState
-
   const pos = context.target?.pos
   if (!pos) break
 
   const side = context.target?.side ?? source.side
-
-  const board = side === "p1"
-    ? state.p1Units
-    : state.p2Units
-
-  const index = pos.r * BATTLE_COLS + pos.c
-
-  if (board[index] && board[index]?.hp > 0) break
-
-  const unit = VARKESH_TOKENS.find(
-    (u: Unit) => u.id === effect.unitId
-  )
+  
+  // 【修正】直接 board を触るのではなく、新しい配列を作る準備
+  const unit = VARKESH_TOKENS.find((u: Unit) => u.id === effect.unitId)
   if (!unit) break
 
+  const index = pos.r * BATTLE_COLS + pos.c
   const summoned = createBattleUnit(unit, index, side)
-
   summoned.pos = { ...pos }
   summoned.index = index
-  summoned.row = pos.r === 0 ? "front" : "back"
 
-  board[index] = summoned
+  // 【重要】新しい配列としてステートを更新する
+  if (side === "p1") {
+    // p1Unitsを新しい配列としてコピーし、召喚したユニットを差し込む
+    context.battleState.p1Units = [...context.battleState.p1Units];
+    context.battleState.p1Units[index] = summoned;
+  } else {
+    // p2Unitsも同様
+    context.battleState.p2Units = [...context.battleState.p2Units];
+    context.battleState.p2Units[index] = summoned;
+  }
+  
+  // この後、親の board 全体を結合している場所でも 
+  // [...p1Units, ...p2Units] のように新しい配列を返しているか確認してください
   break
 }
-    
-    default:
-      break
-  }
-}
 
+  }}

@@ -498,6 +498,7 @@ export function Board({
           columnGap: 18,
           rowGap: 22,
           alignItems: "center",
+          paddingTop: 80,
           transform: `
             perspective(1200px)
             ${flipVertical ? "scale(0.9)" : "scale(1)"}

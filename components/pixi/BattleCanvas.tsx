@@ -90,7 +90,7 @@ export default function BattleCanvas({ board, logs }: Props) {
     const estimatedRows = 10 
     const boardFullH = (estimatedRows * CELL_H) + ((estimatedRows - 1) * GAP_Y)
     const originX = (app.screen.width - ((BATTLE_COLS * CELL_W) + OFFSET_X)) / 2
-    const originY = (app.screen.height - boardFullH) / 2
+    const originY = (app.screen.height - boardFullH) /  80;
 
     // 2. ユニットの描画（常に新規作成）
     board.forEach(async (u) => {

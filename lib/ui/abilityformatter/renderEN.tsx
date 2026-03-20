@@ -506,6 +506,11 @@ function convertEffect(e: any): SemanticEffect {
         scope: e.scope,
       }
 
+    case "DIG_RELIC":
+  return {
+    kind: "dig_relic",
+  }
+
     /* =========================
        特殊
     ========================= */
@@ -1162,11 +1167,6 @@ function counterShort(key?: string, scope?: string): string {
   }
 
   const base = map[key ?? ""] ?? key ?? "?"
-
-  if (scope === "battle") return `${base} (battle)`
-  if (scope === "match") return `${base} (match)`
-  if (scope === "turn") return `${base} (turn)`
-
   return base
 }
 
