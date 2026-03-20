@@ -76,144 +76,119 @@ export default function BattleCanvas({ board, logs }: Props) {
     }
   }, [])
 
-  useEffect(() => {
+ useEffect(() => {
     const app = appRef.current
     if (!app) return
 
-    // 6列 32マスのボードは最大 6行程度（上下合わせて 12行の可能性も考慮）
-    // 画面の高さから逆算して、中央に来るように調整
+    // 1. 画面とキャッシュを完全にリセット（これで分身と消失の両方を防ぐ）
+    app.stage.removeChildren();
+    spriteMapRef.current = {};
+    statsTextMapRef.current = {};
+    targetPositionsRef.current = {};
+
+    // 座標計算
     const estimatedRows = 10 
     const boardFullH = (estimatedRows * CELL_H) + ((estimatedRows - 1) * GAP_Y)
     const originX = (app.screen.width - ((BATTLE_COLS * CELL_W) + OFFSET_X)) / 2
     const originY = (app.screen.height - boardFullH) / 2
 
-    const currentIds = new Set(board.map(u => u.instanceId))
-    
-    Object.keys(spriteMapRef.current).forEach(id => {
-      if (!currentIds.has(id)) {
-        const container = spriteMapRef.current[id]
-        app.stage.removeChild(container)
-        container.destroy({ children: true })
-        delete spriteMapRef.current[id]
-        delete statsTextMapRef.current[id]
-        delete targetPositionsRef.current[id]
-      }
-    })
-
+    // 2. ユニットの描画（常に新規作成）
     board.forEach(async (u) => {
-      let container = spriteMapRef.current[u.instanceId]
+      const container = new PIXI.Container()
       const pos = u.pos ?? { r: 0, c: 0 }
       const tPos = getPos(pos.r, pos.c, originX, originY)
 
-      // --- 修正後のスプライト生成部分 ---
-      if (!container) {
-            container = new PIXI.Container()
-            container.x = tPos.x
-            container.y = tPos.y
+      container.x = tPos.x
+      container.y = tPos.y
 
-            // --- 1. ユニット画像 & マスク設定 (ここだけ切り抜く) ---
-            const unitVisual = new PIXI.Container()
+      // --- 1. ユニット画像 & マスク ---
+      const unitVisual = new PIXI.Container()
+      const texture = await PIXI.Assets.load(`/units/${u.unitId}.jpg`)
+      const sprite = new PIXI.Sprite(texture)
+      sprite.anchor.set(0.5)
+      sprite.x = CELL_W / 2
+      sprite.y = CELL_H / 2
+      const scale = Math.max(CELL_W / texture.width, CELL_H / texture.height)
+      sprite.scale.set(scale)
+
+      const mask = new PIXI.Graphics()
+        .beginFill(0xffffff)
+        .moveTo(CELL_W * 0.25, 0).lineTo(CELL_W * 0.75, 0)
+        .lineTo(CELL_W, CELL_H * 0.5).lineTo(CELL_W * 0.75, CELL_H)
+        .lineTo(CELL_W * 0.25, CELL_H).lineTo(0, CELL_H * 0.5)
+        .closePath().endFill()
+
+      unitVisual.addChild(sprite, mask)
+      unitVisual.mask = mask
+      container.addChild(unitVisual)
+
+      // --- 2. 枠線 ---
+      const border = new PIXI.Graphics()
+        .lineStyle(2, 0xffffff, 0.2)
+        .moveTo(CELL_W * 0.25, 0).lineTo(CELL_W * 0.75, 0)
+        .lineTo(CELL_W, CELL_H * 0.5).lineTo(CELL_W * 0.75, CELL_H)
+        .lineTo(CELL_W * 0.25, CELL_H).lineTo(0, CELL_H * 0.5)
+        .closePath()
+      container.addChild(border)
+
+      // --- 3. 装備アイコン ---
+      if (u.equipments && u.equipments.length > 0) {
+        const eqContainer = new PIXI.Container()
+        const EQ_SIZE = 14
+        const EQ_GAP = 3
+        const totalW = (u.equipments.length * EQ_SIZE) + ((u.equipments.length - 1) * EQ_GAP)
+
+        // 装備アイコンをループで追加
+        for (const [index, eq] of u.equipments.entries()) {
+          try {
+            const eqTex = await PIXI.Assets.load(`/units/${eq.id}.jpg`)
+            const eqSp = new PIXI.Sprite(eqTex)
+            eqSp.width = eqSp.height = EQ_SIZE
+            eqSp.x = index * (EQ_SIZE + EQ_GAP)
             
-            const texture = await PIXI.Assets.load(`/units/${u.unitId}.jpg`)
-            const sprite = new PIXI.Sprite(texture)
-
-            // 画像を中央配置するための設定
-            sprite.anchor.set(0.5)
-            sprite.x = CELL_W / 2
-            sprite.y = CELL_H / 2
-
-            // 画像が歪まないようにリサイズ (Object-fit: cover 相当)
-            const scale = Math.max(CELL_W / texture.width, CELL_H / texture.height)
-            sprite.scale.set(scale)
+            const eqBg = new PIXI.Graphics()
+              .lineStyle(1, 0xffffff, 0.6).beginFill(0x000000)
+              .drawRoundedRect(eqSp.x, 0, EQ_SIZE, EQ_SIZE, 3).endFill()
             
-            // 六角形マスクの描画
-            const mask = new PIXI.Graphics()
-              .beginFill(0xffffff)
-              .moveTo(CELL_W * 0.25, 0)
-              .lineTo(CELL_W * 0.75, 0)
-              .lineTo(CELL_W, CELL_H * 0.5)
-              .lineTo(CELL_W * 0.75, CELL_H)
-              .lineTo(CELL_W * 0.25, CELL_H)
-              .lineTo(0, CELL_H * 0.5)
-              .closePath()
-              .endFill()
-
-            unitVisual.addChild(sprite)
-            unitVisual.addChild(mask)
-            unitVisual.mask = mask // unitVisualの中身だけをマスクする
-            
-            container.addChild(unitVisual)
-
-            // --- 2. 枠線 (マスクの外側に置く) ---
-            const border = new PIXI.Graphics()
-              .lineStyle(2, 0xffffff, 0.2) // 白の20%透明度で細い枠
-              .moveTo(CELL_W * 0.25, 0)
-              .lineTo(CELL_W * 0.75, 0)
-              .lineTo(CELL_W, CELL_H * 0.5)
-              .lineTo(CELL_W * 0.75, CELL_H)
-              .lineTo(CELL_W * 0.25, CELL_H)
-              .lineTo(0, CELL_H * 0.5)
-              .closePath()
-            container.addChild(border)
-
-            // --- 3. スタッツ表示 (マスクの影響を受けない) ---
-            // --- 3. スタッツ表示 (React側のデザインに完全準拠) ---
-      const statsContainer = new PIXI.Container()
-
-      // React側は padding: 1px 6px, borderRadius: 6
-      const STATS_BG_W = 48; // 数値に合わせて少しコンパクトに
-      const STATS_BG_H = 14; 
-      
-      const statsBg = new PIXI.Graphics()
-        .beginFill(0x000000, 0.6) // React側の rgba(0,0,0,0.6)
-        .drawRoundedRect(0, 0, STATS_BG_W, STATS_BG_H, 6) 
-        .endFill()
-      
-      const style = { 
-        fontSize: 9, // React側の fontSize: 8
-        fontWeight: '700' as any, 
-        fontFamily: 'sans-serif', 
-        fill: '#ffffff'
+            eqContainer.addChild(eqBg, eqSp)
+          } catch (e) { console.error(e) }
+        }
+        eqContainer.x = (CELL_W - totalW) / 2
+        eqContainer.y = -14
+        container.addChild(eqContainer)
       }
+
+      // --- 4. スタッツ表示 ---
+      const statsContainer = new PIXI.Container()
+      const STATS_BG_W = 48
+      const statsBg = new PIXI.Graphics().beginFill(0x000000, 0.6).drawRoundedRect(0, 0, STATS_BG_W, 14, 6).endFill()
+      const style = { fontSize: 9, fontWeight: '700' as any, fill: '#ffffff' }
       const atkText = new PIXI.Text("", style)
-      const slashText = new PIXI.Text("/", { ...style, fill: '#aaa' }) // スラッシュは #aaa
+      const slashText = new PIXI.Text("/", { ...style, fill: '#aaa' })
       const hpText = new PIXI.Text("", style)
 
-      // 配置の計算 (背景内での相対位置)
       atkText.anchor.set(1, 0.5);   atkText.position.set(20, 7)
       slashText.anchor.set(0.5, 0.5); slashText.position.set(24, 7)
       hpText.anchor.set(0, 0.5);    hpText.position.set(28, 7)
 
       statsContainer.addChild(statsBg, atkText, slashText, hpText)
-      
-      // 【重要】位置合わせ
-      // React側は bottom: -14, left: 50%, transform: translateX(-50%)
-      // つまりユニットの下辺(CELL_H)から少し下に、中央揃えで配置
       statsContainer.position.set((CELL_W - STATS_BG_W) / 2, CELL_H - 7)
-      
       container.addChild(statsContainer)
-            app.stage.addChild(container)
-            
-            spriteMapRef.current[u.instanceId] = container
-            statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
-          }
 
+      // ステージに追加してキャッシュを保存
+      app.stage.addChild(container)
+      spriteMapRef.current[u.instanceId] = container
+      statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
       targetPositionsRef.current[u.instanceId] = tPos
 
-      // バフ反映
-      const texts = statsTextMapRef.current[u.instanceId]
-      if (texts) {
-        const BUFF = "#6bff8a", DEBUFF = "#ff6b6b", DEFAULT = "#ffffff"
-        texts.atkText.text = `${Math.round(u.atk)}`
-        texts.hpText.text = `${Math.round(u.hp)}`
-
-        // 色判定
-        texts.atkText.style.fill = u.atk > (u.baseAtk || 0) ? BUFF : u.atk < (u.baseAtk || 0) ? DEBUFF : DEFAULT
-        texts.hpText.style.fill = u.maxHp > (u.baseMaxHp || 0) ? BUFF : u.maxHp < (u.baseMaxHp || 0) ? DEBUFF : DEFAULT
-      }
+      // 初回テキスト設定
+      const BUFF = "#6bff8a", DEBUFF = "#ff6b6b", DEFAULT = "#ffffff"
+      atkText.text = `${Math.round(u.atk)}`
+      hpText.text = `${Math.round(u.hp)}`
+      atkText.style.fill = u.atk > (u.baseAtk || 0) ? BUFF : u.atk < (u.baseAtk || 0) ? DEBUFF : DEFAULT
+      hpText.style.fill = u.maxHp > (u.baseMaxHp || 0) ? BUFF : u.maxHp < (u.baseMaxHp || 0) ? DEBUFF : DEFAULT
     })
   }, [board])
-
   // ヒール演出
   const showHealEffect = (instanceId: string, value: number) => {
     const app = appRef.current
