@@ -25,8 +25,8 @@ export default function BattleCanvas({ board, logs }: Props) {
   const targetPositionsRef = useRef<Record<string, { x: number; y: number }>>({})
 
   // 6列に合わせてサイズを微調整
-  const CELL_W = 56 
-  const CELL_H = 52
+  const CELL_W = 62
+  const CELL_H = 58
   const GAP_X = 4
   const GAP_Y = 12 // 行間を詰めないと 8行（上下4行ずつ）入り切らない
   const OFFSET_X = 24
@@ -105,43 +105,98 @@ export default function BattleCanvas({ board, logs }: Props) {
       const pos = u.pos ?? { r: 0, c: 0 }
       const tPos = getPos(pos.r, pos.c, originX, originY)
 
+      // --- 修正後のスプライト生成部分 ---
       if (!container) {
-        container = new PIXI.Container()
-        container.x = tPos.x
-        container.y = tPos.y
-        
-        const texture = await PIXI.Assets.load(`/units/${u.unitId}.jpg`)
-        const sprite = new PIXI.Sprite(texture)
-        sprite.width = CELL_W; sprite.height = CELL_H
-        
-        const mask = new PIXI.Graphics().beginFill(0xffffff)
-          .moveTo(0.25 * CELL_W, 0).lineTo(0.75 * CELL_W, 0)
-          .lineTo(CELL_W, 0.5 * CELL_H).lineTo(0.75 * CELL_W, CELL_H)
-          .lineTo(0.25 * CELL_W, CELL_H).lineTo(0, 0.5 * CELL_H)
-          .closePath().endFill()
-        sprite.mask = mask
-        container.addChild(mask, sprite)
+            container = new PIXI.Container()
+            container.x = tPos.x
+            container.y = tPos.y
 
-        const statsContainer = new PIXI.Container()
-        const statsBg = new PIXI.Graphics().beginFill(0x000000, 0.8).drawRoundedRect(0, 0, 52, 14, 4).endFill()
-        
-        const style = { fontSize: 10, fontWeight: '700' as any, fontFamily: 'sans-serif', fill: '#ffffff' }
-        const atkText = new PIXI.Text("", style)
-        const slashText = new PIXI.Text("/", style)
-        const hpText = new PIXI.Text("", style)
+            // --- 1. ユニット画像 & マスク設定 (ここだけ切り抜く) ---
+            const unitVisual = new PIXI.Container()
+            
+            const texture = await PIXI.Assets.load(`/units/${u.unitId}.jpg`)
+            const sprite = new PIXI.Sprite(texture)
 
-        atkText.anchor.set(1, 0.5); atkText.position.set(22, 7)
-        slashText.anchor.set(0.5, 0.5); slashText.position.set(26, 7)
-        hpText.anchor.set(0, 0.5); hpText.position.set(30, 7)
+            // 画像を中央配置するための設定
+            sprite.anchor.set(0.5)
+            sprite.x = CELL_W / 2
+            sprite.y = CELL_H / 2
 
-        statsContainer.addChild(statsBg, atkText, slashText, hpText)
-        statsContainer.position.set((CELL_W - 52) / 2, CELL_H - 6)
-        container.addChild(statsContainer)
+            // 画像が歪まないようにリサイズ (Object-fit: cover 相当)
+            const scale = Math.max(CELL_W / texture.width, CELL_H / texture.height)
+            sprite.scale.set(scale)
+            
+            // 六角形マスクの描画
+            const mask = new PIXI.Graphics()
+              .beginFill(0xffffff)
+              .moveTo(CELL_W * 0.25, 0)
+              .lineTo(CELL_W * 0.75, 0)
+              .lineTo(CELL_W, CELL_H * 0.5)
+              .lineTo(CELL_W * 0.75, CELL_H)
+              .lineTo(CELL_W * 0.25, CELL_H)
+              .lineTo(0, CELL_H * 0.5)
+              .closePath()
+              .endFill()
 
-        app.stage.addChild(container)
-        spriteMapRef.current[u.instanceId] = container
-        statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
+            unitVisual.addChild(sprite)
+            unitVisual.addChild(mask)
+            unitVisual.mask = mask // unitVisualの中身だけをマスクする
+            
+            container.addChild(unitVisual)
+
+            // --- 2. 枠線 (マスクの外側に置く) ---
+            const border = new PIXI.Graphics()
+              .lineStyle(2, 0xffffff, 0.2) // 白の20%透明度で細い枠
+              .moveTo(CELL_W * 0.25, 0)
+              .lineTo(CELL_W * 0.75, 0)
+              .lineTo(CELL_W, CELL_H * 0.5)
+              .lineTo(CELL_W * 0.75, CELL_H)
+              .lineTo(CELL_W * 0.25, CELL_H)
+              .lineTo(0, CELL_H * 0.5)
+              .closePath()
+            container.addChild(border)
+
+            // --- 3. スタッツ表示 (マスクの影響を受けない) ---
+            // --- 3. スタッツ表示 (React側のデザインに完全準拠) ---
+      const statsContainer = new PIXI.Container()
+
+      // React側は padding: 1px 6px, borderRadius: 6
+      const STATS_BG_W = 48; // 数値に合わせて少しコンパクトに
+      const STATS_BG_H = 14; 
+      
+      const statsBg = new PIXI.Graphics()
+        .beginFill(0x000000, 0.6) // React側の rgba(0,0,0,0.6)
+        .drawRoundedRect(0, 0, STATS_BG_W, STATS_BG_H, 6) 
+        .endFill()
+      
+      const style = { 
+        fontSize: 9, // React側の fontSize: 8
+        fontWeight: '700' as any, 
+        fontFamily: 'sans-serif', 
+        fill: '#ffffff'
       }
+      const atkText = new PIXI.Text("", style)
+      const slashText = new PIXI.Text("/", { ...style, fill: '#aaa' }) // スラッシュは #aaa
+      const hpText = new PIXI.Text("", style)
+
+      // 配置の計算 (背景内での相対位置)
+      atkText.anchor.set(1, 0.5);   atkText.position.set(20, 7)
+      slashText.anchor.set(0.5, 0.5); slashText.position.set(24, 7)
+      hpText.anchor.set(0, 0.5);    hpText.position.set(28, 7)
+
+      statsContainer.addChild(statsBg, atkText, slashText, hpText)
+      
+      // 【重要】位置合わせ
+      // React側は bottom: -14, left: 50%, transform: translateX(-50%)
+      // つまりユニットの下辺(CELL_H)から少し下に、中央揃えで配置
+      statsContainer.position.set((CELL_W - STATS_BG_W) / 2, CELL_H - 7)
+      
+      container.addChild(statsContainer)
+            app.stage.addChild(container)
+            
+            spriteMapRef.current[u.instanceId] = container
+            statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
+          }
 
       targetPositionsRef.current[u.instanceId] = tPos
 

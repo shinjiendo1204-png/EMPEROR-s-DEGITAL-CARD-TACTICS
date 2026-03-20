@@ -359,47 +359,64 @@ export function Board({
               </div>
             )}
 
-            {(() => {
+      
 
-              const stats = calculateFinalStats(unit, now ?? 0)
-              
-              const atkColor =
-                stats.atk > unit.baseAtk ? "#6bff8a" :
-                stats.atk < unit.baseAtk ? "#ff6b6b" :
-                "#ffffff"
+              {/* --- スタッツ表示 (戦闘中デザインに統一) --- */}
+{(() => {
+  const stats = calculateFinalStats(unit, now ?? 0);
+  
+  const BUFF = "#6bff8a";
+  const DEBUFF = "#ff6b6b";
+  const DEFAULT = "#ffffff";
 
-              const hpColor =
-                stats.maxHp > unit.baseMaxHp ? "#6bff8a" :
-                stats.maxHp < unit.baseMaxHp ? "#ff6b6b" :
-                "#ffffff"
+  const atkColor = stats.atk > unit.baseAtk ? BUFF : stats.atk < unit.baseAtk ? DEBUFF : DEFAULT;
+  const hpColor = stats.maxHp > unit.baseMaxHp ? BUFF : stats.maxHp < unit.baseMaxHp ? DEBUFF : DEFAULT;
 
-              return (
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: -14,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    fontSize: 8,
-                    fontWeight: 700,
-                    background: "rgba(0,0,0,0.6)",
-                    padding: "1px 6px",
-                    borderRadius: 6,
-                    zIndex: 10
-                  }}
-                >
-                  <span style={{ color: atkColor }}>
-                    {Math.round(stats.atk)}
-                  </span>
+  return (
+    <div
+      style={{
+        position: "absolute",
+        // 六角形の下側に深く重なるように調整
+        bottom: -10, 
+        left: "50%",
+        transform: "translateX(-50%)",
+        
+        // デザインの肝：幅広のカプセル型
+        minWidth: 48,
+        height: 15,
+        background: "rgba(45, 38, 32, 0.85)", // 少し茶色味のある黒
+        borderRadius: 12, // 強い丸み
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 2,
+        padding: "0 8px",
+        zIndex: 10,
+        boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+      }}
+    >
+      <span style={{ 
+        color: atkColor, 
+        fontSize: 11, 
+        fontWeight: 900,
+        textShadow: "1px 1px 2px rgba(0,0,0,0.8)" 
+      }}>
+        {Math.round(stats.atk)}
+      </span>
 
-                  <span style={{ color: "#aaa" }}>/</span>
+      <span style={{ color: "#bbb", fontSize: 9, margin: "0 1px" }}>/</span>
 
-                  <span style={{ color: hpColor }}>
-                  {Math.round(unit.hp)}
-                  </span>
-                </div>
-              )
-            })()}
+      <span style={{ 
+        color: hpColor, 
+        fontSize: 11, 
+        fontWeight: 900,
+        textShadow: "1px 1px 2px rgba(0,0,0,0.8)" 
+      }}>
+        {Math.round(unit.hp)}
+      </span>
+    </div>
+  );
+})()}
 
             {damageEvent && (
               <div
