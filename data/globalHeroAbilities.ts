@@ -27,16 +27,16 @@ export const GLOBAL_HERO_ABILITIES: Ability[] = [
   },
 
   /* =========================
-       Nightsteel ヒーロー
+       Knightsteel ヒーロー
   ========================= */
   {
     id: "unlock_the_hope_alux",
-    trigger: "battleEnd",
+    trigger: "battleStart",
     pack: "Knightsteel",
     condition: {
     type: "boardCost",
     pack: "Knightsteel",
-    min: 15                  // 合計で 6 体以上
+    min: 15      
   },
     effects: [{ type: "CLAIM_HERO", heroId: "the_hope_alux" }]
   },
