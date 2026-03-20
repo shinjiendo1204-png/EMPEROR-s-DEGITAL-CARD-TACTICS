@@ -686,7 +686,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     variants: {
       equipment: {
         name: "Analysis Lens",
-        baseStats: { atk: 2 },
+        baseStats: { atk: 1 },
         effects: [],
         abilities: [
           {
@@ -698,10 +698,6 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
             scope: "match",
             value: 3,
           },
-        {
-          type: "DESTROY_EQUIPMENT",
-          target: "self"
-              },
             ],
           },
         ],

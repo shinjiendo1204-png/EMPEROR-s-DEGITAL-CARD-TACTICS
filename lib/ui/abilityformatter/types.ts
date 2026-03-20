@@ -60,6 +60,10 @@ export type SemanticEffect =
       target?: AbilityTarget
       duration?: Duration
     }
+  
+  | {
+    kind: "forge_ancient_combo"
+  }
 
   | {
       kind: "mod_stat_from_counter"

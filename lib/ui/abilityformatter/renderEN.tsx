@@ -96,12 +96,29 @@ export function renderAbilityEN(
 
   // ★ 追加：stat統合
   const merged: SemanticEffect[] = []
+
   const used = new Set<number>()
 
   for (let i2 = 0; i2 < effects.length; i2++) {
     if (used.has(i2)) continue
 
     const e = effects[i2]
+    const e2 = effects[i2 + 1]
+
+  // 🔥 ここに入れる（正しい位置）
+    if (
+      e?.kind === "destroy_equipment" &&
+      e2?.kind === "create_ancient_weapon"
+    ) {
+      merged.push({
+        kind: "forge_ancient_combo",
+        target: e.target,
+      } as any)
+
+      used.add(i2)
+      used.add(i2 + 1)
+      continue
+    }
 
     if (e.kind === "mod_stat_from_counter") {
       const group = [e]
@@ -600,6 +617,15 @@ function effectLine(
         ],
       }
       break
+    
+    case "forge_ancient_combo":
+    base = {
+      segments: [
+        { text: "Consume all equipment and forge an Ancient Weapon", tone: TONE.buff },
+        { text: " (max 3)", tone: TONE.neutral }
+      ],
+    }
+    break
 
     case "set_attack_range":
       base = setRangeLine(e)
@@ -1086,22 +1112,9 @@ function createAncientWeaponLine(
   _e: Extract<SemanticEffect, { kind: "create_ancient_weapon" }>
 ): EffectLine {
   return {
-    segments: [{ text: "Forge an Ancient Weapon", tone: TONE.buff }],
-  }
-}
-
-function chainAttackLine(
-  e: Extract<SemanticEffect, { kind: "chain_attack" }>
-): EffectLine {
-  const count = safeNumber((e as any).count ?? (e as any).value ?? 1)
-  const tgt = targetShort((e as any).target)
-
-  return {
-    target: tgt,
     segments: [
-      { text: "Attack " },
-      { text: `${count}`, tone: TONE.buff },
-      { text: " times in a row" },
+      { text: "Consume all equipment and forge an Ancient Weapon", tone: TONE.buff },
+      { text: " (max 3)", tone: TONE.neutral }
     ],
   }
 }
