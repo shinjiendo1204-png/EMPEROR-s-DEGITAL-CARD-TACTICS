@@ -619,19 +619,19 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           {
             id: "ancient_golem_synergy",
             scope: "team",
-            trigger: "onKill",
+            trigger: "battleStart",
             effects: [
               {
             type: "MOD_STAT",
             stat: "hp",
             value: 1,
-            target: "self"
+            target: "equipped_allies"
           },
            {
             type: "MOD_STAT",
             stat: "atk",
             value: 1,
-            target: "self"
+            target: "equipped_allies"
           },
             ],
           },
@@ -775,10 +775,10 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "ruin_raider_synergy",
-            scope: "team",
-            trigger: "onKill",
+            scope: "global",
+            trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "random_ally" },
+              { type: "MOD_STAT", stat: "hp", value: 3, target: "random_ally" },
             ],
           },
         ],
@@ -905,10 +905,11 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         abilities: [
           {
             id: "self_dismantler_synergy",
-            scope: "team",
-            trigger: "onSelfDamage",
+            scope: "global",
+            trigger: "battleStart",
             effects: [
-              { type: "INCREMENT_COUNTER", key: "dig", scope: "match", value: 1 },
+              { type: "DAMAGE", value: 2, target: "all_enemies",  },
+              { type: "DAMAGE", value: 1, target: "all_allies",  },
             ],
           },
         ],
@@ -1363,13 +1364,13 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           id: "antiqua_blade_reclaimer_synergy",
           scope: "team",
-          trigger: "onAttack",
-          condition: { type: "onEquipCount", value: 1 },
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 1 },
           effects: [
             { type: "ADD_STATE", 
               stateType: "as_stack", 
               value: 0.05, 
-              target: "self",
+              target: "all_allies",
               maxStack: 6,
               maxTotalValue: 0.3}
           ]
