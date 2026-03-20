@@ -121,10 +121,9 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           {
             id: "varkesh_rift_berserker_synergy",
             scope: "team",
-            trigger: "onDeath",
-            condition: "deadAlly",
+            trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
+              { type: "MOD_STAT", stat: "hp", value: 1, target: "all_allies" },
             ],
           },
         ],
@@ -187,8 +186,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           {
             id: "varkesh_grave_forager_synergy",
             scope: "team",
-            trigger: "onDeath",
-            effects: [{ type: "HEAL", value: 1, target: "all_allies" }],
+            trigger: "battleStart",
+            effects: [{ type: "ADD_STATE", stateType: "hp", value: 1, target: "all_allies" }],
           },
         ],
       },
@@ -255,8 +254,6 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   },
 
   /* =========================
-     呪刻の巫女（呪術：集中）
-     - 毎秒 highest_hp_enemy に呪印+1
   ========================= */
   {
     id: "varkesh_hex_priestess",
@@ -316,7 +313,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             id: "varkesh_hex_priestess_synergy",
             scope: "team",
             trigger: "auraTick",
-            tick: { type: "everySeconds", seconds: 1},
+            tick: { type: "everySeconds", seconds: 2},
             effects: [
               {
                 type: "ADD_STATE",
@@ -541,13 +538,13 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "varkesh_oni_synergy",
           scope: "team",
-          trigger: "onDamageTaken",
+          trigger: "battleStart",
           effects: [
             {
               type: "ADD_STATE",
               stateType: "as_stack",
-              value: 0.1,
-              target: "target",
+              value: 0.25,
+              target: "random_ally",
               duration: { type: "time", value: 2 }
             }
           ]
@@ -763,8 +760,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           abilities: [
             {
               scope: "team",
-              trigger: "onDeath",
-              condition: "deadAlly",
+              trigger: "battleStart",
               effects: [
                 {
                   type: "ADD_STATE",
@@ -841,8 +837,6 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
     /* =========================
        シナジー
-       - 死亡時に最低HPを2回復
-       - グール死亡軸の完成ピース
     ========================= */
     synergy: {
       name: "Corpse Redistribution",
@@ -851,13 +845,13 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "varkesh_feast_synergy",
           scope: "team",
-          trigger: "onDeath",
-          condition: "deadAlly",
+          trigger: "battleStart",
           effects: [
             {
-              type: "HEAL",
-              value: 2,
-              target: "lowest_hp_ally"
+              type: "ADD_STATE",
+              stateType: "hp",
+              value: -2,
+              target: "random_enemy"
             }
           ]
         }
@@ -929,13 +923,19 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "blood_tyrant_synergy",
           scope: "team",
-          trigger: "onDamageTaken",
+          trigger: "battleStart",
           effects: [
             {
               type: "MOD_STAT",
               stat: "atk",
-              value: 1,
-              target: "random_ally",
+              value: 3,
+              target: "all_allies",
+            },
+            {
+              type: "MOD_STAT",
+              stat: "hp",
+              value: -3,
+              target: "all_allies",
             }
           ]
         }
@@ -1001,10 +1001,10 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "ghoul_overlord_synergy",
           scope: "team",
-          trigger: "onDeath",
-          condition: "deadAlly",
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 3 },
           effects: [
-            { type: "HEAL", value: 1, target: "lowest_hp_ally" }
+            { type: "HEAL", value: 2, target: "lowest_hp_ally" }
           ]
         }
       ]
@@ -1105,7 +1105,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   abilities: [
     {
   trigger: "onAttack",
-  condition: { type: "targetHpBelowPercent", value: 0.1 },
+  condition: { type: "targetHpBelowPercent", value: 0.2 },
   effects: [
     {
       type: "DAMAGE",
@@ -1146,7 +1146,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "executioner_synergy",
           scope: "team",
-          trigger: "onKill",
+          trigger: "battleStart",
           effects: [
             {
               type: "MOD_STAT",
@@ -1227,15 +1227,14 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "feast_lord_synergy",
           scope: "team",
-          trigger: "onDeath",
-          condition: "deadAlly",
+          trigger: "battleStart",
           effects: [
             {
               type: "MOD_STAT",
-              stat: "atk",
-              value: 2,
-              target: "random_ally",
-            }
+              stat: "hp",
+              value: -1,
+              target: "all_enemies",
+            },           
           ]
         }
       ]
@@ -1303,8 +1302,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "blood_pact_synergy",
           scope: "team",
-          trigger: "onDeath",
-          condition: "deadAlly",
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 3 },
           effects: [
             {
               type: "DAMAGE",
@@ -1312,7 +1311,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
               target: "all_enemies",
             },
             {
-              type: "SELF_DAMAGE",
+              type: "DAMAGE",
               value: 1,
               target: "all_allies",
             }
@@ -1466,14 +1465,14 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "death_pulse_synergy",
           scope: "team",
-          trigger: "onDeath",
-          condition: "deadAlly",
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 5 },
           effects: [
             {
               type: "MOD_STAT",
               stat: "hp",
-              value: 2,
-              target: "all_allies",
+              value: 5,
+              target: "random_ally",
             }
           ]
         }
@@ -1534,15 +1533,15 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "lowlife_party_synergy",
           scope: "team",
-          trigger: "onDamageTaken",
+          trigger: "auraTick",
+          tick: { type: "everySeconds", seconds: 3 },
           effects: [
             {
               type: "ADD_STATE",
               stateType: "atk",
-              value: 4,
+              value: 5,
               target: "allies_below_hp_percent",
-              targetHpPercent: 0.2,
-              duration: { type: "time", value: 2 }
+              targetHpPercent: 0.10,
             }
           ]
         }
@@ -1618,14 +1617,14 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           id: "blood_dance_synergy",
           scope: "team",
-          trigger: "onSelfDamage",
+          trigger: "battleStart",
           effects: [
             {
               type: "ADD_STATE",
-              stateType: "as_stack",
-              value: 0.1,
-              duration: { type: "time", value: 2 },
-              target: "all_allies"
+              stateType: "damage_reduce",
+              value: -3,
+              duration: { type: "time", value: 3 },
+              target: "all_enemies"
             }
           ]
         }

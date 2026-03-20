@@ -322,12 +322,12 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           id: "relic_salvager_synergy",
           scope:"team",
-          trigger:"onDeath",
+          trigger:"battleStart",
           effects:[
             {
             type:"MOD_STAT",
             stat:"atk",
-            value:1,
+            value:2,
             target:"random_ally"
             }
           ]
@@ -360,11 +360,11 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   abilities: [
     {
       trigger: "auraTick",
-      tick: { type: "everySeconds", seconds: 4 },
+      tick: { type: "everySeconds", seconds: 3 },
       effects: [
         {
           type: "HEAL",
-          value: 1,
+          value: 2,
           target: "random_ally"
         }
       ]
@@ -833,7 +833,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           {
             id: "ancient_priest_synergy",
             scope: "team",
-            trigger: "onDeath",
+            trigger: "auraTick",
+            tick: { type: "everySeconds", seconds: 3 },
             effects: [{ type: "HEAL", value:  1, target: "all_allies" }],
           },
         ],

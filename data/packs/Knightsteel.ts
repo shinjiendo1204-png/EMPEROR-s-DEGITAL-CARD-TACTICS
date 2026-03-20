@@ -522,8 +522,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
-              { type: "MOD_STAT", stat: "hp", value: 1, target: "all_allies" },
+              { type: "MOD_STAT", stat: "atk", value: 1, target: "random_ally" },
+              { type: "MOD_STAT", stat: "hp", value: 2, target: "random_ally" },
             ],
           },
         ],
@@ -650,8 +650,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
-              { type: "MOD_STAT", stat: "hp", value: 1, target: "all_allies" },
+              { type: "MOD_STAT", stat: "atk", value: 1, target: "equipped_allies" },
+              { type: "MOD_STAT", stat: "hp", value: 1, target: "equipped_allies" },
             ],
           },
         ],
@@ -980,8 +980,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
           trigger: "battleStart",
           effects: [
-            { type: "MOD_STAT", stat: "atk", value: 4, target: "self" },
-            { type: "MOD_STAT", stat: "damageReduce", value: -2, target: "self" },
+            { type: "MOD_STAT", stat: "atk", value: 4, target: "random_ally" },
+            { type: "MOD_STAT", stat: "damageReduce", value: -2, target: "random_ally" },
           ],
         },
       ],
