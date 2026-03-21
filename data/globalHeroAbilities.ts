@@ -15,7 +15,7 @@ export const GLOBAL_HERO_ABILITIES: Ability[] = [
     id: "unlock_hero_yamato",
     trigger: "battleEnd",
     pack: "Varkesh",
-    condition: { type: "counter", key: "onDeath", scope: "match", min: 1 },
+    condition: { type: "counter", key: "onDeath", scope: "match", min: 20 },
     effects: [{ type: "CLAIM_HERO", heroId: "hero_yamato" }]
   },
   {
