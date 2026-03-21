@@ -351,6 +351,7 @@ export const HERO_UNITS: Unit[] = [
     {
       id: "yamato_ability2",
       trigger: "onDeath",
+      condition: "deadAlly",
       effects: [
         {
           type: "INCREMENT_COUNTER",
