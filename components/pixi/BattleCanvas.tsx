@@ -85,6 +85,64 @@ export default function BattleCanvas({ board, logs }: Props) {
   }, [])
 
   useEffect(() => {
+    // 🚩 装備品を描画・更新する関数
+  const updateEquipments = async (container: PIXI.Container, equipments: any[]) => {
+    const equipContainer = container.getChildByName("equipContainer") as PIXI.Container;
+    if (!equipContainer) return;
+
+    // 既存の装備アイコンをクリア
+    equipContainer.removeChildren().forEach(c => c.destroy({ children: true }));
+
+    if (!equipments || equipments.length === 0) return;
+
+    const EQ_SIZE = 18;
+    const EQ_GAP = 3;
+    const totalW = (equipments.length * EQ_SIZE) + ((equipments.length - 1) * EQ_GAP);
+    
+    // 中央揃えにするための開始位置
+    let startX = (CELL_W - totalW) / 2;
+
+    equipments.forEach(async (eq, idx) => {
+      const slot = new PIXI.Container();
+      slot.x = startX + (idx * (EQ_SIZE + EQ_GAP));
+      slot.y = -20; // ユニットの少し上に配置
+
+      // 黒背景と枠線
+      const bg = new PIXI.Graphics()
+        .beginFill(0x000000)
+        .lineStyle(1, 0xffffff, 0.6)
+        .drawRoundedRect(0, 0, EQ_SIZE, EQ_SIZE, 4)
+        .endFill();
+      slot.addChild(bg);
+
+      // アイコン画像
+      let eqTexture = textureCacheRef.current[eq.id];
+      if (!eqTexture) {
+        try {
+          eqTexture = await PIXI.Assets.load(`/units/${eq.id}.jpg`);
+          textureCacheRef.current[eq.id] = eqTexture;
+        } catch (e) {
+          eqTexture = PIXI.Texture.WHITE;
+        }
+      }
+
+      const eqSprite = new PIXI.Sprite(eqTexture);
+      eqSprite.width = EQ_SIZE - 2;
+      eqSprite.height = EQ_SIZE - 2;
+      eqSprite.x = 1;
+      eqSprite.y = 1;
+
+      // マスク（アイコンを角丸にする場合）
+      const eqMask = new PIXI.Graphics()
+        .beginFill(0xffffff)
+        .drawRoundedRect(1, 1, EQ_SIZE - 2, EQ_SIZE - 2, 3)
+        .endFill();
+      eqSprite.mask = eqMask;
+      slot.addChild(eqSprite, eqMask);
+
+      equipContainer.addChild(slot);
+    });
+  };
     const app = appRef.current
     if (!app) return
 
@@ -134,8 +192,9 @@ if (texts) {
   // 色判定：最大HPがベースより高ければ緑にする
   const isBuffed = displayMaxHp > (u.baseMaxHp ?? 100);
   texts.hpText.style.fill = isBuffed ? "#6bff8a" : "#ffffff";
-}
+  updateEquipments(container, u.equipments);
         return; 
+      }
       }
 
       // --- 新規作成時 ---
@@ -175,6 +234,12 @@ if (texts) {
         .moveTo(CELL_W * 0.25, 0).lineTo(CELL_W * 0.75, 0).lineTo(CELL_W, CELL_H * 0.5)
         .lineTo(CELL_W * 0.75, CELL_H).lineTo(CELL_W * 0.25, CELL_H).lineTo(0, CELL_H * 0.5)
         .closePath(); container.addChild(border)
+
+        // 🚩 装備品表示用コンテナの追加
+      const equipContainer = new PIXI.Container();
+      equipContainer.name = "equipContainer";
+      container.addChild(equipContainer);
+      updateEquipments(container, u.equipments);
 
       const statsContainer = new PIXI.Container()
       const STATS_BG_W = 52
