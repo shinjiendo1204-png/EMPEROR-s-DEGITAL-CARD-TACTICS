@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react"
 import * as PIXI from "pixi.js"
 import { BattleUnit, BattleLog } from "@/types"
 import { BATTLE_COLS } from "@/lib/battle/boardsize"
-import { calculateFinalStats } from "@/lib/battle/statCalculator"
 
 type Props = {
   board: BattleUnit[]
@@ -20,8 +19,6 @@ type StatsTexts = {
 export default function BattleCanvas({ board, logs }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const appRef = useRef<PIXI.Application | null>(null)
-  
-  // ★重要: removeChildren() をやめるため、ステージ用のコンテナを持つ
   const unitLayerRef = useRef<PIXI.Container>(new PIXI.Container())
   
   const spriteMapRef = useRef<Record<string, PIXI.Container>>({})
@@ -29,19 +26,13 @@ export default function BattleCanvas({ board, logs }: Props) {
   const targetPositionsRef = useRef<Record<string, { x: number; y: number }>>({})
   const textureCacheRef = useRef<Record<string, PIXI.Texture>>({})
 
-  // --- 盤面サイズ設定 (前回調整したサイズ) ---
   const CELL_W = 70
   const CELL_H = 64
   const GAP_X = 6
   const GAP_Y = 16 
   const OFFSET_X = 28
-  
-  const getPos = (r: number, c: number, originX: number, originY: number) => ({
-    x: originX + (c * (CELL_W + GAP_X)) + (r % 2 === 1 ? OFFSET_X : 0),
-    y: originY + (r * (CELL_H + GAP_Y))
-  })
 
-  // PIXIの初期化 (1回だけ実行)
+  // --- PIXIの初期化 (1つに統合) ---
   useEffect(() => {
     let active = true
     const init = async () => {
@@ -59,20 +50,33 @@ export default function BattleCanvas({ board, logs }: Props) {
       appRef.current = app
       containerRef.current.innerHTML = ""
       containerRef.current.appendChild(app.canvas)
-
-      // ユニットレイヤーを追加
       app.stage.addChild(unitLayerRef.current)
 
+      // ★ Ticker: 実際に存在するスプライトだけを更新
       app.ticker.add(() => {
-        for (const id in spriteMapRef.current) {
-          const target = targetPositionsRef.current[id]
-          const container = spriteMapRef.current[id]
-          if (target && container) {
-            // なめらかな移動
-            container.x += (target.x - container.x) * 0.2
-            container.y += (target.y - container.y) * 0.2
-          }
-        }
+        unitLayerRef.current.children.forEach((container: any) => {
+          const id = container.instanceId;
+          const target = targetPositionsRef.current[id];
+          if (!target) return;
+
+          // 論理座標の初期化
+          if (container.logicX === undefined) container.logicX = container.x;
+          if (container.logicY === undefined) container.logicY = container.y;
+
+          // 1. なめらかな論理移動 (0.15 は追従速度)
+          container.logicX += (target.x - container.logicX) * 0.15;
+          container.logicY += (target.y - container.logicY) * 0.15;
+
+          // 2. 「駒の跳ね」演出 (距離が遠いほど高く跳ねる)
+          const dist = Math.sqrt(
+            Math.pow(target.x - container.logicX, 2) + 
+            Math.pow(target.y - container.logicY, 2)
+          );
+          const jumpHeight = Math.min(dist * 0.4, 18); // 最大18px浮く設定
+
+          container.x = container.logicX;
+          container.y = container.logicY - jumpHeight; // Y軸を浮かせる
+        });
       });
     }
     init()
@@ -85,29 +89,25 @@ export default function BattleCanvas({ board, logs }: Props) {
     }
   }, [])
 
-  // 盤面の描画更新 (★ここを差分更新に修正)
-  // 盤面の描画更新 (★ここを修正)
-  // 盤面の描画更新
+  // 盤面の描画・同期
   useEffect(() => {
     const app = appRef.current
     if (!app) return
 
-    // --- ここを大幅に修正 ---
     const originX = (app.screen.width - ((BATTLE_COLS * CELL_W) + OFFSET_X)) / 2
-    
-    const originY = -0; 
-
-    const CURRENT_GAP_Y = 8; // ★ 16 や 8 からさらに 4 まで詰める
-    // -----------------------
+    const originY = 2; 
+    const CURRENT_GAP_Y = 6;
 
     const currentIds = new Set(board.map(u => u.instanceId));
 
-    // 消去ロジック（変更なし）
+    // 消去: Stateにいないスプライトを物理的に削除
     Object.keys(spriteMapRef.current).forEach(id => {
       if (!currentIds.has(id)) {
         const container = spriteMapRef.current[id];
-        unitLayerRef.current.removeChild(container);
-        container.destroy({ children: true });
+        if (container) {
+          unitLayerRef.current.removeChild(container);
+          container.destroy({ children: true });
+        }
         delete spriteMapRef.current[id];
         delete statsTextMapRef.current[id];
         delete targetPositionsRef.current[id];
@@ -116,8 +116,6 @@ export default function BattleCanvas({ board, logs }: Props) {
 
     board.forEach(async (u) => {
       const pos = u.pos ?? { r: 0, c: 0 }
-      
-      // 座標計算に新しい originY と CURRENT_GAP_Y を適用
       const tPos = {
         x: originX + (pos.c * (CELL_W + GAP_X)) + (pos.r % 2 === 1 ? OFFSET_X : 0),
         y: originY + (pos.r * (CELL_H + CURRENT_GAP_Y)) 
@@ -125,6 +123,7 @@ export default function BattleCanvas({ board, logs }: Props) {
 
       targetPositionsRef.current[u.instanceId] = tPos;
 
+      // 更新
       if (spriteMapRef.current[u.instanceId]) {
         const texts = statsTextMapRef.current[u.instanceId];
         if (texts) {
@@ -135,28 +134,22 @@ export default function BattleCanvas({ board, logs }: Props) {
         return; 
       }
 
-      // --- ここから新規作成 (グールなど) ---
-      const container = new PIXI.Container()
-      
-      // 召喚時は、目標地点にパッと出すか、ふわっと出すか
-      container.x = tPos.x
-      container.y = tPos.y
-      
-      // 召喚演出: ちょっと小さく始めて大きくする
-      container.scale.set(0.5);
-      container.alpha = 0;
+      // --- 新規作成 ---
+      const container = new PIXI.Container() as any;
+      container.instanceId = u.instanceId;
+      container.logicX = tPos.x;
+      container.logicY = tPos.y;
+      container.x = tPos.x;
+      container.y = tPos.y;
 
-      // --- ユニット画像 ---
+      // ユニットビジュアル (画像)
       const unitVisual = new PIXI.Container()
       let texture = textureCacheRef.current[u.unitId]
       if (!texture) {
         try {
           texture = await PIXI.Assets.load(`/units/${u.unitId}.jpg`)
           textureCacheRef.current[u.unitId] = texture
-        } catch (e) {
-          // 画像がない場合のプレースホルダー
-          texture = PIXI.Texture.WHITE;
-        }
+        } catch (e) { texture = PIXI.Texture.WHITE; }
       }
       
       const sprite = new PIXI.Sprite(texture)
@@ -164,7 +157,7 @@ export default function BattleCanvas({ board, logs }: Props) {
       if (texture !== PIXI.Texture.WHITE) {
         sprite.scale.set(Math.max(CELL_W / texture.width, CELL_H / texture.height))
       } else {
-        sprite.width = CELL_W; sprite.height = CELL_H; sprite.tint = 0xff0000; // 赤い四角
+        sprite.width = CELL_W; sprite.height = CELL_H; sprite.tint = 0xff0000;
       }
 
       const mask = new PIXI.Graphics().beginFill(0xffffff)
@@ -174,13 +167,13 @@ export default function BattleCanvas({ board, logs }: Props) {
       unitVisual.addChild(sprite, mask); unitVisual.mask = mask
       container.addChild(unitVisual)
 
-      // --- 枠線 ---
+      // 枠線
       const border = new PIXI.Graphics().lineStyle(2, 0xffffff, 0.2)
         .moveTo(CELL_W * 0.25, 0).lineTo(CELL_W * 0.75, 0).lineTo(CELL_W, CELL_H * 0.5)
         .lineTo(CELL_W * 0.75, CELL_H).lineTo(CELL_W * 0.25, CELL_H).lineTo(0, CELL_H * 0.5)
         .closePath(); container.addChild(border)
 
-      // --- スタッツ表示 ---
+      // スタッツ
       const statsContainer = new PIXI.Container()
       const STATS_BG_W = 52
       const statsBg = new PIXI.Graphics().beginFill(0x2d2620, 0.85).drawRoundedRect(0, 0, STATS_BG_W, 16, 8).endFill()
@@ -198,31 +191,25 @@ export default function BattleCanvas({ board, logs }: Props) {
       statsContainer.position.set((CELL_W - STATS_BG_W) / 2, CELL_H - 8)
       container.addChild(statsContainer)
 
-      // レイヤーに追加
       unitLayerRef.current.addChild(container)
-      
-      // キャッシュに保存
       spriteMapRef.current[u.instanceId] = container
       statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
-
-      // 召喚アニメーション (Tween的な処理を簡易的にTickerで行う)
-      let summonAge = 0;
+      
+      // 召喚アニメ
+      container.scale.set(0);
+      let age = 0;
       const summonTicker = (delta: PIXI.Ticker) => {
-        summonAge += delta.deltaTime;
-        const progress = Math.min(1, summonAge / 10); // 10フレームで完了
-        
-        container.scale.set(0.5 + 0.5 * progress); // 0.5 -> 1.0
-        container.alpha = progress; // 0 -> 1
-
-        if (progress >= 1) {
-          app.ticker.remove(summonTicker);
-        }
+        age += delta.deltaTime;
+        const p = Math.min(1, age / 15);
+        container.scale.set(p);
+        if (p >= 1) app.ticker.remove(summonTicker);
       };
       app.ticker.add(summonTicker);
     })
-  }, [board]) // board が変わるたびに差分更新が走る
+  }, [board])
 
-  // ヒール演出 (logsを監視して、新しいhealログがあれば演出を出す)
+  // ログ演出（攻撃・ダメージ・ヒール）
+ // ログ演出（攻撃・ダメージ・ヒール）
   const processedLogsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -230,40 +217,107 @@ export default function BattleCanvas({ board, logs }: Props) {
     if (!app) return;
 
     logs.forEach((log) => {
-      // 一意なキーを作成
+      // 1. instanceId が無い場合はスキップ（型エラー防止）
+      if (!log.instanceId) return;
+
       const logKey = `${log.time}-${log.instanceId}-${log.action}-${(log as any).value}`;
-      if (processedLogsRef.current.has(logKey)) return; // 処理済みならスキップ
+      if (processedLogsRef.current.has(logKey)) return;
       processedLogsRef.current.add(logKey);
 
-      if ((log as any).action === "heal" && log.instanceId) {
-        const unit = spriteMapRef.current[log.instanceId];
-        if (!unit) return;
+      // 2. unit を安全に取得
+      const unit = spriteMapRef.current[log.instanceId];
+      if (!unit) return;
 
+      // --- A. 攻撃モーション ---
+      if (log.action === "attack") {
+        // プレイヤー側なら右(1)、敵側なら左(-1)へ踏み込む
+        const isPlayerSide = (log as any).isPlayer ?? true;
+        const dir = isPlayerSide ? 1 : -1; 
+        const pushAmount = 24 * dir; 
+
+        let age = 0;
+        const attackTicker = (delta: PIXI.Ticker) => {
+          age += delta.deltaTime;
+          if (age < 5) {
+            unit.x += (pushAmount / 5) * delta.deltaTime;
+          } else if (age < 15) {
+            unit.x -= (pushAmount / 10) * delta.deltaTime;
+          } else {
+            // 位置を完全にリセット
+            app.ticker.remove(attackTicker);
+          }
+        };
+        app.ticker.add(attackTicker);
+      }
+
+      // --- B. ダメージ演出 ---
+      if (log.action === "damage" || log.action === "self_damage") {
+        const value = (log as any).value || 0;
+
+        // ★ 追加: ダメージが 0 以下の場合は演出を表示しない
+        if (value <= 0) return;
+
+        const isSelf = log.action === "self_damage";
+        const dmgText = new PIXI.Text(`${Math.round(value)}`, {
+          fontSize: isSelf ? 18 : 26, 
+          fontWeight: '900' as any, 
+          fill: isSelf ? '#ffaa00' : '#ff4444',
+          stroke: { color: '#000000', width: 4 }
+        });
+        dmgText.anchor.set(0.5);
+        dmgText.x = unit.x + CELL_W / 2;
+        dmgText.y = unit.y + CELL_H / 2;
+        app.stage.addChild(dmgText);
+
+        const originalX = unit.x;
+        let age = 0;
+        const dmgTicker = (delta: PIXI.Ticker) => {
+          age += delta.deltaTime;
+          dmgText.y -= 1.2 * delta.deltaTime;
+          dmgText.alpha = 1 - (age / 35);
+          
+          // 被弾時のガタガタ震える演出
+          if (age < 12) {
+            unit.x = originalX + (Math.random() - 0.5) * 8;
+          } else if (age >= 12 && age < 14) {
+            unit.x = originalX;
+          }
+
+          if (age > 35) {
+            app.stage.removeChild(dmgText);
+            dmgText.destroy();
+            app.ticker.remove(dmgTicker);
+          }
+        };
+        app.ticker.add(dmgTicker);
+      }
+
+      // --- C. ヒール演出 ---
+      if (log.action === "heal") {
         const value = (log as any).value || 0;
         const text = new PIXI.Text(`+${Math.round(value)}`, {
-          fontSize: 20, fontWeight: '900' as any, fill: '#6bff8a', stroke: { color: '#004400', width: 4 }
-        })
-        text.anchor.set(0.5)
-        // ユニットの頭上に表示
-        text.x = unit.x + CELL_W / 2
-        text.y = unit.y - 10
-        app.stage.addChild(text)
+          fontSize: 22, fontWeight: '900' as any, fill: '#6bff8a', stroke: { color: '#004400', width: 4 }
+        });
+        text.anchor.set(0.5);
+        text.x = unit.x + CELL_W / 2;
+        text.y = unit.y - 12;
+        app.stage.addChild(text);
 
-        let age = 0
-        const ticker = (delta: PIXI.Ticker) => {
-          age += delta.deltaTime
-          text.y -= 1.5 // ふわっと浮き上がる
-          text.alpha = 1 - (age / 40) // 徐々に消える
-          if (age > 40) {
-            app.stage.removeChild(text)
-            text.destroy()
-            app.ticker.remove(ticker)
+        let age = 0;
+        const healTicker = (delta: PIXI.Ticker) => {
+          age += delta.deltaTime;
+          text.y -= 1.5;
+          text.alpha = 1 - (age / 45);
+          if (age > 45) {
+            app.stage.removeChild(text);
+            text.destroy();
+            app.ticker.remove(healTicker);
           }
-        }
-        app.ticker.add(ticker)
+        };
+        app.ticker.add(healTicker);
       }
     });
-  }, [logs]); // logs が更新されるたびにチェック
+  }, [logs]);
 
   return <div ref={containerRef} style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
 }

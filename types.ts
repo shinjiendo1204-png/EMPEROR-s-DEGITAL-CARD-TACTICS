@@ -518,6 +518,7 @@ export type BattleEvent =
 
 export type BattleLog = {
   action:
+  | "self_damage"
   | "move"
   | "attack"
   | "damage"
