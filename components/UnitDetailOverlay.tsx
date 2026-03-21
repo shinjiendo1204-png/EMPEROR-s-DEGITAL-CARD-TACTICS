@@ -157,31 +157,55 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
   /* =========================
      Unit 表示
   ========================= */
+  /* =========================
+     Unit 表示 (ハンド・アルバム・図鑑用)
+  ========================= */
   const renderUnit = (unit: Unit) => {
+    // 1. 各種変数の準備
+    const isHero = unit.mode === "hero" // ★ヒーロー判定
     const role = (unit as any).role
     const attackRange = unit.attackRange
     const baseATK = (unit as any).atk ?? 0
     const baseHP = (unit as any).hp ?? 0
     const variants: any = (unit as any).variants
 
-
+    // 攻撃速度 (AS) の取得
     const baseAS =
       role && ROLE_AS[role as keyof typeof ROLE_AS] !== undefined
         ? ROLE_AS[role as keyof typeof ROLE_AS]
         : null
 
-    const dps =
-      baseAS && baseAS > 0
-        ? baseATK / baseAS
-        : baseATK
-
     return (
       <>
+        {/* --- ヘッダー：名前とコストバッジ --- */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 19, fontWeight: 900 }}>{unit.name}</div> {/* ★フォントを少し大きく */}
-          <div style={{ fontSize: 12, opacity: 0.7, background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: 4 }}>Cost {unit.cost}</div>
+          <div style={{ 
+            fontSize: 19, 
+            fontWeight: 900,
+            color: isHero ? "#e8edf5" : "#fff", // ヒーローはプラチナ色
+            textShadow: isHero ? "0 0 10px rgba(232,237,245,0.3)" : "none"
+          }}>
+            {unit.name}
+          </div>
+
+          {/* 盤面(renderBattleUnit)と共通のデザイン */}
+          <div style={{ 
+            fontSize: 12, 
+            fontWeight: 800,
+            opacity: 1, 
+            background: isHero 
+              ? "linear-gradient(45deg, #2c3e50, #000)" 
+              : "rgba(255, 255, 255, 0.15)", 
+            color: isHero ? "#e8edf5" : "#fff",
+            padding: "2px 8px", 
+            borderRadius: 4,
+            border: isHero ? "1px solid rgba(232, 237, 245, 0.5)" : "1px solid rgba(255, 255, 255, 0.1)"
+          }}>
+            {isHero ? "✦ HERO" : `Cost ${unit.cost}`}
+          </div>
         </div>
 
+        {/* --- ステータス行 --- */}
         <div
           style={{
             display: "flex",
@@ -191,7 +215,7 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
             opacity: 0.9,
             marginTop: 8,
             paddingBottom: 8,
-            borderBottom: "1px solid rgba(255,255,255,0.08)" // ★区切り線
+            borderBottom: isHero ? "1px solid rgba(232,237,245,0.3)" : "1px solid rgba(255,255,255,0.08)"
           }}
         >
           {role && <div>{roleToText(role)}</div>}
@@ -201,66 +225,45 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
           {attackRange && <div>Range {attackRangeToText(attackRange)}</div>}
         </div>
 
+        {/* --- ユニットアビリティ --- */}
         <SectionTitle>Unit Ability</SectionTitle>
         <AbilityList abilities={(unit as any).abilities} />
 
-        {/* hand または album モードの時に表示 */}
+        {/* --- フォームチェンジ情報 (ハンドまたはアルバム時のみ) --- */}
         {(mode === "hand" || mode === "album") && (
           <>
-            {/* ★色を付けて区別しやすく */}
+            {/* 装備形態 */}
             <SectionTitle color="#4fd1ff">Equipment Form</SectionTitle> 
             {variants?.equipment ? (
-  <>
-    <div style={{ fontSize: 12, opacity: 0.8, fontWeight: "bold", marginBottom: 4 }}>
-      {variants.equipment.name}
-    </div>
+              <>
+                <div style={{ fontSize: 12, opacity: 0.8, fontWeight: "bold", marginBottom: 4 }}>
+                  {variants.equipment.name}
+                </div>
 
-    {/* ===== baseStats表示 ===== */}
-        {variants.equipment.baseStats && (
-          <div
-            style={{
-              display: "flex",
-              gap: 12,
-              fontSize: 12,
-              fontWeight: 700,
-              marginTop: 4,
-              marginBottom: 6,
-            }}
-          >
-            {variants.equipment.baseStats.atk && (
-              <div>
-                ATK{" "}
-                <span style={{ color: "#4ade80" }}>
-                  +{variants.equipment.baseStats.atk}
-                </span>
-              </div>
+                {/* 装備時の追加ステータス */}
+                {variants.equipment.baseStats && (
+                  <div style={{ display: "flex", gap: 12, fontSize: 12, fontWeight: 700, marginTop: 4, marginBottom: 6 }}>
+                    {variants.equipment.baseStats.atk && (
+                      <div>ATK <span style={{ color: "#4ade80" }}>+{variants.equipment.baseStats.atk}</span></div>
+                    )}
+                    {variants.equipment.baseStats.hp && (
+                      <div>HP <span style={{ color: "#4ade80" }}>+{variants.equipment.baseStats.hp}</span></div>
+                    )}
+                  </div>
+                )}
+
+                {/* 装備アビリティ */}
+                {(variants.equipment.abilities && variants.equipment.abilities.length > 0) ? (
+                  <AbilityList abilities={variants.equipment.abilities}/>
+                ) : (
+                  !variants.equipment.baseStats && <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
+                )}
+              </>
+            ) : (
+              <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
             )}
 
-            {variants.equipment.baseStats.hp && (
-              <div>
-                HP{" "}
-                <span style={{ color: "#4ade80" }}>
-                  +{variants.equipment.baseStats.hp}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ===== abilities ===== */}
-        {(variants.equipment.abilities &&
-          variants.equipment.abilities.length > 0) ? (
-          <AbilityList abilities={variants.equipment.abilities}/>
-        ) : (
-          !variants.equipment.baseStats && (
-            <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
-          )
-        )}
-      </>
-    ) : (
-      <div style={{ fontSize: 12, opacity: 0.55 }}>なし</div>
-    )}
-
+            {/* シナジー形態 */}
             <SectionTitle color="#4ade80">Synergy Form</SectionTitle>
             {variants?.synergy ? (
               <>
@@ -282,13 +285,8 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
    BattleUnit 表示 (盤面に出た時の表示)
 ========================= */
 const renderBattleUnit = (unit: BattleUnit) => {
-  // 1. 最終的なステータス（バフ込み）を計算
   const finalStats = calculateFinalStats(unit, 0)
-  
-  // 2. ヒーロー判定 (元のユニットデータに mode: "hero" があるか確認)
-  // BattleUnit生成時に mode が引き継がれている想定です
   const isHero = (unit as any).mode === "hero";
-  
   const baseAtk = unit.baseAtk
   const atkColor = finalStats.atk > baseAtk ? "#4ade80" : finalStats.atk < baseAtk ? "#f87171" : "#fff"
 
@@ -298,21 +296,24 @@ const renderBattleUnit = (unit: BattleUnit) => {
         <div style={{ 
           fontSize: 18, 
           fontWeight: 800,
-          color: isHero ? "#e8edf5" : "#fff" 
+          color: isHero ? "#e8edf5" : "#fff",
+          textShadow: isHero ? "0 0 10px rgba(232,237,245,0.3)" : "none"
         }}>
           {unit.unitName}
         </div>
         
-        {/* ★ 盤面でも Cost (または HERO) を表示させる */}
+        {/* ★ renderUnit と完全に同期 */}
         <div style={{ 
           fontSize: 12, 
           fontWeight: 800,
-          opacity: 0.9, 
-          background: isHero ? "linear-gradient(45deg, #2c3e50, #000)" : "rgba(255,255,255,0.1)", 
+          opacity: 1, 
+          background: isHero 
+            ? "linear-gradient(45deg, #2c3e50, #000)" 
+            : "rgba(255, 255, 255, 0.15)", 
           color: isHero ? "#e8edf5" : "#fff",
           padding: "2px 8px", 
           borderRadius: 4,
-          border: isHero ? "1px solid #e8edf5" : "none"
+          border: isHero ? "1px solid rgba(232, 237, 245, 0.5)" : "1px solid rgba(255, 255, 255, 0.1)"
         }}>
           {isHero ? "✦ HERO" : `Cost ${unit.cost ?? 0}`}
         </div>
