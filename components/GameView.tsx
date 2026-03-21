@@ -3,6 +3,7 @@ import BattleCanvas from "@/components/pixi/BattleCanvas"
 import { buildDamageStats } from "@/lib/battle/buildDamageStats"
 import { useEffect, useRef, useState } from "react"
 import { CounterPanel } from "@/components/CounterPanel"
+import{ CardListOverlay } from "@/components/CardListOverlay"
 import {
   startTurn,
   placeUnit,
@@ -13,9 +14,8 @@ import {
   equipUnitWithCost,
   createGame,
   rerollHand,
-  createBattleBoard
 } from "@/lib/game"
-import { PlayerState, BattleLog, PackId, Unit, PreBattleState, GameState, BattleUnit} from "@/types"
+import { PlayerState, BattleLog, PackId, Unit, PreBattleState, GameState, BattleUnit,} from "@/types"
 import { Hand } from "@/components/Hand"
 import { Board } from "@/components/Board"
 import { DragItem } from "@/types/drag"
@@ -95,6 +95,7 @@ export default function GameView() {
   const [battleLogs, setBattleLogs] = useState<BattleLog[]>([])
   const battleTimerRef = useRef<number | null>(null)
   const logRef = useRef<HTMLDivElement | null>(null)
+const [viewingPackId, setViewingPackId] = useState<PackId | null>(null);
 
   useEffect(() => {
   if (!logRef.current) return
@@ -476,7 +477,9 @@ function handleBattleStart() {
 
     batch.forEach((next) => {
       console.log("Log Action:", next.action);
-      const logId = `${next.time}-${next.instanceId}-${next.action}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`
+      const fromStr = (next as any).from ? `${(next as any).from.r}${(next as any).from.c}` : "";
+const toStr = (next as any).to ? `${(next as any).to.r}${(next as any).to.c}` : "";
+const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`;
       if (processedIds.current.has(logId)) return
       processedIds.current.add(logId)
 
@@ -515,15 +518,28 @@ function handleBattleStart() {
           const unit = { ...prev[unitIndex] }
           const b = [...prev]
 
-          // 1. 【移動】
+          // 526行目付近：移動ログの処理
           if (next.action === "move" && (next as any).from && (next as any).to) {
-            const from = (next as any).from
-            const to = (next as any).to
-            unit.prevPos = { r: from.r ?? 0, c: from.c ?? 0 }
-            unit.pos = { r: to.r ?? 0, c: to.c ?? 0 }
-            ;(unit as any).lastMoveTime = next.time
-          }
+            const from = (next as any).from;
+            const to = (next as any).to;
 
+            // unit.pos が undefined の場合に備えてデフォルト値を設定
+            const currentPos = unit.pos ?? { r: 0, c: 0 };
+
+            // 🚩 前回の座標を「現在の座標」から安全にコピー
+            unit.prevPos = { 
+              r: from.r ?? currentPos.r, 
+              c: from.c ?? currentPos.c 
+            };
+
+            // 🚩 新しい座標をセット
+            unit.pos = { 
+              r: to.r ?? 0, 
+              c: to.c ?? 0 
+            };
+
+            (unit as any).lastMoveTime = next.time;
+          }
           // 2. 【バフ・ステータス更新】
           if ((next as any).action === "mod_stat" || (next as any).action === "add_state") {
             const stat = (next as any).stat
@@ -621,20 +637,46 @@ if (next.action === "summon") {
     }})
   }, 300)
 }
-  /* =========================
+/* =========================
    パック選択フェーズ
 ========================= */
+
 if (preBattle.phase === "packSelect" || preBattle.phase === "p2Selecting") {
   return (
-    <PackSelectScreen
-      selectedPack={preBattle.p1Pack}
-      enemyPack={preBattle.p2Pack}
-      disabledPacks={preBattle.p1Pack ? [preBattle.p1Pack] : []}
-      onSelect={selectP1Pack}
-    />
+    <>
+      <PackSelectScreen
+        selectedPack={preBattle.p1Pack}
+        enemyPack={preBattle.p2Pack}
+        disabledPacks={preBattle.p1Pack ? [preBattle.p1Pack] : []}
+        onSelect={selectP1Pack}
+        onViewCardList={(id) => setViewingPackId(id)}
+      />
+
+      {viewingPackId && (
+        <CardListOverlay
+          packId={viewingPackId}
+          onClose={() => setViewingPackId(null)}
+          onRightClickUnit={(unit, x, y) => {
+            setDetailOverlay({
+              target: { kind: "unit", unit },
+              mode: "album" as any, 
+              x,
+              y
+            });
+          }}
+        />
+      )}
+
+      {/* ★ ここを追加：詳細画面コンポーネントをここに置く */}
+      {detailOverlay && (
+        <UnitDetailOverlay
+          {...detailOverlay}
+          onClose={() => setDetailOverlay(null)}
+        />
+      )}
+    </>
   )
 }
-
 /* =========================
    フュージョン演出
 ========================= */

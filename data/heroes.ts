@@ -1,5 +1,5 @@
 import type { Unit } from "@/types"
-import { setDefaultAutoSelectFamilyAttemptTimeout } from "net"
+
 
 export const HERO_UNITS: Unit[] = [
   {
@@ -557,7 +557,7 @@ synergy: {
 
     {
       id: "shuran_ability4",
-      trigger: "battleStart",
+      trigger: "onAttack",
       condition: {
         type: "counter",
         key: "selfDamage",
@@ -659,8 +659,8 @@ synergy: {
   pack: "Varkesh",
   cost: 0,
 
-  hp: 18,
-  atk: 8,
+  hp: 16,
+  atk: 6,
   attackRange: 3,
   role: "skirmisher",
 

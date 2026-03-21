@@ -1,0 +1,71 @@
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 90%;
+  max-width: 900px;
+  height: 80vh;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 20px 30px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 10px;
+  color: #d8b15a;
+  letter-spacing: 2px;
+}
+
+.packName {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 4px 0 0 0;
+  
+  /* ★ ここを追加 ★ */
+  color: #ffffff; 
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* 影をつけるとさらに読みやすくなります */
+}
+
+.grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 30px;
+  justify-items: center;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.closeBtn:hover {
+  opacity: 1;
+}
+

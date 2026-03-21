@@ -4,6 +4,8 @@ export type UnitMode = "unit" | "equipment" | "synergy" | "hero"
 
 export type Row = "front" | "back"
 
+export type DetailMode = "hand" | "board" | "equipment" | "synergy" | "album" // ← "album" を追加
+
 export type BattleSide = "p1" | "p2"
 
  export type GameState = {
