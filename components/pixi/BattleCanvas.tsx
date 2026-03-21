@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import * as PIXI from "pixi.js"
 import { BattleUnit, BattleLog } from "@/types"
 import { BATTLE_COLS } from "@/lib/battle/boardsize"
+import { calculateFinalStats } from "@/lib/battle/statCalculator"
 
 type Props = {
   board: BattleUnit[]
@@ -99,8 +100,8 @@ export default function BattleCanvas({ board, logs }: Props) {
     const CURRENT_GAP_Y = 6;
 
     const currentIds = new Set(board.map(u => u.instanceId));
+    const currentBattleTime = logs.length > 0 ? logs[logs.length - 1].time : 0;
 
-    // 消去: Stateにいないスプライトを物理的に削除
     Object.keys(spriteMapRef.current).forEach(id => {
       if (!currentIds.has(id)) {
         const container = spriteMapRef.current[id];
@@ -115,32 +116,48 @@ export default function BattleCanvas({ board, logs }: Props) {
     });
 
     board.forEach(async (u) => {
+      // 1. 描画前に必ず最終ステータスを計算
+      const finalStats = calculateFinalStats(u, currentBattleTime);
+      
       const pos = u.pos ?? { r: 0, c: 0 }
       const tPos = {
         x: originX + (pos.c * (CELL_W + GAP_X)) + (pos.r % 2 === 1 ? OFFSET_X : 0),
         y: originY + (pos.r * (CELL_H + CURRENT_GAP_Y)) 
       }
 
-      targetPositionsRef.current[u.instanceId] = tPos;
-
-      // 更新
+      // 既存スプライトがある場合
       if (spriteMapRef.current[u.instanceId]) {
+        const container = spriteMapRef.current[u.instanceId] as any;
         const texts = statsTextMapRef.current[u.instanceId];
+        
+        // ターゲット位置を更新
+        targetPositionsRef.current[u.instanceId] = tPos;
+
         if (texts) {
-          texts.atkText.text = `${Math.round(u.atk)}`;
-          texts.hpText.text = `${Math.round(u.hp)}`;
-          texts.atkText.style.fill = u.atk > (u.baseAtk ?? 0) ? "#6bff8a" : "#ffffff";
+          const displayAtk = Math.round(finalStats.atk);
+          const displayHp = Math.round(u.hp);
+
+          if (texts.atkText.text !== `${displayAtk}`) {
+            texts.atkText.text = `${displayAtk}`;
+            texts.atkText.scale.set(1.5);
+            setTimeout(() => { if (texts.atkText) texts.atkText.scale.set(1); }, 100);
+          }
+          texts.hpText.text = `${displayHp}`;
+
+          const baseAtk = u.baseAtk ?? 0;
+          texts.atkText.style.fill = displayAtk > baseAtk ? "#6bff8a" : (displayAtk < baseAtk ? "#ff6b6b" : "#ffffff");
         }
         return; 
       }
 
-      // --- 新規作成 ---
+      // --- 新規作成時 ---
       const container = new PIXI.Container() as any;
       container.instanceId = u.instanceId;
       container.logicX = tPos.x;
       container.logicY = tPos.y;
       container.x = tPos.x;
       container.y = tPos.y;
+      targetPositionsRef.current[u.instanceId] = tPos;
 
       // ユニットビジュアル (画像)
       const unitVisual = new PIXI.Container()
@@ -179,10 +196,12 @@ export default function BattleCanvas({ board, logs }: Props) {
       const statsBg = new PIXI.Graphics().beginFill(0x2d2620, 0.85).drawRoundedRect(0, 0, STATS_BG_W, 16, 8).endFill()
       const style = { fontSize: 11, fontWeight: '900' as any, fill: '#ffffff' }
       
-      const atkText = new PIXI.Text(`${Math.round(u.atk)}`, style)
+      const atkText = new PIXI.Text(`${Math.round(finalStats.atk)}`, style)
       const slashText = new PIXI.Text("/", { ...style, fill: '#aaa', fontSize: 9 })
       const hpText = new PIXI.Text(`${Math.round(u.hp)}`, style)
-
+      
+      if (Math.round(finalStats.atk) > (u.baseAtk ?? 0)) atkText.style.fill = "#6bff8a";
+      
       atkText.anchor.set(1, 0.5);   atkText.position.set(22, 8)
       slashText.anchor.set(0.5, 0.5); slashText.position.set(26, 8)
       hpText.anchor.set(0, 0.5);    hpText.position.set(30, 8)

@@ -541,31 +541,52 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
             (unit as any).lastMoveTime = next.time;
           }
           // 2. 【バフ・ステータス更新】
+          // 🚩 【バフ・ステータス更新】累積（加算）に対応させる
           if ((next as any).action === "mod_stat" || (next as any).action === "add_state") {
-            const stat = (next as any).stat
-            const value = (next as any).value
+            const stat = (next as any).stat;
+            const value = (next as any).value;
             const map: Record<string, string> = {
-              atk: "atk", hp: "hp", maxHp: "hp",
-              attackSpeed: "as_stack", damageReduce: "damage_reduce"
-            }
-            const stateType = map[stat] || (next as any).stateType
+              atk: "atk", 
+              hp: "hp", 
+              maxHp: "hp",
+              attackSpeed: "as_stack", 
+              damageReduce: "damage_reduce"
+            };
+            const stateType = map[stat] || (next as any).stateType;
             
             if (stateType && typeof value === "number") {
-              unit.states = unit.states ? [...unit.states] : []
-              const idx = unit.states.findIndex(s => s.type === stateType)
-              if (idx !== -1) {
-                unit.states[idx] = { ...unit.states[idx], value }
+              unit.states = unit.states ? [...unit.states] : [];
+
+              // --- ここが修正ポイント！ ---
+              // 同じ種別のバフを探す
+              const existingIndex = unit.states.findIndex(s => s.type === stateType);
+
+              if (existingIndex !== -1) {
+                // ❌ 上書きではなく ✅ 加算する
+                // 元の value に今回の value を足す（累積）
+                unit.states[existingIndex] = { 
+                  ...unit.states[existingIndex], 
+                  value: (unit.states[existingIndex].value ?? 0) + value 
+                };
               } else {
-                unit.states.push({ id: crypto.randomUUID(), type: stateType, value, stacks: 1 })
+                // 新規バフとして追加
+                unit.states.push({ 
+                  id: crypto.randomUUID(), 
+                  type: stateType, 
+                  value: value, 
+                  stacks: 1 
+                });
               }
             }
-            // 🚩 数値を再計算して unit に反映
-            const final = calculateFinalStats(unit, next.time)
-            unit.atk = final.atk
-            unit.maxHp = final.maxHp
-            if (stat === "hp") unit.hp = value 
+            
+            // 🚩 数値を再計算して unit に反映（calculateFinalStats が累積された states を計算してくれる）
+            const final = calculateFinalStats(unit, next.time);
+            unit.atk = final.atk;
+            unit.maxHp = final.maxHp;
+            
+            // HPそのものの直接変更（回復など）の場合のみ、現在のHPを更新
+            if (stat === "hp" && value > 0) unit.hp = value; 
           }
-
           // 3. 【ダメージ反映】
           if (next.action === "attack" || next.action === "damage") {
             const dmg = (next as any).damage ?? (next as any).value
