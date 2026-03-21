@@ -28,6 +28,7 @@ export function Card({
         ${styles[`pack${unit.pack}`]}
         ${styles[`cost${unit.cost}`]}
         ${selected ? styles.selected : ""}
+        ${isHero ? styles.hero : ""}
       `}
       onClick={onClick}
       draggable

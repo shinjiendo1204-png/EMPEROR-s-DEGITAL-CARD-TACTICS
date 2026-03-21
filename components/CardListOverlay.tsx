@@ -1,7 +1,7 @@
 import React from "react";
 import { PackId, Unit } from "@/types";
 import { PACK_UNITS } from "@/data/packs";
-import { HERO_UNITS } from "@/data/heroes"; // ★ ヒーローデータのインポートを追加
+import { HERO_UNITS } from "@/data/heroes"; 
 import { Card } from "./Card";
 import styles from "./CardListOverlay.module.css";
 

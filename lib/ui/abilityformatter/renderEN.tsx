@@ -338,45 +338,60 @@ export function renderAbilitiesENFromRaw(
 ========================================================= */
 
 function buildHeader(s: SemanticAbility): string {
-  const trig = triggerShort(s.trigger)
+  // 1. 各パーツの文字列を取得
+  // ★ triggerShort に第2引数として s を渡すことで auraTick の秒数を正しく取得させる
+  const trig = triggerShort(s.trigger, s)
   const cond = conditionShort(s.condition)
   const delay = delayShort((s as any).delay)
   const tick = tickShort((s as any).tick)
-
   const once = (s as any).once ? " (once per battle)" : ""
 
+  // 特殊ケース: 鍛造（Forge）関連
   if (cond.includes("after forging")) {
-  return `On equip ${cond}`
-}
-
-  if (s.trigger === "onDeath") {
-  if (cond.startsWith("when an allied")) {
-    return capitalize(cond) + once
+    return `On equip ${cond}`
   }
-  if (cond === "When an ally dies") return `When an ally dies${once}`
-  if (cond === "When an enemy dies") return `When an enemy dies${once}`
-  return `On death${once}`
-}
+
+  // 特殊ケース: 死亡（onDeath）関連
+  if (s.trigger === "onDeath") {
+    if (cond.startsWith("when an allied")) return capitalize(cond) + once
+    if (cond === "When an ally dies") return `When an ally dies${once}`
+    if (cond === "When an enemy dies") return `When an enemy dies${once}`
+    return `On death${once}`
+  }
 
   const parts: string[] = []
 
-  if (delay) {
-    parts.push(delay)
-  } else if (tick) {
+  // 2. 表示優先順位に従ってパーツを組み立てる
+  
+  // A. 遅延（After 5s 等）
+  if (delay) parts.push(delay)
+
+  // B. 周期（Every 1s 等）
+  // ★ else if ではなく独立させることで delay との両立を可能にする
+  if (tick) {
     parts.push(tick)
   }
 
-  if (trig && !delay && s.trigger !== "auraTick") {
+  // C. トリガー（On attack 等）
+  // ★ auraTick の場合は tick (Every Xs) がすでに情報を担っているため重複を避ける
+  if (trig && s.trigger !== "auraTick") {
+    // すでに delay がある場合は "On attack after 5s" のように繋がる
     parts.push(trig)
   }
 
+  // D. 条件（if HP is below 50% 等）
   if (cond) parts.push(cond)
 
-  const base = parts.join(" ")
+  // 3. 結合して整形
+  const base = parts.filter(Boolean).join(" ")
+
+  // fallback: もし何も文字が作れなかった場合
+  if (!base) {
+    return s.trigger === "auraTick" ? "Periodically" : (trig || "Effect")
+  }
 
   return base + once
 }
-
 function delayShort(d?: any): string {
   if (!d) return ""
   if (d.type === "time" && typeof d.value === "number") {

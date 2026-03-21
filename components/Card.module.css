@@ -211,12 +211,72 @@
     0 14px 22px rgba(0,0,0,0.72);
 }
 
+/* Card.module.css */
+
+/* --- 既存の .hero や .hero .artWrapper はそのまま --- */
+
+/* ★ イラスト枠（六角形）のボーダーを消し、同化させる調整 */
 .hero .artWrapper::before {
-  border: 3px solid rgba(255,255,255,0.28);
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* イラストの上に重ねる */
+  pointer-events: none;
+
+  /* ★ ボーダー（線）を完全に削除 */
+  border: none !important;
+
+  /* ★ 代わりに、内側への強い影（インセットシャドウ）を追加 */
+  /* これにより、イラストの縁が暗くなり、背景に溶け込みます */
   box-shadow:
-    inset 0 2px 5px rgba(255,255,255,0.28),
-    inset 0 -4px 8px rgba(0,0,0,0.65),
-    0 0 14px rgba(255,255,255,0.14);
+    inset 0 10px 20px rgba(0, 0, 0, 0.8),  /* 上部からの強い影 */
+    inset 0 -10px 20px rgba(0, 0, 0, 0.8), /* 下部からの強い影 */
+    inset 10px 0 15px rgba(0, 0, 0, 0.5),  /* 左からの影 */
+    inset -10px 0 15px rgba(0, 0, 0, 0.5); /* 右からの影 */
+}
+
+/* ★ 念のため、artWrapper 自体の clip-path 周りの影も調整 */
+/* Card.module.css */
+
+/* --- 既存の .hero や .hero .artWrapper はそのまま --- */
+
+/* ★ イラスト枠（六角形）のボーダーを消し、同化させる調整 */
+.hero .artWrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* イラストの上に重ねる */
+  pointer-events: none;
+
+  /* ★ ボーダー（線）を完全に削除 */
+  border: none !important;
+
+  /* ★ 代わりに、内側への強い影（インセットシャドウ）を追加 */
+  /* これにより、イラストの縁が暗くなり、背景に溶け込みます */
+  box-shadow:
+    inset 0 10px 20px rgba(0, 0, 0, 0.8),  /* 上部からの強い影 */
+    inset 0 -10px 20px rgba(0, 0, 0, 0.8), /* 下部からの強い影 */
+    inset 10px 0 15px rgba(0, 0, 0, 0.5),  /* 左からの影 */
+    inset -10px 0 15px rgba(0, 0, 0, 0.5); /* 右からの影 */
+}
+
+/* ★ 念のため、artWrapper 自体の clip-path 周りの影も調整 */
+.hero .artWrapper {
+  position: relative;
+  /* 既存の clip-path はそのまま */
+  clip-path: polygon(
+    25% 0%, 75% 0%,
+    100% 50%, 75% 100%,
+    25% 100%, 0% 50%
+  );
+  
+  /* 外側の青白い光（Glow）を消し、背景に沈める */
+  box-shadow: none !important;
+}
+
+/* ★ イラスト自体を少し暗くして、より背景に馴染ませる（任意） */
+.hero .artWrapper img {
+  filter: brightness(0.9) contrast(1.1); /* 少し暗く、コントラストを強く */
 }
 
 .artWrapper img {
@@ -297,24 +357,79 @@
 ========================= */
 
 .hero {
-  border-color: #e8edf5;
-  box-shadow:
-    0 0 0 3px rgba(232,237,245,0.3),
-    0 14px 22px rgba(0,0,0,0.7);
-}.atkBox {
-  width: 38px;
-  height: 38px;
+  /* 背景をプラチナ・シルバー系のグラデーションに */
+  --card-color: linear-gradient(
+    180deg,
+    #2c3e50 0%,
+    #1a2530 45%,
+    #0d1318 100%
+  ) !important;
 
+  /* 提示された枠線と光の演出 */
+  border: 2px solid #e8edf5 !important;
+  box-shadow:
+    0 0 0 3px rgba(232, 237, 245, 0.3), /* 外側の細い光 */
+    0 14px 22px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ヒーローのイラスト枠に特別なエフェクトを追加 */
+.hero .artWrapper {
+  position: relative;
+}
+
+.hero .artWrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* 提示されたイラスト枠の装飾 */
+  border: 3px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 2px 5px rgba(255, 255, 255, 0.28),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.65),
+    0 0 14px rgba(255, 255, 255, 0.14);
+}
+
+/* ヒーロー用の特別なメダル（✦） */
+.heroBadge {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #e8edf5, #b0bbc9);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  border: 2px solid #fff;
+  z-index: 10;
+}
+/* =========================
+   STATS (ATK / HP BOX)
+========================= */
 
+.atkBox {
+  position: absolute;
+  bottom: -10px;
+  left: -10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
   font-weight: 900;
   color: white;
+  z-index: 5;
 
-  background: linear-gradient(145deg,#3a6ed8,#1f3f8f);
-
+  /* 攻撃力ボックス：六角形 */
+  background: linear-gradient(145deg, #3a6ed8, #1f3f8f);
   clip-path: polygon(
     50% 0%,
     90% 25%,
@@ -323,51 +438,38 @@
     10% 75%,
     10% 25%
   );
-
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.6),
-    0 4px 8px rgba(0,0,0,0.7);
-
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,0.2);
-}
-
-.hpBox {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 18px;
-  font-weight: 900;
-  color: white;
-
-  background: linear-gradient(145deg,#c0392b,#7a1f17);
-
-  border-radius: 50%;
-
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.6),
-    0 4px 8px rgba(0,0,0,0.7);
-
-  box-shadow:
-    0 4px 10px rgba(0,0,0,0.6),
-    inset 0 2px 4px rgba(255,255,255,0.2);
-}
-.atkBox {
-  position: absolute;
-  bottom: -10px;
-  left: -10px;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.6);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);
 }
 
 .hpBox {
   position: absolute;
   bottom: -10px;
   right: -10px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+  z-index: 5;
+
+  /* HPボックス：円形 */
+  background: linear-gradient(145deg, #c0392b, #7a1f17);
+  border-radius: 50%;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.6);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
 }
 
+/* ヒーローカードの時は、さらに高級感を出すために枠線を白っぽくする調整 */
+.hero .atkBox {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.hero .hpBox {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
 /* =========================
    PACK COLORS
 ========================= */

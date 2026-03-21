@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useLayoutEffect } from "react" // ★ useLayoutEffect を追加
 import { Unit, Ability, BattleUnit, PlayerState } from "@/types"
-import { resolveFinalStats } from "@/lib/ui/resolveFinalStats"
 import { ROLE_AS } from "@/lib/battle/constants"
 import { calculateFinalStats } from "@/lib/battle/statCalculator"
 import { BattleState } from "@/lib/battle/state"
@@ -280,30 +279,70 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
   }
 
   /* =========================
-     BattleUnit 表示 (変更なし)
-  ========================= */
-  const renderBattleUnit = (unit: BattleUnit) => {
-    const finalStats = calculateFinalStats(unit, 0)
-    const dps = finalStats.attackSpeed > 0 ? finalStats.atk / finalStats.attackSpeed : finalStats.atk
-    const baseAtk = unit.baseAtk
-    const side = unit.side
-    const atkColor = finalStats.atk > baseAtk ? "#4ade80" : finalStats.atk < baseAtk ? "#f87171" : "#fff"
-    return (
-      <>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ fontSize: 18, fontWeight: 800 }}>{unit.unitName}</div>
+   BattleUnit 表示 (盤面に出た時の表示)
+========================= */
+const renderBattleUnit = (unit: BattleUnit) => {
+  // 1. 最終的なステータス（バフ込み）を計算
+  const finalStats = calculateFinalStats(unit, 0)
+  
+  // 2. ヒーロー判定 (元のユニットデータに mode: "hero" があるか確認)
+  // BattleUnit生成時に mode が引き継がれている想定です
+  const isHero = (unit as any).mode === "hero";
+  
+  const baseAtk = unit.baseAtk
+  const atkColor = finalStats.atk > baseAtk ? "#4ade80" : finalStats.atk < baseAtk ? "#f87171" : "#fff"
+
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ 
+          fontSize: 18, 
+          fontWeight: 800,
+          color: isHero ? "#e8edf5" : "#fff" 
+        }}>
+          {unit.unitName}
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 12px", fontSize: 12, opacity: 0.9, marginTop: 8 }}>
-          <div>{roleToText(unit.role)}</div>
-          <div>ATK <span style={{ color: atkColor }}>{finalStats.atk}</span></div>
-          <div>HP {unit.maxHp}</div>
-          <div>Range {attackRangeToText(unit.attackRange)}</div>
+        
+        {/* ★ 盤面でも Cost (または HERO) を表示させる */}
+        <div style={{ 
+          fontSize: 12, 
+          fontWeight: 800,
+          opacity: 0.9, 
+          background: isHero ? "linear-gradient(45deg, #2c3e50, #000)" : "rgba(255,255,255,0.1)", 
+          color: isHero ? "#e8edf5" : "#fff",
+          padding: "2px 8px", 
+          borderRadius: 4,
+          border: isHero ? "1px solid #e8edf5" : "none"
+        }}>
+          {isHero ? "✦ HERO" : `Cost ${unit.cost ?? 0}`}
         </div>
-        <SectionTitle>Ability</SectionTitle>
-        <AbilityList abilities={unit.abilities}/>
-      </>
-    )
-  }
+      </div>
+
+      <div style={{ 
+        display: "flex", 
+        flexWrap: "wrap", 
+        gap: "6px 12px", 
+        fontSize: 12, 
+        opacity: 0.9, 
+        marginTop: 8,
+        paddingBottom: 8,
+        borderBottom: "1px solid rgba(255,255,255,0.08)"
+      }}>
+        <div>{roleToText(unit.role)}</div>
+        <div>HP {unit.hp} / {unit.maxHp}</div>
+        <div>ATK <span style={{ color: atkColor }}>{finalStats.atk}</span></div>
+        
+        {/* ★ 消えていた AS (Attack Speed) を追加 */}
+        <div>AS <span style={{ color: "#fff" }}>{finalStats.attackSpeed.toFixed(2)}</span></div>
+        
+        <div>Range {attackRangeToText(unit.attackRange)}</div>
+      </div>
+
+      <SectionTitle>Ability</SectionTitle>
+      <AbilityList abilities={unit.abilities}/>
+    </>
+  )
+}
 
   const renderSynergy = (s: SynergyLike) => (
     <>

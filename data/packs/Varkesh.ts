@@ -1575,7 +1575,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     },    
     {
       trigger: "auraTick",
-      tick: { type: "everySeconds", seconds: 3 },
+      tick: { type: "everySeconds", seconds: 5 },
       effects: [
         {
           type: "DAMAGE_FROM_COUNTER",
