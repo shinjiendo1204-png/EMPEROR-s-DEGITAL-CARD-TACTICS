@@ -384,8 +384,12 @@ function handleBattleStart() {
     finalizedBoard.forEach(u => {
       if (u) {
         const final = calculateFinalStats(u, 0)
-        u.atk = final.atk
-        u.maxHp = final.maxHp
+        // ✅ 修正: ?? を使って undefined の場合に base 値を代入するようにする
+      u.atk = final.atk ?? u.baseAtk ?? 0
+      u.maxHp = final.maxHp ?? u.baseMaxHp ?? 0
+      
+      // 初期状態なので hp も maxHp に合わせておく
+      u.hp = u.maxHp
       }
     })
     setBattleBoard(finalizedBoard.filter((u): u is BattleUnit => u !== null))
@@ -404,9 +408,9 @@ function handleBattleStart() {
 
   setBattleLogs([])
   const sourceLogs = p1.lastBattleLogs ?? []
-  let i = 0
   if (sourceLogs.length === 0) return
 
+  let i = 0
   // 9. ダメージ適用処理
   function applyBattleDamage() {
     const baseTurn = p1.turn
@@ -426,19 +430,27 @@ function handleBattleStart() {
 
   // 10. 次のターン（配置フェーズ）への移行
   function handleNextTurn() {
-    const ng = structuredClone(g)
-    const restoreUnitAfterBattle = (board: (BattleUnit | null)[]) => {
-      board.forEach(u => {
-        if (!u) return
-        // 配置フェーズ用の永続ステータスで再計算
-        const permanentStats = calculateFinalStats(u, 0)
-        u.maxHp = permanentStats.maxHp
-        u.hp = u.maxHp
-        u.atk = permanentStats.atk
-      })
-    }
-    restoreUnitAfterBattle(ng.p1.board)
-    restoreUnitAfterBattle(ng.p2.board)
+  const ng = structuredClone(g)
+  
+  const restoreUnitAfterBattle = (board: (BattleUnit | null)[]) => {
+    board.forEach(u => {
+      if (!u) return
+      
+      // 配置フェーズ用の永続ステータスで再計算
+      const permanentStats = calculateFinalStats(u, 0)
+      
+      // ✅ 修正: すべてに対してデフォルト値を設定
+      u.maxHp = permanentStats.maxHp ?? u.baseMaxHp ?? 0
+      
+      // 🚩 エラー箇所: u.hp = u.maxHp (u.maxHp が undefined の可能性を排除済み)
+      u.hp = u.maxHp 
+      
+      u.atk = permanentStats.atk ?? u.baseAtk ?? 0
+    })
+  }
+  
+  restoreUnitAfterBattle(ng.p1.board)
+  restoreUnitAfterBattle(ng.p2.board)
 
     startTurn(ng, ng.p1)
     startTurn(ng, ng.p2)
@@ -579,10 +591,30 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
               }
             }
             
-            // 🚩 数値を再計算して unit に反映（calculateFinalStats が累積された states を計算してくれる）
+            // --- 修正後のステータス更新処理 ---
             const final = calculateFinalStats(unit, next.time);
-            unit.atk = final.atk;
-            unit.maxHp = final.maxHp;
+
+            // 🚩 型安全に値を取得 (undefined の場合は base 値や 0 に逃がす)
+            const prevMax = unit.maxHp ?? unit.baseMaxHp ?? 0;
+            const nextMax = final.maxHp ?? unit.baseMaxHp ?? 0;
+
+            // ① 最大HPが増えたなら、現在HPもその分だけ「底上げ」する
+            if (nextMax > prevMax) {
+              const diff = nextMax - prevMax;
+              unit.hp = (unit.hp ?? 0) + diff; 
+              console.log(`[VIEW_HP_SYNC] ${unit.unitName}: HP Increased +${diff}`);
+            }
+
+            // ② ステータスを最新状態に上書き
+            unit.atk = final.atk ?? unit.baseAtk ?? 0;
+            unit.maxHp = nextMax;
+            unit.attackSpeed = final.attackSpeed ?? unit.baseAttackSpeed ?? 1;
+
+            // ③ 安全装置（最大HPが減った時に現在HPがハミ出さないようにする）
+            if (unit.hp > unit.maxHp) {
+              unit.hp = unit.maxHp;
+            }
+// ----------------
             
             // HPそのものの直接変更（回復など）の場合のみ、現在のHPを更新
             if (stat === "hp" && value > 0) unit.hp = value; 

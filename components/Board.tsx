@@ -384,8 +384,8 @@ export function Board({
   const DEFAULT = "#ffffff";
 
   const atkColor = stats.atk > unit.baseAtk ? BUFF : stats.atk < unit.baseAtk ? DEBUFF : DEFAULT;
-  const hpColor = stats.maxHp > unit.baseMaxHp ? BUFF : stats.maxHp < unit.baseMaxHp ? DEBUFF : DEFAULT;
-
+  const currentMax = stats.maxHp ?? unit.baseMaxHp;
+const hpColor = currentMax > unit.baseMaxHp ? BUFF : currentMax < unit.baseMaxHp ? DEBUFF : DEFAULT;
   return (
     <div
       style={{

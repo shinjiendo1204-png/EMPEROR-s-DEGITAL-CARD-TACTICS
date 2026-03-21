@@ -46,7 +46,7 @@ export function attackOnce(
 
   if (!ignoreDR) {
     damage *= getDamageTakenMultiplier(target, now)
-    damage -= targetStats.damageReduce
+    damage -= (targetStats.damageReduce ?? 0)
   }
 
   /* =========================

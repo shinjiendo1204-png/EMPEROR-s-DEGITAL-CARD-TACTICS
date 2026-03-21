@@ -658,9 +658,11 @@ function applyAbilityEffect(
     /* =========================
        通常ステータス変更（state化）
     ========================= */
+    /* =========================
+       通常ステータス変更（state化）
+    ========================= */
     case "MOD_STAT": {
       const v = effect.value
-
       const expiresAt =
         effect.duration?.type === "time"
           ? context.now + effect.duration.value
@@ -670,16 +672,11 @@ function applyAbilityEffect(
         stat: typeof effect.stat
       ): BattleStateEffect["type"] | null => {
         switch (stat) {
-          case "atk":
-            return "atk"
-          case "hp":
-            return "hp"
-          case "attackSpeed":
-            return "as_stack"
-          case "damageReduce":
-            return "damage_reduce"
-          default:
-            return null
+          case "atk": return "atk"
+          case "hp": return "hp"
+          case "attackSpeed": return "as_stack"
+          case "damageReduce": return "damage_reduce"
+          default: return null
         }
       }
 
@@ -701,8 +698,6 @@ function applyAbilityEffect(
         time: context.now,
         side: target.side,
       })
-   
-
       break
     }
 

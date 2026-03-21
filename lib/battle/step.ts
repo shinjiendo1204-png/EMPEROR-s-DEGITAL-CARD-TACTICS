@@ -14,10 +14,37 @@ import { calculateFinalStats } from "./statCalculator"
    Utility
 ========================= */
 function getAliveUnits(units: (BattleUnit | null)[]) {
-
   return units.filter((u): u is BattleUnit => {
     return u !== null && u !== undefined && u.hp > 0;
   });
+}
+
+// src/lib/battle/step.ts
+
+function updateUnitFinalStats(unit: BattleUnit, now: number) {
+  const final = calculateFinalStats(unit, now);
+  const nextMax = final.maxHp ?? unit.baseMaxHp ?? 0;
+
+  // 1. 最大HPが増えるなら、現在HPもその差分だけ必ず増やす
+  // 以前の値を `unit.maxHp` から直接取るのではなく、
+  // 計算機が適用される前の「生の値」と比較するのがコツです。
+  const currentMax = unit.maxHp ?? unit.baseMaxHp ?? 0;
+
+  if (nextMax > currentMax) {
+    const bonus = nextMax - currentMax;
+    unit.hp += bonus; 
+   
+  }
+
+  // 2. 基本ステータスの同期
+  unit.maxHp = nextMax;
+  unit.atk = final.atk ?? unit.baseAtk;
+  unit.attackSpeed = final.attackSpeed ?? unit.baseAttackSpeed;
+
+  // 3. 安全装置（バフが切れて最大HPが減った時用）
+  if (unit.hp > unit.maxHp) {
+    unit.hp = unit.maxHp;
+  }
 }
 
 function syncBoardHP(
@@ -26,16 +53,14 @@ function syncBoardHP(
 ) {
   for (const u of units) {
     if (!u) continue
-
     const boardUnit = player.board[u.index]
-
     if (!boardUnit) continue
-
     boardUnit.hp = u.hp
-  }
 }
-const MOVE_TIME = BASE_INTERVAL * 0.9   // 900ms
-const STUN_WAIT = BASE_INTERVAL         // 1000ms
+}
+
+const MOVE_TIME = BASE_INTERVAL * 0.9
+const STUN_WAIT = BASE_INTERVAL
 const MIN_ADVANCE = 0.1
 
 /* =========================
@@ -52,15 +77,14 @@ export function stepBattle(
 
   const p1Alive = getAliveUnits(state.p1Units)
   const p2Alive = getAliveUnits(state.p2Units)
+  const allAlive = [...p1Alive, ...p2Alive]
 
-  /* =========================
-     勝敗判定
-  ========================= */
+  /* --- 勝敗判定 --- */
   if (p1Alive.length === 0 && p2Alive.length === 0) {
     if (state.suddenDeath) {
       state.finished = true
       state.winner = "p1"
-      battleLogs.push({ text: "🏆 P1 WIN" } as BattleLog)
+      battleLogs.push({ text: "🏆 P1 WIN (Draw)" } as any)
       return false
     }
   }
@@ -68,358 +92,213 @@ export function stepBattle(
   if (p1Alive.length === 0) {
     state.finished = true
     state.winner = "p2"
-    battleLogs.push({ text: "🏆 P2 WIN" } as BattleLog)
+    battleLogs.push({ text: "🏆 P2 WIN" } as any)
     return false
   }
 
   if (p2Alive.length === 0) {
     state.finished = true
     state.winner = "p1"
-    battleLogs.push({ text: "🏆 P1 WIN" } as BattleLog)
+    battleLogs.push({ text: "🏆 P1 WIN" } as any)
     return false
   }
 
-  /* =========================
-     行動者決定
-  ========================= */
-  const actor = [...p1Alive, ...p2Alive].reduce((a, b) =>
+  /* --- 行動者決定 --- */
+  const actor = allAlive.reduce((a, b) =>
     a.nextActionTime < b.nextActionTime ? a : b
   )
 
-  // ✅ actorのnextActionTimeが壊れてたら強制終了（無限フリーズ防止）
-  if (!Number.isFinite(actor.nextActionTime)) {
-    console.log("BAD ACTOR nextActionTime", actor.unitName, actor.role, actor.nextActionTime)
-    console.log("P1 times", state.p1Units.map(u => u?.nextActionTime))
-    console.log("P2 times", state.p2Units.map(u => u?.nextActionTime))
-    state.finished = true
-    state.winner = "p1"
-    return false
-  }
-
   const prevNow = state.now
-
-  // ✅ ここが本命修正：まず actor の時間を state.now に反映する
   state.now = actor.nextActionTime
 
-  // ✅ now が戻った/止まった場合も最低限進める（固着対策）
   if (!Number.isFinite(state.now) || state.now <= prevNow) {
     state.now = prevNow + MIN_ADVANCE
     actor.nextActionTime = state.now
   }
 
-  for (const u of [...p1Alive, ...p2Alive]) {
-  processCurseDot(u, state.now, battleLogs)
-}
+  /* --- ステータス更新 & 状態異常処理 --- */
+  for (const u of allAlive) {
+    processCurseDot(u, state.now, battleLogs)
+    applyExpiredTimedModifiers(u, state.now)
+    removeExpiredStates(u, state.now)
+    updateUnitFinalStats(u, state.now)
+  }
 
-  // ★ stunチェック（stunはここだけで止める）
+  // stunチェック
   const isStunned = (actor.states ?? []).some(
-    s =>
-      s.type === "stun" &&
-      (s.expiresAt === undefined || s.expiresAt > state.now)
+    s => s.type === "stun" && (s.expiresAt === undefined || s.expiresAt > state.now)
   )
 
   if (isStunned) {
-  actor.nextActionTime = Math.max(
-    actor.nextActionTime,
-    state.now + STUN_WAIT
-  )
-  return true
-}
+    actor.nextActionTime = Math.max(actor.nextActionTime, state.now + STUN_WAIT)
+    return true
+  }
+
   const allies = actor.side === "p1" ? p1Alive : p2Alive
   const enemies = actor.side === "p1" ? p2Alive : p1Alive
 
-  /* =========================
-     auraTick + duration解除
-  ========================= */
-  for (const unit of [...p1Alive, ...p2Alive]) {
-  applyExpiredTimedModifiers(unit, state.now)
-  removeExpiredStates(unit, state.now)
+  /* --- auraTick --- */
+  for (const unit of allAlive) {
+    const unitAllies = unit.side === "p1" ? p1Alive : p2Alive
+    const unitEnemies = unit.side === "p1" ? p2Alive : p1Alive
 
-  const unitAllies = unit.side === "p1" ? p1Alive : p2Alive
-  const unitEnemies = unit.side === "p1" ? p2Alive : p1Alive
+    if (unit.abilities?.some(a => a.trigger === "auraTick" && a.scope !== "team")) {
+      runAbilities("auraTick", unit, {
+        allies: unitAllies,
+        enemies: unitEnemies,
+        now: state.now,
+        battleState: state,
+        playerState: unit.side === "p1" ? p1 : p2,
+        battleLogs,
+        leader: unitAllies[0],
+      })
+      updateUnitFinalStats(unit, state.now)
+    }
+  }
 
-  if (unit.abilities?.some(a => a.trigger === "auraTick" && a.scope !== "team")) {
-    runAbilities("auraTick", unit, {
-      allies: unitAllies,
-      enemies: unitEnemies,
+  for (const side of ["p1", "p2"] as const) {
+    const teamAbilities = state.teamAbilities?.[side] ?? []
+    if (!teamAbilities.some(a => a.trigger === "auraTick")) continue
+    const teamAllies = side === "p1" ? p1Alive : p2Alive
+    const leader = teamAllies[0]
+    if (!leader) continue
+   
+    runAbilities("auraTick", { ...leader, abilities: teamAbilities } as any, {
+      allies: teamAllies,
+      enemies: side === "p1" ? p2Alive : p1Alive,
       now: state.now,
       battleState: state,
-      playerState: unit.side === "p1" ? p1 : p2,
+      playerState: side === "p1" ? p1 : p2,
       battleLogs,
-      leader: unitAllies[0],
+      isTeam: true,
+      leader,
     })
   }
-}
 
-for (const side of ["p1", "p2"] as const) {
-  const teamAbilities = state.teamAbilities?.[side] ?? []
-  if (!teamAbilities.some(a => a.trigger === "auraTick")) continue
+  if (enemies.length === 0) return true
 
-  const teamAllies = side === "p1" ? p1Alive : p2Alive
-  const teamEnemies = side === "p1" ? p2Alive : p1Alive
-  const leader = teamAllies[0]
-  if (!leader) continue
-
-  const teamUnit = {
-    ...leader,
-    abilities: teamAbilities,
-  }
-
-  runAbilities("auraTick", teamUnit, {
-    allies: teamAllies,
-    enemies: teamEnemies,
-    now: state.now,
-    battleState: state,
-    playerState: side === "p1" ? p1 : p2,
-    battleLogs,
-    isTeam: true,
-    leader,
-  })
-}
-
-  if (enemies.length === 0) {
-    state.finished = true
-    battleLogs.push(
-      { text: actor.side === "p1" ? "🏆 P1 WIN" : "🏆 P2 WIN" } as BattleLog
-    )
-    return false
-  }
-
-  /* =========================
-     移動判定
-  ========================= */
-  const occupied = new Set<string>()
-
-  for (const u of [...p1Alive, ...p2Alive]) {
-    if (u.pos) occupied.add(`${u.pos.r}-${u.pos.c}`)
-  }
-
+  /* --- ターゲット & 移動判定 --- */
   const target = selectTarget(enemies, actor)
 
+  // ✅ target がいない場合は移動処理、いる場合は攻撃処理へ
   if (!target) {
+    const occupied = new Set<string>()
+    for (const u of allAlive) {
+      if (u.pos) occupied.add(`${u.pos.r}-${u.pos.c}`)
+    }
+    const oldPos = actor.pos ? { ...actor.pos } : null
+    moveToward(actor, enemies, occupied)
 
-  const oldPos = actor.pos ? { ...actor.pos } : null
-
-  moveToward(actor, enemies, occupied)
-
-  if (oldPos && actor.pos) {
-    battleLogs.push({
-      action: "move",
-      instanceId: actor.instanceId,
-      from: oldPos,
-      to: { ...actor.pos },
-      time: state.now
-    })
+    if (oldPos && actor.pos && (oldPos.r !== actor.pos.r || oldPos.c !== actor.pos.c)) {
+      battleLogs.push({
+        action: "move",
+        instanceId: actor.instanceId,
+        from: oldPos,
+        to: { ...actor.pos },
+        time: state.now
+      })
+      actor.nextActionTime = state.now + MOVE_TIME
+      return true
+    }
+    // 移動も攻撃もできない場合は時間を進める
+    actor.nextActionTime = state.now + MIN_ADVANCE
+    return true
   }
-  actor.nextActionTime = state.now + MOVE_TIME
-  return true
-}
 
+  /* --- 攻撃処理 --- */
   const defenders = target.side === "p1" ? p1Alive : p2Alive
   const realTarget = redirectDamage(target, defenders)
 
-  /* =========================
-     攻撃前 Ability
-  ========================= */
-  runAbilities("onAttack", actor, {
-    allies,
-    enemies,
-    now: state.now,
-    target: realTarget,
-    battleState: state,
-    playerState: actor.side === "p1" ? p1 : p2,
-    battleLogs,
-    isTeam: true,
-  leader: allies[0],
-  })
- 
-
-  /* =========================
-     攻撃処理
-  ========================= */
-  const events = attackOnce(actor, realTarget)
-
-  /* =========================
-     被弾 Ability
-  ========================= */
-  const realTargetAllies = realTarget.side === "p1" ? p1Alive : p2Alive
-  const realTargetEnemies = realTarget.side === "p1" ? p2Alive : p1Alive
-
-  runAbilities("onDamageTaken", realTarget, {
-    allies: realTargetAllies,
-    enemies: realTargetEnemies,
-    now: state.now,
-    target: actor,
-    battleState: state,
-    playerState: realTarget.side === "p1" ? p1 : p2,
-    battleLogs,
-    isTeam: true,
-  leader: allies[0],
-  })
-
-
-  /* =========================
-     ログ
-  ========================= */
-  const attackEvent = events.find(e => e.type === "attack")
-  if (attackEvent && attackEvent.type === "attack") {
-    const actorStats = calculateFinalStats(actor, state.now)
-
-    logAttackEvent(
-      battleLogs,
-      actor,
-      realTarget,
-      attackEvent.damage,
-      `🗡 ${actor.unitName}（AS:${actorStats.attackSpeed.toFixed(2)}）が ` +
-        `${realTarget.unitName} に ${attackEvent.damage} ダメージ`,
-      state.now
-    )
-  }
-
-  /* =========================
-     死亡処理
-  ========================= */
-  /* =========================
-     死亡処理
-  ========================= */
-  const didDie = events.some(e => e.type === "death")
-
-  if (didDie) {
-    realTarget.isDying = true
-
-    logDeathEvent(battleLogs, realTarget, `${realTarget.unitName} dies`, state.now)
-    logKillEvent(battleLogs, actor, realTarget, state.now)
-
-    // 1. まず「生存ユニットのリスト」を先に取得する（重要！）
-    const aliveP1Now = getAliveUnits(state.p1Units)
-    const aliveP2Now = getAliveUnits(state.p2Units)
-
-    // 2. 「死んだ本人」のアビリティを発動させる
-    // これにより Blooddrinker Stalker がリストから外れる前に実行される
-    runAbilities("onDeath", realTarget, {
-      allies: realTarget.side === "p1" ? aliveP1Now : aliveP2Now,
-      enemies: realTarget.side === "p1" ? aliveP2Now : aliveP1Now,
+  // ✅ realTarget の存在チェックを追加して TypeScript エラーを回避
+  if (realTarget) {
+    runAbilities("onAttack", actor, {
+      allies,
+      enemies,
       now: state.now,
       target: realTarget,
+      battleState: state,
+      playerState: actor.side === "p1" ? p1 : p2,
+      battleLogs,
+      isTeam: true,
+      leader: allies[0],
+    })
+
+    const events = attackOnce(actor, realTarget)
+
+    runAbilities("onDamageTaken", realTarget, {
+      allies: realTarget.side === "p1" ? p1Alive : p2Alive,
+      enemies: realTarget.side === "p1" ? p2Alive : p1Alive,
+      now: state.now,
+      target: actor,
       battleState: state,
       playerState: realTarget.side === "p1" ? p1 : p2,
       battleLogs,
-      deadUnit: realTarget,
-    });
+      isTeam: true,
+      leader: allies[0],
+    })
 
-    // 3. 誰かが死んだ時のカウントを増やす
-    if (state.counters) {
-      const side = realTarget.side
-      const counters = state.counters[side]
-      counters["teamOnDeathTriggerCount"] = (counters["teamOnDeathTriggerCount"] ?? 0) + 1
+    const attackEvent = events.find(e => e.type === "attack")
+    if (attackEvent && attackEvent.type === "attack") {
+      logAttackEvent(
+        battleLogs,
+        actor,
+        realTarget,
+        attackEvent.damage,
+        `🗡 ${actor.unitName} (ATK:${Math.round(actor.atk)}) が ${realTarget.unitName} に ${attackEvent.damage} ダメージ`,
+        state.now
+      )
     }
 
-    // --- あとは既存の「他のユニット」への通知処理 ---
-    const contextForP1Death = {
-      allies: aliveP1Now,
-      enemies: aliveP2Now,
-      now: state.now,
-      target: realTarget,
-      battleState: state,
-      playerState: p1,
-      battleLogs,
-      deadUnit: realTarget,
-    }
-    // ...以下、既存の for ループなど
+    /* --- 死亡処理 --- */
+    const didDie = events.some(e => e.type === "death")
+    if (didDie) {
+      realTarget.isDying = true
+      logDeathEvent(battleLogs, realTarget, `${realTarget.unitName} dies`, state.now)
+      logKillEvent(battleLogs, actor, realTarget, state.now)
 
-    const contextForP2Death = {
-      allies: aliveP2Now,
-      enemies: aliveP1Now,
-      now: state.now,
-      target: realTarget,
-      battleState: state,
-      playerState: p2,
-      battleLogs,
-      deadUnit: realTarget,
-    }
+      const aliveP1Now = getAliveUnits(state.p1Units)
+      const aliveP2Now = getAliveUnits(state.p2Units)
 
-    for (const u of aliveP1Now)
-  runAbilities("onDeath", u, {
-    ...contextForP1Death,
-    isTeam: true,
-    leader: aliveP1Now[0],
-  })
-
-for (const u of aliveP2Now)
-  runAbilities("onDeath", u, {
-    ...contextForP2Death,
-    isTeam: true,
-    leader: aliveP2Now[0],
-  })
-    removeStatesLinkedToDeadUnit(
-      [...p1Alive, ...p2Alive],
-      realTarget.instanceId
-    )
-
-    if (!state.firstDeathResolved) {
-      state.firstDeathResolved = true
-
-      const p1Alive2 = getAliveUnits(state.p1Units)
-      const p2Alive2 = getAliveUnits(state.p2Units)
-
-      const contextForP1 = {
-        allies: p1Alive2,
-        enemies: p2Alive2,
+      runAbilities("onDeath", realTarget, {
+        allies: realTarget.side === "p1" ? aliveP1Now : aliveP2Now,
+        enemies: realTarget.side === "p1" ? aliveP2Now : aliveP1Now,
         now: state.now,
         target: realTarget,
         battleState: state,
-        playerState: p1,
+        playerState: realTarget.side === "p1" ? p1 : p2,
         battleLogs,
-      }
+        deadUnit: realTarget,
+      })
 
-      const contextForP2 = {
-        allies: p2Alive2,
-        enemies: p1Alive2,
-        now: state.now,
-        target: realTarget,
-        battleState: state,
-        playerState: p2,
-        battleLogs,
-      }
+      removeStatesLinkedToDeadUnit([...p1Alive, ...p2Alive], realTarget.instanceId)
 
-      for (const u of p1Alive2) runAbilities("firstDeath", u, contextForP1)
-      for (const u of p2Alive2) runAbilities("firstDeath", u, contextForP2)
+      const units = realTarget.side === "p1" ? state.p1Units : state.p2Units
+      const index = units.findIndex(u => u?.instanceId === realTarget.instanceId)
+      if (index !== -1) units[index] = null
     }
-
-    const units = realTarget.side === "p1" ? state.p1Units : state.p2Units
-    const index = units.findIndex(u => u?.instanceId === realTarget.instanceId)
-    if (index !== -1) units[index] = null
   }
 
-  /* =========================
-   次行動時間更新
-========================= */
-const actorStats = calculateFinalStats(actor, state.now)
+  /* --- 最終確定 --- */
+  for (const u of getAliveUnits([...state.p1Units, ...state.p2Units])) {
+    updateUnitFinalStats(u, state.now)
+  }
 
-const rawAS = actorStats.attackSpeed
-const safeAS = Number.isFinite(rawAS) && rawAS > 0 ? rawAS : 1
+  const safeAS = actor.attackSpeed > 0 ? actor.attackSpeed : 1
+  actor.nextActionTime = state.now + (BASE_INTERVAL / safeAS)
 
-const attackInterval = BASE_INTERVAL / safeAS
+  state.p1Units = [...state.p1Units]
+  state.p2Units = [...state.p2Units]
 
-actor.nextActionTime = state.now + attackInterval
-
-// HP同期
-syncBoardHP(state.p1Units, p1)
-syncBoardHP(state.p2Units, p2)
+  syncBoardHP(state.p1Units, p1)
+  syncBoardHP(state.p2Units, p2)
 
   return true
 }
 
-function processCurseDot(
-  unit: BattleUnit,
-  now: number,
-  battleLogs: BattleLog[]
-) {
+function processCurseDot(unit: BattleUnit, now: number, battleLogs: BattleLog[]) {
   const curseStates = (unit.states ?? []).filter(s => s.type === "curse_stack")
   if (!curseStates.length) return
-
   const stack = curseStates.reduce((sum, s) => sum + (s.value ?? 0), 0)
-
   const interval = 1000
   const last = (unit as any).__lastCurseTick ?? 0
   if (now - last < interval) return
@@ -427,23 +306,18 @@ function processCurseDot(
   const damage = Math.floor(stack / 2)
   if (damage <= 0) return
 
-  unit.prevHp = unit.hp
-  unit.hp -= damage
-  if (unit.hp < 0) unit.hp = 0
+  unit.hp = Math.max(0, unit.hp - damage)
 
   battleLogs.push({
-  action: "damage",
-
-  instanceId: unit.instanceId,
-  damage: damage,
-
-  unitId: "team_curse",       // ★固定ID
-  unitName: "Ability Damage",   // ★表示名
-  side: unit.side,            // ★ここ重要
-
-  source: "curse",
-  time: now
-} as any)
+    action: "damage",
+    instanceId: unit.instanceId,
+    damage: damage,
+    unitId: "team_curse",
+    unitName: "Curse Damage",
+    side: unit.side,
+    source: "curse",
+    time: now
+  } as any)
 
   ;(unit as any).__lastCurseTick = now
 }

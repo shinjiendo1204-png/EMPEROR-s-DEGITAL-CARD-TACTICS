@@ -565,13 +565,17 @@ export function startBattleVs(game: GameState, p1: PlayerState, p2: PlayerState)
   const allUnits = [...p1BattleBoard, ...p2BattleBoard]
   allUnits.forEach(u => {
     if (!u) return
-    const final = calculateFinalStats(u, 0) // 現在時刻 0 で計算
-    u.atk = final.atk
-    u.maxHp = final.maxHp
-    u.hp = final.maxHp // 戦闘開始時は全回復
-    
+    // 568行目付近の修正
+    const final = calculateFinalStats(u, 0) 
+
+    u.atk = final.atk ?? u.baseAtk ?? 0
+
+    u.maxHp = final.maxHp ?? u.baseMaxHp ?? 0
+
+    u.hp = u.maxHp
     // Pixiでの比較用（緑色表示）に baseAtk が正しく入っているか確認
     if (!u.baseAtk) u.baseAtk = u.atk 
+    if (!(u as any).baseMaxHp) (u as any).baseMaxHp = u.maxHp
   })
 
   // 2. 「確定した数値」のコピーを Pixi 表示用の初期盤面として保存

@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react"
 import * as PIXI from "pixi.js"
 import { BattleUnit, BattleLog } from "@/types"
 import { BATTLE_COLS } from "@/lib/battle/boardsize"
-import { calculateFinalStats } from "@/lib/battle/statCalculator"
 
 type Props = {
   board: BattleUnit[]
@@ -33,7 +32,6 @@ export default function BattleCanvas({ board, logs }: Props) {
   const GAP_Y = 16 
   const OFFSET_X = 28
 
-  // --- PIXIの初期化 (1つに統合) ---
   useEffect(() => {
     let active = true
     const init = async () => {
@@ -53,30 +51,26 @@ export default function BattleCanvas({ board, logs }: Props) {
       containerRef.current.appendChild(app.canvas)
       app.stage.addChild(unitLayerRef.current)
 
-      // ★ Ticker: 実際に存在するスプライトだけを更新
       app.ticker.add(() => {
         unitLayerRef.current.children.forEach((container: any) => {
           const id = container.instanceId;
           const target = targetPositionsRef.current[id];
           if (!target) return;
 
-          // 論理座標の初期化
           if (container.logicX === undefined) container.logicX = container.x;
           if (container.logicY === undefined) container.logicY = container.y;
 
-          // 1. なめらかな論理移動 (0.15 は追従速度)
           container.logicX += (target.x - container.logicX) * 0.15;
           container.logicY += (target.y - container.logicY) * 0.15;
 
-          // 2. 「駒の跳ね」演出 (距離が遠いほど高く跳ねる)
           const dist = Math.sqrt(
             Math.pow(target.x - container.logicX, 2) + 
             Math.pow(target.y - container.logicY, 2)
           );
-          const jumpHeight = Math.min(dist * 0.4, 18); // 最大18px浮く設定
+          const jumpHeight = Math.min(dist * 0.4, 18);
 
           container.x = container.logicX;
-          container.y = container.logicY - jumpHeight; // Y軸を浮かせる
+          container.y = container.logicY - jumpHeight;
         });
       });
     }
@@ -90,7 +84,6 @@ export default function BattleCanvas({ board, logs }: Props) {
     }
   }, [])
 
-  // 盤面の描画・同期
   useEffect(() => {
     const app = appRef.current
     if (!app) return
@@ -100,7 +93,6 @@ export default function BattleCanvas({ board, logs }: Props) {
     const CURRENT_GAP_Y = 6;
 
     const currentIds = new Set(board.map(u => u.instanceId));
-    const currentBattleTime = logs.length > 0 ? logs[logs.length - 1].time : 0;
 
     Object.keys(spriteMapRef.current).forEach(id => {
       if (!currentIds.has(id)) {
@@ -116,8 +108,9 @@ export default function BattleCanvas({ board, logs }: Props) {
     });
 
     board.forEach(async (u) => {
-      // 1. 描画前に必ず最終ステータスを計算
-      const finalStats = calculateFinalStats(u, currentBattleTime);
+      // ✅ エンジン側ですでに計算済みの値（u.atk, u.hp）をそのまま使う
+      const displayAtk = Math.round(u.atk);
+      const displayHp = Math.round(u.hp);
       
       const pos = u.pos ?? { r: 0, c: 0 }
       const tPos = {
@@ -125,28 +118,23 @@ export default function BattleCanvas({ board, logs }: Props) {
         y: originY + (pos.r * (CELL_H + CURRENT_GAP_Y)) 
       }
 
-      // 既存スプライトがある場合
       if (spriteMapRef.current[u.instanceId]) {
         const container = spriteMapRef.current[u.instanceId] as any;
         const texts = statsTextMapRef.current[u.instanceId];
-        
-        // ターゲット位置を更新
         targetPositionsRef.current[u.instanceId] = tPos;
 
-        if (texts) {
-          const displayAtk = Math.round(finalStats.atk);
-          const displayHp = Math.round(u.hp);
+        // BattleCanvas.tsx の statsTextMapRef 更新部分
+if (texts) {
+  const displayAtk = Math.round(u.atk);
+  const displayHp = Math.round(u.hp);
+  const displayMaxHp = Math.round(u.maxHp || u.baseMaxHp);
 
-          if (texts.atkText.text !== `${displayAtk}`) {
-            texts.atkText.text = `${displayAtk}`;
-            texts.atkText.scale.set(1.5);
-            setTimeout(() => { if (texts.atkText) texts.atkText.scale.set(1); }, 100);
-          }
-          texts.hpText.text = `${displayHp}`;
+ texts.hpText.text = `${displayHp}`;
 
-          const baseAtk = u.baseAtk ?? 0;
-          texts.atkText.style.fill = displayAtk > baseAtk ? "#6bff8a" : (displayAtk < baseAtk ? "#ff6b6b" : "#ffffff");
-        }
+  // 色判定：最大HPがベースより高ければ緑にする
+  const isBuffed = displayMaxHp > (u.baseMaxHp ?? 100);
+  texts.hpText.style.fill = isBuffed ? "#6bff8a" : "#ffffff";
+}
         return; 
       }
 
@@ -159,7 +147,6 @@ export default function BattleCanvas({ board, logs }: Props) {
       container.y = tPos.y;
       targetPositionsRef.current[u.instanceId] = tPos;
 
-      // ユニットビジュアル (画像)
       const unitVisual = new PIXI.Container()
       let texture = textureCacheRef.current[u.unitId]
       if (!texture) {
@@ -184,23 +171,21 @@ export default function BattleCanvas({ board, logs }: Props) {
       unitVisual.addChild(sprite, mask); unitVisual.mask = mask
       container.addChild(unitVisual)
 
-      // 枠線
       const border = new PIXI.Graphics().lineStyle(2, 0xffffff, 0.2)
         .moveTo(CELL_W * 0.25, 0).lineTo(CELL_W * 0.75, 0).lineTo(CELL_W, CELL_H * 0.5)
         .lineTo(CELL_W * 0.75, CELL_H).lineTo(CELL_W * 0.25, CELL_H).lineTo(0, CELL_H * 0.5)
         .closePath(); container.addChild(border)
 
-      // スタッツ
       const statsContainer = new PIXI.Container()
       const STATS_BG_W = 52
       const statsBg = new PIXI.Graphics().beginFill(0x2d2620, 0.85).drawRoundedRect(0, 0, STATS_BG_W, 16, 8).endFill()
       const style = { fontSize: 11, fontWeight: '900' as any, fill: '#ffffff' }
       
-      const atkText = new PIXI.Text(`${Math.round(finalStats.atk)}`, style)
+      const atkText = new PIXI.Text(`${displayAtk}`, style)
       const slashText = new PIXI.Text("/", { ...style, fill: '#aaa', fontSize: 9 })
-      const hpText = new PIXI.Text(`${Math.round(u.hp)}`, style)
+      const hpText = new PIXI.Text(`${displayHp}`, style)
       
-      if (Math.round(finalStats.atk) > (u.baseAtk ?? 0)) atkText.style.fill = "#6bff8a";
+      if (displayAtk > (u.baseAtk ?? 0)) atkText.style.fill = "#6bff8a";
       
       atkText.anchor.set(1, 0.5);   atkText.position.set(22, 8)
       slashText.anchor.set(0.5, 0.5); slashText.position.set(26, 8)
@@ -214,7 +199,6 @@ export default function BattleCanvas({ board, logs }: Props) {
       spriteMapRef.current[u.instanceId] = container
       statsTextMapRef.current[u.instanceId] = { atkText, slashText, hpText }
       
-      // 召喚アニメ
       container.scale.set(0);
       let age = 0;
       const summonTicker = (delta: PIXI.Ticker) => {
@@ -227,8 +211,6 @@ export default function BattleCanvas({ board, logs }: Props) {
     })
   }, [board])
 
-  // ログ演出（攻撃・ダメージ・ヒール）
- // ログ演出（攻撃・ダメージ・ヒール）
   const processedLogsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -236,24 +218,18 @@ export default function BattleCanvas({ board, logs }: Props) {
     if (!app) return;
 
     logs.forEach((log) => {
-      // 1. instanceId が無い場合はスキップ（型エラー防止）
       if (!log.instanceId) return;
-
       const logKey = `${log.time}-${log.instanceId}-${log.action}-${(log as any).value}`;
       if (processedLogsRef.current.has(logKey)) return;
       processedLogsRef.current.add(logKey);
 
-      // 2. unit を安全に取得
       const unit = spriteMapRef.current[log.instanceId];
       if (!unit) return;
 
-      // --- A. 攻撃モーション ---
       if (log.action === "attack") {
-        // プレイヤー側なら右(1)、敵側なら左(-1)へ踏み込む
         const isPlayerSide = (log as any).isPlayer ?? true;
         const dir = isPlayerSide ? 1 : -1; 
         const pushAmount = 24 * dir; 
-
         let age = 0;
         const attackTicker = (delta: PIXI.Ticker) => {
           age += delta.deltaTime;
@@ -262,20 +238,15 @@ export default function BattleCanvas({ board, logs }: Props) {
           } else if (age < 15) {
             unit.x -= (pushAmount / 10) * delta.deltaTime;
           } else {
-            // 位置を完全にリセット
             app.ticker.remove(attackTicker);
           }
         };
         app.ticker.add(attackTicker);
       }
 
-      // --- B. ダメージ演出 ---
       if (log.action === "damage" || log.action === "self_damage") {
         const value = (log as any).value || 0;
-
-        // ★ 追加: ダメージが 0 以下の場合は演出を表示しない
         if (value <= 0) return;
-
         const isSelf = log.action === "self_damage";
         const dmgText = new PIXI.Text(`${Math.round(value)}`, {
           fontSize: isSelf ? 18 : 26, 
@@ -294,14 +265,11 @@ export default function BattleCanvas({ board, logs }: Props) {
           age += delta.deltaTime;
           dmgText.y -= 1.2 * delta.deltaTime;
           dmgText.alpha = 1 - (age / 35);
-          
-          // 被弾時のガタガタ震える演出
           if (age < 12) {
             unit.x = originalX + (Math.random() - 0.5) * 8;
           } else if (age >= 12 && age < 14) {
             unit.x = originalX;
           }
-
           if (age > 35) {
             app.stage.removeChild(dmgText);
             dmgText.destroy();
@@ -311,7 +279,6 @@ export default function BattleCanvas({ board, logs }: Props) {
         app.ticker.add(dmgTicker);
       }
 
-      // --- C. ヒール演出 ---
       if (log.action === "heal") {
         const value = (log as any).value || 0;
         const text = new PIXI.Text(`+${Math.round(value)}`, {
@@ -321,7 +288,6 @@ export default function BattleCanvas({ board, logs }: Props) {
         text.x = unit.x + CELL_W / 2;
         text.y = unit.y - 12;
         app.stage.addChild(text);
-
         let age = 0;
         const healTicker = (delta: PIXI.Ticker) => {
           age += delta.deltaTime;

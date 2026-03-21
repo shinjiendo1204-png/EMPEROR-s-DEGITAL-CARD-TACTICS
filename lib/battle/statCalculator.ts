@@ -8,16 +8,16 @@ const MAX_AS = 5
    ヘルパー
 ========================= */
 
-function sumStates(unit: BattleUnit, type: BattleStateEffect["type"], now: number): number {
+function sumStates(unit: BattleUnit, key: string, now: number): number {
   return (unit.states ?? [])
     .filter(s =>
-      s.type === type &&
+      (s.type === key || (s as any).stat === key) && // ✅ type または stat が一致するかチェック
       (s.expiresAt === undefined || s.expiresAt > now) &&
-      (s.consumeOn == null) // ✅ これ追加：一回消費系は常時計上しない
+      (s.consumeOn == null)
     )
     .reduce((sum, s) => {
-  return sum + (s.value ?? 0) 
-}, 0)
+      return sum + (s.value ?? 0) 
+    }, 0)
 }
 
 /* =========================
@@ -43,8 +43,6 @@ export function calculateFinalStats(
     return {
       atk: unit.baseAtk,
       attackSpeed: 0, // 行動停止（step側でstun処理してるので実害は小さいが一応）
-      damageReduce: unit.baseDamageReduce ?? 0,
-      maxHp: unit.baseMaxHp,
     }
   }
 

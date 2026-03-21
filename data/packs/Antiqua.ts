@@ -1662,8 +1662,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 4,
               target: "equipped_allies"
             },

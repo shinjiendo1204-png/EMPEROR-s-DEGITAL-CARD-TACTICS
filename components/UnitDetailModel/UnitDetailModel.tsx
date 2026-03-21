@@ -128,10 +128,11 @@ export function UnitDetailModel({
   const baseAS = battleUnit?.baseAttackSpeed ?? roleAS
   const baseDR = battleUnit?.baseDamageReduce ?? 0
 
-  const atkDiff = stats ? stats.atk - baseAtk : 0
-  const hpDiff = stats ? stats.maxHp - baseHp : 0
-  const asDiff = stats ? stats.attackSpeed - baseAS : 0
-  const drDiff = stats ? stats.damageReduce - baseDR : 0
+  // 131行目からの修正
+const atkDiff = stats ? (stats.atk ?? baseAtk) - baseAtk : 0;
+const hpDiff = stats ? (stats.maxHp ?? baseHp) - baseHp : 0;
+const asDiff = stats ? (stats.attackSpeed ?? baseAS) - baseAS : 0;
+const drDiff = stats ? (stats.damageReduce ?? baseDR) - baseDR : 0;
 
   const dps = stats
     ? stats.atk / stats.attackSpeed
@@ -218,7 +219,7 @@ export function UnitDetailModel({
 
             <StatRow
               label="HP"
-              value={stats ? stats.maxHp : baseHp}
+              value={stats?.maxHp ?? baseHp}
               color={getStatColor(hpDiff)}
             />
 
@@ -240,7 +241,7 @@ export function UnitDetailModel({
 
             <StatRow
               label="DR"
-              value={stats ? stats.damageReduce : baseDR}
+              value={stats?.atk ?? baseAtk}
               color={getStatColor(drDiff)}
             />
 
