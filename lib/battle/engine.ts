@@ -92,48 +92,62 @@ function runBattleEnd(
   p1: PlayerState,
   p2: PlayerState
 ) {
-  for (const u of [...state.p1Units, ...state.p2Units]) {
-  if (!u) continue
-  if ((u as any).startPos) {
-  u.pos = { ...(u as any).startPos }
-} else if (!u.pos) {
-  u.pos = { r: 0, c: 0 }
-}
-}
-  const p1Units: BattleUnit[] = state.p1Units.filter(
-    (u): u is BattleUnit => u !== null
-  )
+  // 1. 全ユニット（生存・死亡問わず）を取得
+  const allPossibleUnits = [...state.p1Units, ...state.p2Units];
+  
+  for (const u of allPossibleUnits) {
+    if (!u) continue;
 
-  const p2Units: BattleUnit[] = state.p2Units.filter(
-    (u): u is BattleUnit => u !== null
-  )
+    // 座標のリセット
+    if ((u as any).startPos) {
+      u.pos = { ...(u as any).startPos };
+    } else if (!u.pos) {
+      u.pos = { r: 0, c: 0 };
+    }
 
-  const allUnits: BattleUnit[] = [...p1Units, ...p2Units]
+    // ★【ここに追加】アビリティの状態をリセット
+    // これをやらないと、次の戦闘でヤマトが「もう召喚した」と思い込んで動かなくなります
+    u.abilities?.forEach((ability: Ability) => {
+      ability.used = false;
+      ability.__lastTickTime = undefined;
+      ability.__stackCount = undefined;
+      ability.__expiresAt = undefined;
+      ability.__remainingTurns = undefined;
+    });
+  }
 
-  for (const unit of allUnits) {
-    const playerState = unit.side === "p1" ? p1 : p2
 
+const p1Alive = state.p1Units.filter((u): u is BattleUnit => {
+  if (!u) return false; // ここで null や undefined を完全に弾く
+  return u.hp > 0;      // ここに到達した時、u は確実に BattleUnit
+});
+
+const p2Alive = state.p2Units.filter((u): u is BattleUnit => {
+  if (!u) return false;
+  return u.hp > 0;
+});
+  const allSurvivors = [...p1Alive, ...p2Alive];
+
+  // 3. 生存者のみ battleEnd アビリティを実行
+  for (const unit of allSurvivors) {
+    const playerState = unit.side === "p1" ? p1 : p2;
     runAbilities("battleEnd", unit, {
-      allies: unit.side === "p1" ? p1Units : p2Units,
-      enemies: unit.side === "p1" ? p2Units : p1Units,
+      allies: unit.side === "p1" ? p1Alive : p2Alive,
+      enemies: unit.side === "p1" ? p2Alive : p1Alive,
       now: state.now,
       battleState: state,
       playerState,
       gameState: state.gameState,
-    })
+    });
   }
 
-  for (const unit of allUnits) {
-    unit.abilities?.forEach((ability: Ability) => {
-      ability.used = false
-      ability.__lastTickTime = undefined
-      ability.__stackCount = undefined
-      ability.__expiresAt = undefined
-      ability.__remainingTurns = undefined
-    })
+  // 4. 勝敗の最終決定（state.winner が undefined の場合の保険）
+  if (!state.winner) {
+    if (p1Alive.length > p2Alive.length) state.winner = "p1";
+    else if (p2Alive.length > p1Alive.length) state.winner = "p2";
+    else state.winner = "p1"; // 引き分けは一旦p1
   }
-}
-
+} // ← ここで関数の終わりを閉じる！
 
 
 function runGlobalHeroChecks(

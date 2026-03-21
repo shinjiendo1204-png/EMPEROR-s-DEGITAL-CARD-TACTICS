@@ -682,25 +682,25 @@ synergy: {
           type: "ADD_STATE",
           stateType: "curse_stack",
           value: 6,
-          target: "all_other_allies"
+          target: "all_allies"
         },
         {
           type: "ADD_STATE",
           stateType: "atk",
           value: 8,
-          target: "all_other_allies"
+          target: "all_allies"
         },
         {
           type: "ADD_STATE",
           stateType: "hp",
           value: 12,
-          target: "all_other_allies"
+          target: "all_allies"
         },
         {
           type: "ADD_STATE",
           stateType: "as_stack",
           value: 0.25,
-          target: "all_other_allies"
+          target: "all_allies"
         }
       ]
     },

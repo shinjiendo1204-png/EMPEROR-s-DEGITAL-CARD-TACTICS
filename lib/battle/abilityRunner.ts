@@ -109,6 +109,14 @@ export function runAbilities(
   unit: BattleUnit,
   context: AbilityContext
 ) {
+  // ★ デバッグログを追加
+  if (trigger === "onDeath") {
+    console.log(`[DEBUG] runAbilities(onDeath) called for: ${unit.unitName}`, {
+      hp: unit.hp,
+      abilityCount: unit.abilities?.length,
+      depth: (unit as any).__abilityDepth
+    });
+  }
   const t: BattleTrigger = trigger
 
   // =========================
@@ -194,6 +202,18 @@ for (let i = 0; i < abilities.length; i++) {
       // onDeath counter
       // =========================
       if (t === "onDeath") {
+  const isSelf = !isAlive(unit); // 自分が死んでいるか
+  const isOther = context.deadUnit && context.deadUnit.instanceId !== unit.instanceId; // 死んだのが自分以外か
+
+  // 1. "遺言"アビリティ（conditionなし）の場合
+  if (!ability.condition) {
+    if (!isSelf) continue; // 自分が生きてるなら、自分の遺言は流さない
+  }
+
+  // 2. "味方が死んだ時"アビリティ（deadAllyなど）の場合
+  if (ability.condition === "deadAlly") {
+    if (!isOther) continue; // 死んだのが自分自身なら、"味方の死"としてはカウントしない
+  }
         incrementCounter(context, unit.side, "onDeath", "match", 1)
         incrementCounter(context, unit.side, "onDeath", "battle", 1)
 
@@ -249,7 +269,9 @@ for (let i = 0; i < abilities.length; i++) {
       }
 
       // 生存チェック
-      if (t !== "onDeath" && !isAlive(unit)) break
+      if (t !== "onDeath" && t !== "battleEnd" && !isAlive(unit)) {
+        break;
+      }
 
       // =========================
       // ログ（auraTickは除外）
@@ -324,6 +346,10 @@ function isNonTargetEffect(effect: AbilityEffect): boolean {
   )
 }
 
+// abilityRunner.ts 内
+
+// abilityRunner.ts 内
+
 function applyAbilityEffects(
   ability: Ability,
   source: BattleUnit,
@@ -331,8 +357,6 @@ function applyAbilityEffects(
   context: AbilityContext
 ) {
   for (const effect of ability.effects ?? []) {
-
-    // ★ target不要effectは、resolveTargets / isAliveチェックを通さずに実行する
     if (isNonTargetEffect(effect)) {
       applyAbilityEffect(effect, source, source, context)
       continue
@@ -341,8 +365,20 @@ function applyAbilityEffects(
     const targets = resolveTargets(effect.target, baseTarget, context, effect)
      
     for (const t of targets) {
-      if (!isAlive(t)) continue
-      applyAbilityEffect(effect, source, t, context)
+      // ★ ここを修正！！
+      // 修正前: if (!isAlive(t)) continue;
+      // 修正後: 
+      // 1. 攻撃対象(t)が生きていることは必須（死体に追い打ちはしない）
+      // 2. ただし、自分(source)が死んでいるかどうかは、onDeathの時は無視する
+      
+      if (!isAlive(t)) continue; 
+
+      // 念のため、DAMAGE効果の時だけログを出すデバッグを入れても良いです
+      if (effect.type === "DAMAGE") {
+        console.log(`[EXECUTE] Damage ${effect.value} from ${source.unitName} to ${t.unitName}`);
+      }
+
+      applyAbilityEffect(effect, source, t, context);
     }
   }
 }
@@ -1208,38 +1244,67 @@ case "CREATE_ANCIENT_WEAPON": {
   break
 }
 case "SUMMON": {
-  if (effect.type !== "SUMMON") break
-  if (!context.battleState) break
+  if (effect.type !== "SUMMON") break;
+  const state = context.battleState as any;
+  if (!state) break;
 
-  const state = context.battleState
-  const pos = context.target?.pos
-  if (!pos) break
+  const side = context.target?.side ?? source.side;
+  const unitData = VARKESH_TOKENS.find((u: Unit) => u.id === effect.unitId);
+  if (!unitData) break;
 
-  const side = context.target?.side ?? source.side
-  
-  // 【修正】直接 board を触るのではなく、新しい配列を作る準備
-  const unit = VARKESH_TOKENS.find((u: Unit) => u.id === effect.unitId)
-  if (!unit) break
+  // 1. 召喚先の配列を特定
+  const targetUnits = side === "p1" ? state.p1Units : state.p2Units;
+  let emptyIndex = -1;
 
-  const index = pos.r * BATTLE_COLS + pos.c
-  const summoned = createBattleUnit(unit, index, side)
-  summoned.pos = { ...pos }
-  summoned.index = index
+  // 2. 【改善】死んだユニットの場所をまずチェックする
+  const deadPos = context.target?.pos;
+  const preferredIdx = deadPos ? (deadPos.r * BATTLE_COLS + deadPos.c) : -1;
 
-  // 【重要】新しい配列としてステートを更新する
-  if (side === "p1") {
-    // p1Unitsを新しい配列としてコピーし、召喚したユニットを差し込む
-    context.battleState.p1Units = [...context.battleState.p1Units];
-    context.battleState.p1Units[index] = summoned;
+  if (preferredIdx !== -1 && !targetUnits[preferredIdx]) {
+    // 死んだ場所が空いていればそこを使う
+    emptyIndex = preferredIdx;
   } else {
-    // p2Unitsも同様
-    context.battleState.p2Units = [...context.battleState.p2Units];
-    context.battleState.p2Units[index] = summoned;
+    // 空いていなければ、配列の「後ろから（自分の陣地の手前から）」探す
+    // これで「相手の一番奥」から出る現象を防ぎます
+    for (let i = targetUnits.length - 1; i >= 0; i--) {
+      if (!targetUnits[i]) {
+        emptyIndex = i;
+        break;
+      }
+    }
   }
-  
-  // この後、親の board 全体を結合している場所でも 
-  // [...p1Units, ...p2Units] のように新しい配列を返しているか確認してください
-  break
-}
 
+  if (emptyIndex === -1) break; // 満員なら終了
+
+  // 3. ユニット生成
+  const summoned = createBattleUnit(unitData, emptyIndex, side);
+  summoned.pos = {
+    r: Math.floor(emptyIndex / BATTLE_COLS),
+    c: emptyIndex % BATTLE_COLS
+  };
+  summoned.prevPos = { ...summoned.pos }; // アニメーション用
+  summoned.index = emptyIndex;
+
+  // 4. 内部状態の更新（配列のコピーを作成して代入）
+  if (side === "p1") {
+    state.p1Units = [...state.p1Units];
+    state.p1Units[emptyIndex] = summoned;
+  } else {
+    state.p2Units = [...state.p2Units];
+    state.p2Units[emptyIndex] = summoned;
+  }
+
+  // 5. ログの発行 (GameViewへ通知)
+  const logs = state.logs || (context as any).logs || (state as any).battleLogs;
+  if (logs) {
+    logs.push({
+      time: (context as any).currentTime || 0,
+      action: "summon",
+      instanceId: summoned.instanceId,
+      side: side,
+      unit: JSON.parse(JSON.stringify(summoned)), 
+    });
+  }
+  break;
+}
   }}

@@ -475,9 +475,32 @@ function handleBattleStart() {
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
+      console.log("Log Action:", next.action);
       const logId = `${next.time}-${next.instanceId}-${next.action}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`
       if (processedIds.current.has(logId)) return
       processedIds.current.add(logId)
+
+      // --- GameView.tsx 内の handleBattleStart -> batch.forEach 内 ---
+
+      // --- Summon 処理 (関数型更新に修正) ---
+      if ((next as any).action === "summon" || (next as any).action === "SUMMON") {
+        console.log("Summon unit data:", (next as any).unit);
+        const summonedUnit = (next as any).unit as BattleUnit;
+        if (summonedUnit) {
+          // ★最重要: prev => [...] の形式にする
+          setBattleBoard((prevBoard) => {
+            // prevBoard は常に「最新の」盤面データになる
+            const currentBoard = prevBoard || [];
+            
+          if (currentBoard.some(u => u.instanceId === summonedUnit.instanceId)) return currentBoard;
+            
+            console.log("Adding Ghoul to Board:", summonedUnit.instanceId);
+            
+        
+            return [...currentBoard, summonedUnit];
+          });
+        }
+      }
 
       if (typeof next.instanceId === "string") {
         const targetId = next.instanceId
@@ -560,22 +583,42 @@ function handleBattleStart() {
           }
         }
 
-        if (next.action === "death") {
-          setVisualEvents(prev => [...prev, { id: targetId, type: "death" } as any])
-          // 🚩 death ログでも即時削除を走らせる
-          setBattleBoard(prev => prev ? prev.filter(u => u.instanceId !== targetId) : prev)
-          setTimeout(() => {
-            setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "death")))
-          }, 400)
-        }
-      }
+        // GameView.tsx の handleBattleStart -> batch.forEach 内
 
+if (next.action === "death") {
+  const targetId = next.instanceId;
+  setVisualEvents(prev => [...prev, { id: targetId, type: "death" } as any]);
+
+  // ★重要：death ログが来たら、確実にそのユニットを盤面から消す
+  setBattleBoard(prev => {
+    if (!prev) return prev;
+    const filtered = prev.filter(u => u.instanceId !== targetId);
+    console.log(`Removing dead unit: ${targetId}. Remaining:`, filtered.length);
+    return filtered;
+  });
+
+  setTimeout(() => {
+    setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "death")));
+  }, 400);
+}
+
+// SUMMON 側も「既にあるなら追加しない」を徹底
+if (next.action === "summon") {
+  const summonedUnit = (next as any).unit;
+  if (summonedUnit) {
+    setBattleBoard(prev => {
+      const current = prev || [];
+      if (current.some(u => u.instanceId === summonedUnit.instanceId)) return current;
+      return [...current, summonedUnit];
+    });
+  }
+}
       if ((next as any).action === "counter" && next.side === "p1") {
         const key = (next as any).key
         const val = (next as any).value ?? 1
         setBattleCounters(prev => ({ ...prev, [key]: (prev[key] ?? 0) + val }))
       }
-    })
+    }})
   }, 300)
 }
   /* =========================

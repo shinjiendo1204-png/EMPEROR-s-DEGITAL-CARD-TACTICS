@@ -14,7 +14,10 @@ import { calculateFinalStats } from "./statCalculator"
    Utility
 ========================= */
 function getAliveUnits(units: (BattleUnit | null)[]) {
-  return units.filter((u): u is BattleUnit => u !== null && u.hp > 0)
+
+  return units.filter((u): u is BattleUnit => {
+    return u !== null && u !== undefined && u.hp > 0;
+  });
 }
 
 function syncBoardHP(
@@ -276,41 +279,42 @@ for (const side of ["p1", "p2"] as const) {
   /* =========================
      死亡処理
   ========================= */
+  /* =========================
+     死亡処理
+  ========================= */
   const didDie = events.some(e => e.type === "death")
 
   if (didDie) {
     realTarget.isDying = true
 
-    logDeathEvent(
-      battleLogs,
-      realTarget,
-      `${realTarget.unitName} dies`,
-      state.now
-    )
-
+    logDeathEvent(battleLogs, realTarget, `${realTarget.unitName} dies`, state.now)
     logKillEvent(battleLogs, actor, realTarget, state.now)
 
-    runAbilities("onKill", actor, {
-      allies,
-      enemies,
-      now: state.now,
-      target: realTarget,
-      battleState: state,
-      playerState: actor.side === "p1" ? p1 : p2,
-      battleLogs,
-      isTeam: true,
-      leader: allies[0],
-    })
-    if (state.counters) {
-      const side = realTarget.side
-      const counters = state.counters[side]
-      counters["teamOnDeathTriggerCount"] =
-        (counters["teamOnDeathTriggerCount"] ?? 0) + 1
-    }
-
+    // 1. まず「生存ユニットのリスト」を先に取得する（重要！）
     const aliveP1Now = getAliveUnits(state.p1Units)
     const aliveP2Now = getAliveUnits(state.p2Units)
 
+    // 2. 「死んだ本人」のアビリティを発動させる
+    // これにより Blooddrinker Stalker がリストから外れる前に実行される
+    runAbilities("onDeath", realTarget, {
+      allies: realTarget.side === "p1" ? aliveP1Now : aliveP2Now,
+      enemies: realTarget.side === "p1" ? aliveP2Now : aliveP1Now,
+      now: state.now,
+      target: realTarget,
+      battleState: state,
+      playerState: realTarget.side === "p1" ? p1 : p2,
+      battleLogs,
+      deadUnit: realTarget,
+    });
+
+    // 3. 誰かが死んだ時のカウントを増やす
+    if (state.counters) {
+      const side = realTarget.side
+      const counters = state.counters[side]
+      counters["teamOnDeathTriggerCount"] = (counters["teamOnDeathTriggerCount"] ?? 0) + 1
+    }
+
+    // --- あとは既存の「他のユニット」への通知処理 ---
     const contextForP1Death = {
       allies: aliveP1Now,
       enemies: aliveP2Now,
@@ -321,6 +325,7 @@ for (const side of ["p1", "p2"] as const) {
       battleLogs,
       deadUnit: realTarget,
     }
+    // ...以下、既存の for ループなど
 
     const contextForP2Death = {
       allies: aliveP2Now,

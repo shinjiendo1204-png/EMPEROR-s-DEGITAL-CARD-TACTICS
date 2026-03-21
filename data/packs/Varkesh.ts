@@ -59,8 +59,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "atk", value: 1, target: "all_allies" },
-              { type: "MOD_STAT", stat: "damageReduce", value: -1, target: "all_allies" },
+              { type: "ADD_STATE", stateType: "atk", value: 1, target: "all_allies" },
+              { type: "ADD_STATE", stateType: "damage_reduce", value: -1, target: "all_allies" },
             ],
           },
         ],
@@ -123,7 +123,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             scope: "team",
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "hp", value: 1, target: "all_allies" },
+              { type: "ADD_STATE", stateType: "hp", value: 1, target: "all_allies" },
             ],
           },
         ],
@@ -156,7 +156,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       {
         trigger: "onDeath",
         condition: "deadAlly",
-        effects: [{ type: "MOD_STAT", stat: "atk", value: 1, target: "self" }],
+        effects: [{ type: "ADD_STATE", stateType: "atk", value: 1, target: "self" }],
       },
     ],
 
@@ -246,7 +246,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             id: "varkesh_blood_ghoul_synergy",
             scope: "team",
             trigger: "onKill",
-            effects: [{ type: "MOD_STAT", stat: "atk", value: 1, target: "self"}],
+            effects: [{ type: "ADD_STATE", stateType: "atk", value: 1, target: "self"}],
           },
         ],
       },
@@ -374,7 +374,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           {
             trigger: "battleStart",
             effects: [
-              { type: "MOD_STAT", stat: "damageReduce", value: -1, target: "self" },
+              { type: "ADD_STATE", stateType: "damage_reduce", value: -1, target: "self" },
             ],
           },
         ],
@@ -445,8 +445,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           once: true,
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 1,
               target: "all_allies",
               duration: { type: "time", value: 3 }
@@ -501,8 +501,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       effects: [
         { type: "SELF_DAMAGE", value: 1, target: "self" },
         {
-          type: "MOD_STAT",
-          stat: "atk",
+          type: "ADD_STATE",
+          stateType: "atk",
           value: 1,
           target: "self",
         }
@@ -520,8 +520,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "onAttack",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 1,
               target: "self",
               duration: { type: "time", value: 2 }
@@ -891,8 +891,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     condition: { type: "selfHpBelowPercent", value: 0.5 },
     effects: [
       {
-        type: "MOD_STAT",
-        stat: "atk",
+        type: "ADD_STATE",
+        stateType: "atk",
         value: 2,
         target: "self"
       }
@@ -910,7 +910,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "onAttack",
           effects: [
             { type: "SELF_DAMAGE", value: 1, target: "self" },
-            { type: "MOD_STAT", stat: "atk", value: 1, target: "self" }
+            { type: "ADD_STATE", stateType: "atk", value: 1, target: "self" }
           ]
         }
       ]
@@ -925,14 +925,14 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 3,
               target: "all_allies",
             },
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "ADD_STATE",
+              stateType: "hp",
               value: -3,
               target: "all_allies",
             }
@@ -1061,7 +1061,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             { type: "ADD_STATE", stateType: "curse_stack", value: 1, target: "self" },
-            { type: "MOD_STAT", stat: "atk", value: 4, target: "self" }
+            { type: "ADD_STATE", stateType: "atk", value: 4, target: "self" }
           ]
         }
       ]
@@ -1128,8 +1128,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           effects: [
             { type: "SELF_DAMAGE", value: 1, target: "self" },
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 2,
               target: "self",
               duration: { type: "time", value: 3 }
@@ -1148,8 +1148,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 1,
               target: "all_allies",
             }
@@ -1210,8 +1210,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "onDeath",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "atk",
+              type: "ADD_STATE",
+              stateType: "atk",
               value: 2,
               target: "all_allies",
             }
@@ -1229,8 +1229,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           trigger: "battleStart",
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "ADD_STATE",
+              stateType: "hp",
               value: -1,
               target: "all_enemies",
             },           
@@ -1392,8 +1392,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           condition: { type: "enemyHasCurse", value: 5 },
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "damageReduce",
+              type: "ADD_STATE",
+              stateType: "damage_reduce",
               value: -1,
               target: "all_enemies",
             }
@@ -1468,8 +1468,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           tick: { type: "everySeconds", seconds: 5 },
           effects: [
             {
-              type: "MOD_STAT",
-              stat: "hp",
+              type: "ADD_STATE",
+              stateType: "hp",
               value: 5,
               target: "random_ally",
             }
@@ -1502,8 +1502,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
       condition: { type:"selfHpBelowPercent", value:0.2 },
       effects: [
         {
-          type:"MOD_STAT",
-          stat:"atk",
+          type:"ADD_STATE",
+          stateType:"atk",
           value:3,
           target:"all_allies",
         }
@@ -1657,7 +1657,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onDeath",
     condition: { type: "deadRoleIs", value: "tank" },
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_tank" }
+      { type: "ADD_STATE", stateType: "absorbed_tank", target: "self" }
     ]
   },
 
@@ -1665,7 +1665,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onDeath",
     condition: { type: "deadRoleIs", value: "bruiser" },
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_bruiser" }
+      { type: "ADD_STATE", stateType: "absorbed_bruiser", target: "self" }
     ]
   },
 
@@ -1673,7 +1673,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onDeath",
     condition: { type: "deadRoleIs", value: "skirmisher" },
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_skirmisher" }
+      { type: "ADD_STATE", stateType: "absorbed_skirmisher", target: "self" }
     ]
   },
 
@@ -1681,7 +1681,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onDeath",
     condition: { type: "deadRoleIs", value: "ranged" },
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_ranged" }
+      { type: "ADD_STATE", stateType: "absorbed_ranged", target: "self" }
     ]
   },
 
@@ -1689,7 +1689,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onDeath",
     condition: { type: "deadRoleIs", value: "support" },
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_support" }
+      { type: "ADD_STATE", stateType: "absorbed_support", target: "self" }
     ]
   },
 
@@ -1700,35 +1700,35 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   {
     trigger: "onAbsorb_tank",
     effects: [
-      { type: "MOD_STAT", stat: "hp", value: 4 }
+      { type: "ADD_STATE", stateType: "hp", value: 4, target: "self"}
     ]
   },
 
   {
     trigger: "onAbsorb_bruiser",
     effects: [
-      { type: "MOD_STAT", stat: "atk", value: 3 }
+      { type: "ADD_STATE", stateType: "atk", value: 3, target: "self" }
     ]
   },
 
   {
     trigger: "onAbsorb_skirmisher",
     effects: [
-      { type: "ADD_STATE", stateType: "as_stack", value: 0.2 }
+      { type: "ADD_STATE", stateType: "as_stack", value: 0.2, target: "self" }
     ]
   },
 
   {
     trigger: "onAbsorb_ranged",
     effects: [
-      { type: "SET_ATTACK_RANGE", value: "next" }
+      { type: "SET_ATTACK_RANGE", value: "next", target: "self" }
     ]
   },
 
   {
     trigger: "onAbsorb_support",
     effects: [
-      { type: "MOD_STAT", stat: "damageReduce", value: 2 }
+      { type: "ADD_STATE", stateType: "damage_reduce", value: 2, target: "self" }
     ]
   },
 
@@ -1740,9 +1740,9 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
     trigger: "onAllRolesAbsorbed",
     once: true,
     effects: [
-      { type: "MOD_STAT", stat: "atk", value: 6 },
-      { type: "MOD_STAT", stat: "hp", value: 6 },
-      { type: "ADD_STATE", stateType: "as_stack", value: 0.4 }
+      { type: "ADD_STATE", stateType: "atk", value: 6, target: "self" },
+      { type: "ADD_STATE", stateType: "hp", value: 6, target: "self" },
+      { type: "ADD_STATE", stateType: "as_stack", value: 0.4, target: "self" }
     ]
   }
 

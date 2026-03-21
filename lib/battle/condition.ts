@@ -75,12 +75,22 @@ export function checkCondition(
       const t = context?.deadUnit
       if (!t) return false
 
-      // 味方死亡のみを対象にするならここで制御
-      const side = context?.actor?.side ?? unit.side
-      const isAlly = t.side === side
+      // 1. 自分自身の死は無視
+      if (t.instanceId === unit.instanceId) return false
+
+      // 2. サイド判定を「自分のサイド」と「死んだ奴のサイド」の比較に固定
+      const isAlly = t.side === unit.side
       if (!isAlly) return false
 
-      return t.role === condition.value
+      // 3. ロールの一致（念のためトリムと小文字化）
+      const targetRole = String(t.role).toLowerCase().trim()
+      const conditionRole = String(condition.value).toLowerCase().trim()
+      
+      const match = targetRole === conditionRole
+      
+      if (match) {
+      }
+      return match
     }
 
     if (condition?.type === "counter") {

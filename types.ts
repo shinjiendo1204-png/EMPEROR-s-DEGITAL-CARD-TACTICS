@@ -524,6 +524,7 @@ export type BattleLog = {
   | "kill"
   | "skill"
   | "curse"
+  | "summon"
   side?: "p1" | "p2"
   unitId?: string
   unitName?: string
