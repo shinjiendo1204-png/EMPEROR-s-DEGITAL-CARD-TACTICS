@@ -1468,8 +1468,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
           tick: { type: "everySeconds", seconds: 5 },
           effects: [
             {
-              type: "ADD_STATE",
-              stateType: "hp",
+              type: "HEAL",
               value: 5,
               target: "random_ally",
             }
