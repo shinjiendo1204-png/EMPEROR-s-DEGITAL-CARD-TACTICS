@@ -14,7 +14,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
   id: "future_core",
   baseName: "未来の要",
-  name: "Core Of Tomorrow",
+  name: "未来の要",
   mode: "unit",
   pack: "Knightsteel",
   cost: 1,
@@ -47,7 +47,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Handwoven Chainmail",
+      name: "手編みの鎖帷子",
       baseStats: {
         hp: 4,
       },
@@ -71,7 +71,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "Yearning for Battle",
+      name: "戦場への憧れ",
       effects: [],
       abilities: [
         {
@@ -100,7 +100,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "greatshield_guard",
     baseName: "仲間思いの大楯持ち",
-    name: "Shieldbearer of the Fallen",
+    name: "仲間思いの大楯持ち",
     mode: "unit",
     pack: "Knightsteel",
     cost: 1,
@@ -123,7 +123,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Shield for ally",
+        name: "二人分の盾",
         baseStats:{
         hp: 4
         },
@@ -136,7 +136,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Even If I Fall",
+        name: "たとえこの身が滅びても",
         effects: [],
         abilities: [
           {
@@ -159,7 +159,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "royal_scout",
     baseName: "王都の斥候",
-    name: "Royal Vanguard Scout",
+    name: "王都の斥候",
     mode: "unit",
     pack: "Knightsteel",
     cost: 1,
@@ -188,7 +188,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Polished Dagger",
+        name: "磨かれた短剣",
         baseStats:{
           atk: 2,
         },
@@ -208,7 +208,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Signal Relay",
+        name: "情報伝達",
         effects: [],
         abilities: [
           {
@@ -236,7 +236,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "trainee_lancer",
     baseName: "見習い槍兵",
-    name: "Novice Lancer",
+    name: "見習い槍兵",
     mode: "unit",
     pack: "Knightsteel",
     cost: 1,
@@ -266,7 +266,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Slim Spear",
+        name: "細身の槍",
         baseStats:{
           atk: 3,
         },
@@ -274,7 +274,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         abilities: [],
       },
       synergy: {
-        name: "Thread the Needle",
+        name: "針の糸を通す",
         effects: [],
         abilities: [
           {
@@ -302,7 +302,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "supply_soldier",
     baseName: "働き者の補給兵",
-    name: "Tireless Quartermaster",
+    name: "働き者の補給兵",
     mode: "unit",
     pack: "Knightsteel",
     cost: 1,
@@ -333,7 +333,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Basic Supplies",
+        name: "最低限の物資",
         baseStats:{
         hp: 3
         },
@@ -353,7 +353,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Keep Them Alive",
+        name: "命を繋ぐ",
         effects: [],
         abilities: [
           {
@@ -380,7 +380,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "approved_archer",
     baseName: "認められた弓手",
-    name: "Proven Archer",
+    name: "認められた弓手",
     mode: "unit",
     pack: "Knightsteel",
     cost: 1,
@@ -410,7 +410,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Inherited Bow",
+        name: "託された弓",
         baseStats:{
           atk: 2
         },
@@ -429,7 +429,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Archer's Discipline",
+        name: "弓手の立ち回り",
         effects: [],
         abilities: [
           {
@@ -460,7 +460,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "secret_keeper",
     baseName: "機密を知る者",
-    name: "Keeper of Secrets",
+    name: "機密を知る者",
     mode: "unit",
     pack: "Knightsteel",
     cost: 2,
@@ -492,7 +492,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Hidden Footsteps",
+        name: "秘密の足跡",
         baseStats:{
           hp: 2,
           atk: 2
@@ -514,7 +514,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Erased Legacy",
+        name: "消された伝承",
         effects: [],
         abilities: [
           {
@@ -537,7 +537,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "soup_kitchen_helper",
     baseName: "母思いの炊き出し係",
-    name: "Kindhearted Cook",
+    name: "母思いの炊き出し係",
     mode: "unit",
     pack: "Knightsteel",
     cost: 2,
@@ -569,7 +569,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Fresh Rations",
+        name: "出来立て並の保存食",
         baseStats:{
           hp: 4
         },
@@ -585,7 +585,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
        },
         synergy: {
-  name: "Meal For the Needy",
+  name: "求める者への炊き出し",
   effects: [],
   abilities: [
     {
@@ -607,7 +607,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "bloody_apprentice",
     baseName: "血豆だらけの見習い職人",
-    name: "Bloodied Apprentice",
+    name: "血豆だらけの見習い職人",
     mode: "unit",
     pack: "Knightsteel",
     cost: 2,
@@ -633,7 +633,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Imitation Holy Sword",
+        name: "聖剣の模倣品",
         baseStats:{
           hp: 2,
           atk: 2
@@ -642,7 +642,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         abilities: [],
       },
       synergy: {
-        name: "Daily Training",
+        name: "日々の鍛錬",
         effects: [],
         abilities: [
           {
@@ -666,7 +666,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "battlefield_outcast",
     baseName: "戦場の嫌われ者",
-    name: "Battlefield Outcast",
+    name: "戦場の嫌われ者",
     mode: "unit",
     pack: "Knightsteel",
     cost: 2,
@@ -702,7 +702,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Midnight Roar",
+        name: "深夜の雄叫び",
         effects: [],
         baseStats:{
           hp: 2,
@@ -729,7 +729,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Battlefield Chaos",
+        name: "戦場の混乱",
         effects: [],
         abilities: [
           {
@@ -753,7 +753,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
     id: "war_bell_ringer",
     baseName: "戦いを告げる鐘鳴らし",
-    name: "War Bell Herald",
+    name: "戦いを告げる鐘鳴らし",
     mode: "unit",
     pack: "Knightsteel",
     cost: 2,
@@ -782,7 +782,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     variants: {
       equipment: {
-        name: "Golden Bell",
+        name: "黄金の鐘",
         baseStats:{
           hp: 5
         },
@@ -804,7 +804,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         ],
       },
       synergy: {
-        name: "Ringing Alarm",
+        name: "響き渡る警鐘",
         effects: [],
         abilities: [
           {
@@ -831,7 +831,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
   id: "veteran_gatekeeper",
   baseName: "古参の門番",
-  name: "Veteran Gatekeeper",
+  name: "古参の門番",
   mode: "unit",
   pack: "Knightsteel",
   cost: 2,
@@ -863,7 +863,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Grand Gate",
+      name: "豪華な門",
       baseStats: {
         hp: 6,
       },
@@ -886,7 +886,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "Gate Defense",
+      name: "門前防衛",
       effects: [],
       abilities: [
         {
@@ -910,7 +910,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   {
   id: "arena_champion",
   baseName: "決闘場のチャンピオン",
-  name: "Arena Champion",
+  name: "決闘場のチャンピオン",
   mode: "unit",
   pack: "Knightsteel",
   cost: 3,
@@ -950,7 +950,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        最初の一撃を超強化
     ========================= */
     equipment: {
-      name: "Mark of Duel",
+      name: "決闘の証",
       baseStats:{
           hp: 3,
           atk: 2
@@ -972,7 +972,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        全員が決闘状態に入る
     ========================= */
     synergy: {
-      name: "Duel of Honor",
+      name: "名誉の一騎打ち",
       effects: [],
       abilities: [
         {
@@ -991,7 +991,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "royal_intelligence_agent",
   baseName: "王族直属密偵",
-  name: "Royal Shadow Agent",
+  name: "王族直属密偵",
   mode: "unit",
   pack: "Knightsteel",
   cost: 3,
@@ -1021,7 +1021,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        ランダム敵を一時弱体化
     ========================= */
     equipment: {
-      name: "Disguise Kit",
+      name: "偽装装備",
       baseStats:{
           atk: 2,
           hp: 3
@@ -1055,7 +1055,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        敵全体のASを一時低下
     ========================= */
     synergy: {
-      name: "Disrupton Tactics",
+      name: "錯乱工作",
       effects: [],
       abilities: [
         {
@@ -1079,7 +1079,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "wandering_bard",
   baseName: "流浪の吟遊詩人",
-  name: "Wandering Bard",
+  name: "流浪の吟遊詩人",
   mode: "unit",
   pack: "Knightsteel",
   cost: 3,
@@ -1128,7 +1128,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        装備者死亡時、味方ATK上昇
     ========================= */
     equipment: {
-      name: "War Song of Resolve",
+      name: "涙を止める戦歌",
       baseStats:{
           atk: 2,
           hp: 3
@@ -1149,7 +1149,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        味方全体のHP上昇
     ========================= */
     synergy: {
-      name: "Refugee Uprising",
+      name: "難民たちの奮起",
       effects: [],
       abilities: [
         {
@@ -1167,7 +1167,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "power_hungry_investigator",
   baseName: "権力好きの内部調査官",
-  name: "Power-Hungry Inspector",
+  name: "権力好きの内部調査官",
   mode: "unit",
   pack: "Knightsteel",
   cost: 3,
@@ -1207,7 +1207,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        最初の攻撃で強力な監査
     ========================= */
     equipment: {
-      name: "Ledger of Judgment",
+      name: "税務帳簿",
       baseStats:{
           atk: 4,
           hp: 2
@@ -1235,7 +1235,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        開幕で敵一体を機能不全に
     ========================= */
     synergy: {
-      name: "Financial Audit",
+      name: "財務監査",
       effects: [],
       abilities: [
         {
@@ -1259,7 +1259,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "instant_surveyor",
   baseName: "即答の測量士",
-  name: "Swift Surveyor",
+  name: "即答の測量士",
   mode: "unit",
   pack: "Knightsteel",
   cost: 3,
@@ -1296,7 +1296,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        装備者自身の射程昇格
     ========================= */
     equipment: {
-      name: "Natural Range Ssense",
+      name: "天性の距離感",
       baseStats:{
           atk: 3,
           hp: 4
@@ -1321,7 +1321,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
        前列全体の射程を昇格
     ========================= */
     synergy: {
-      name: "Expanded Front",
+      name: "戦域拡張",
       effects: [],
       abilities: [
         {
@@ -1343,7 +1343,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "banner_officer",
   baseName: "戦旗将校",
-  name: "Banner Officer",
+  name: "戦旗将校",
   mode: "unit",
   pack: "Knightsteel",
   cost: 4,
@@ -1378,7 +1378,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   variants: {
     /* 王国大戦旗 */
     equipment: {
-      name: "Royal War Banner",
+      name: "王国大戦旗",
       baseStats:{
           atk: 3,
           hp: 4
@@ -1401,7 +1401,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     /* 全速全軍 */
     synergy: {
-      name: "Full Advance",
+      name: "全速全軍",
       effects: [],
       abilities: [
         {
@@ -1426,7 +1426,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "kingdom_heavy_guard",
   baseName: "王国一の重装兵",
-  name: "Kingdom's Heavy Guard",
+  name: "王国一の重装兵",
   mode: "unit",
   pack: "Knightsteel",
   cost: 4,
@@ -1467,7 +1467,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   variants: {
     /* 装甲一式 */
     equipment: {
-  name: "Full Armor Set",
+  name: "装甲一式",
   baseStats:{
           atk: 2,
           hp: 8
@@ -1490,7 +1490,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     /* 絶対不屈 */
     synergy: {
-      name: "Unbreakable Resolve",
+      name: "絶対不屈",
       effects: [],
       abilities: [
         {
@@ -1514,7 +1514,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "reckless_charge_captain",
   baseName: "危険な突撃隊長",
-  name: "Reckless Charge Captain",
+  name: "危険な突撃隊長",
   mode: "unit",
   pack: "Knightsteel",
   cost: 4,
@@ -1544,7 +1544,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   variants: {
     /* 血で育つ剣 */
     equipment: {
-      name: "Bloodforged Blade",
+      name: "血で育つ剣",
       baseStats:{
           atk: 6,
         },
@@ -1566,7 +1566,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     /* 一点突破 */
     synergy: {
-      name: "Breakthrough Strike",
+      name: "一点突破",
       effects: [],
       abilities: [
         {
@@ -1589,7 +1589,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "legendary_priest",
   baseName: "伝説を語る司祭",
-  name: "Priest of Legends",
+  name: "伝説を語る司祭",
   mode: "unit",
   pack: "Knightsteel",
   cost: 4,
@@ -1620,7 +1620,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   variants: {
     /* 選ばれし聖印 */
     equipment: {
-      name: "Chosen Sigil",
+      name: "選ばれし聖印",
       baseStats:{
           hp: 7
         },
@@ -1642,7 +1642,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
     /* 祝福の儀式 */
     synergy: {
-      name: "Blessing Rite",
+      name: "祝福の儀式",
       effects: [],
       abilities: [
         {
@@ -1665,7 +1665,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "immortal_knight",
   baseName: "不滅の騎士",
-  name: "Immortal Knight",
+  name: "不滅の騎士",
   mode: "unit",
   pack: "Knightsteel",
   cost: 5,
@@ -1695,7 +1695,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Oath of Immortality",
+      name: "不死の誓い",
       baseStats:{
           atk: 4,
           hp: 10
@@ -1713,7 +1713,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "Gift of Immortality",
+      name: "不滅の付与",
       effects: [],
       abilities: [
         {
@@ -1737,7 +1737,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "victory_strategist",
   baseName: "勝利の軍師",
-  name: "Strategist of Victory",
+  name: "勝利の軍師",
   mode: "unit",
   pack: "Knightsteel",
   cost: 5,
@@ -1769,7 +1769,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Tome of Radiant Wisdom",
+      name: "輝く知恵の書",
       baseStats:{
           atk: 5,
           hp: 5
@@ -1794,7 +1794,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "Army Optimization",
+      name: "全軍最適化",
       effects: [],
       abilities: [
         {
@@ -1820,7 +1820,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
 {
   id: "battlefield_disruptor",
   baseName: "戦場を乱す者",
-  name: "Battlefield Disruptor",
+  name: "戦場を乱す者",
   mode: "unit",
   pack: "Knightsteel",
   cost: 5,
@@ -1848,7 +1848,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
           atk: 8,
           hp: 2
         },
-      name: "Twin Blades of the Vanguard",
+      name: "遊撃長の双刃",
       effects: [],
       abilities: [
         {
@@ -1861,7 +1861,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
     },
 
     synergy: {
-      name: "Mounting Corpses",
+      name: "積み上がる屍",
       effects: [],
       abilities: [
         {

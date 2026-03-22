@@ -7,7 +7,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 {
   id: "relic_atk",
   baseName: "炎のレリック",
-  name: "Flame Relic",
+  name: "炎のレリック",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -22,7 +22,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Flame Relic",
+      name: "炎のレリック",
       baseStats: { atk: 2 },
       effects: [],
       abilities: []
@@ -33,7 +33,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 {
   id: "relic_hp",
   baseName: "水のレリック",
-  name: "Aqua Relic",
+  name: "水のレリック",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -49,7 +49,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Aqua Relic",
+      name: "水のレリック",
       baseStats: { hp: 3 },
       effects: [],
       abilities: []
@@ -60,7 +60,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 {
   id: "relic_as",
   baseName: "風のレリック",
-  name: "Gale Relic",
+  name: "風のレリック",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -76,7 +76,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Gale Relic",
+      name: "風のレリック",
       baseStats: { attackSpeed: 0.08 },
       effects: [],
       abilities: []
@@ -87,7 +87,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 {
   id: "relic_regen",
   baseName: "土のレリック",
-  name: "Terra Relic",
+  name: "土のレリック",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -103,7 +103,7 @@ export const ANTIQUA_RELICS_T1: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Terra Relic",
+      name: "土のレリック",
       baseStats: {hp: 1},
       effects: [],
       abilities: [
@@ -129,7 +129,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
   {
   id: "relic_t2_flame_core",
   baseName: "炎神核",
-  name: "Ember Core",
+  name: "炎神核",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -144,7 +144,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Ember Core",
+      name: "炎神核",
       baseStats: { atk: 3 },
       effects: [],
       abilities: [
@@ -161,7 +161,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 {
   id: "relic_t2_ancient_crystal",
   baseName: "水神核",
-  name: "Tide Core",
+  name: "水神核",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -176,7 +176,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Tide Core",
+      name: "水神核",
       baseStats: { hp: 5 },
       effects: [],
       abilities: [
@@ -193,7 +193,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 {
   id: "relic_t2_wind_core",
   baseName: "風神核",
-  name: "Storm Core",
+  name: "風神核",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -208,7 +208,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Storm Core",
+      name: "風神核",
       baseStats: { attackSpeed: 0.15 },
       effects: [],
       abilities: []
@@ -218,7 +218,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 {
   id: "relic_t2_regen_core",
   baseName: "土神核",
-  name: "Earthshard Core",
+  name: "土神核",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -233,7 +233,7 @@ export const ANTIQUA_RELICS_T2: Unit[] = ensureAbilityIds([
 
   variants: {
     equipment: {
-      name: "Earthshard Core",
+      name: "土神核",
       baseStats: { hp: 3 },
       effects: [],
       abilities: [
@@ -254,7 +254,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
   {
   id: "relic_t3_ancient_core",
   baseName: "フェニックスソウル",
-  name: "Phoenix Soul",
+  name: "フェニックスソウル",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -269,7 +269,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Phoenix Soul",
+      name: "フェニックスソウル",
       baseStats: { atk: 4, hp: 4 },
       effects: [],
       abilities: [
@@ -287,7 +287,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 {
   id: "relic_t3_ancient_crown",
   baseName: "タイガーソウル",
-  name: "Tiger Soul",
+  name: "タイガーソウル",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -302,7 +302,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Tiger Soul",
+      name: "タイガーソウル",
       baseStats: { atk: 3, hp: 6 },
       effects: [],
       abilities: [
@@ -319,7 +319,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 {
   id: "relic_t3_guardian_stone",
   baseName: "タートルソウル",
-  name: "Turtle Soul",
+  name: "タートルソウル",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -334,7 +334,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Turtle Soul",
+      name: "タートルソウル",
       baseStats: { hp: 6 },
       effects: [],
       abilities: [
@@ -351,7 +351,7 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 {
   id: "relic_t3_reactor",
   baseName: "ドラゴンソウル",
-  name: "Dragon Soul",
+  name: "ドラゴンソウル",
   mode: "unit",
   pack: "Antiqua",
   cost: 0,
@@ -366,18 +366,12 @@ export const ANTIQUA_RELICS_T3: Unit[] = ensureAbilityIds( [
 
   variants: {
     equipment: {
-      name: "Dragon Soul",
-      baseStats: { hp: 3 },
+      name: "ドラゴンソウル",
+      baseStats: { atk: 5 ,hp: 6 },
 
       effects: [],
       abilities: [
-        {
-          trigger: "battleStart",
-          effects: [
-            { type: "MOD_STAT", stat: "atk", value: 2, target: "self" },
-            { type: "MOD_STAT", stat: "attackSpeed", value: 0.1, target: "self" }
-          ]
-        }
+
       ]
     }
   }

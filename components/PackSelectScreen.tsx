@@ -14,13 +14,13 @@ type Props = {
 
 const PACK_INFO: Record<string, { desc: string }> = {
   Antiqua: {
-    desc: "Scale with relic power"
+    desc: "探求と装備でスケールする冒険者パック"
   },
   Varkesh: {
-    desc: "Sacrifice & curse enemies"
+    desc: "自傷、呪印、死亡で強化される邪悪パック"
   },
   Knightsteel: {
-    desc: "Speed & combat buffs"
+    desc: "軽減、AS増加、ヒールが得意な騎士パック"
   }
 }
 
@@ -51,7 +51,7 @@ export function PackSelectScreen({
           TITLE
       ========================= */}
       <h2 style={{ fontSize: 32, letterSpacing: 1.2, marginBottom: 40 }}>
-        Choose Your Pack
+        パックを選択する
       </h2>
 
       {/* =========================
@@ -151,7 +151,7 @@ export function PackSelectScreen({
                   e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
                 }}
               >
-                VIEW CARD LIST
+                カードリスト
               </button>
             </div>
           )
@@ -163,7 +163,7 @@ export function PackSelectScreen({
       ========================= */}
       {selectedPack && !enemyPack && (
         <div style={{ marginTop: 36, opacity: 0.7 }}>
-          Creating shared card pool...
+          カードプール作成中...
         </div>
       )}
 

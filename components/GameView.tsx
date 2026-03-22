@@ -749,7 +749,7 @@ if (preBattle.phase === "fusion") {
       }}
     >
       <div style={{ fontSize: 28, opacity: 0.8 }}>
-        Fusing Packs...
+        カードプール生成中...
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
@@ -768,10 +768,6 @@ if (preBattle.phase === "fusion") {
 
       <div style={{ fontSize: 20, fontWeight: 700 }}>
         {preBattle.p1Pack} × {preBattle.p2Pack}
-      </div>
-
-      <div style={{ opacity: 0.7 }}>
-        Shared Card Pool Created
       </div>
     </div>
   )
@@ -868,12 +864,12 @@ const damageStats = damageSide === "p1"
               onClick={handleBattleStart}
               disabled={disabled}
             >
-              BattleStart
+              戦闘開始
             </button>
           )}
 
           <button style={{ marginLeft: 12 }} onClick={() => setShowEnemyBoard((v) => !v)}>
-            {showEnemyBoard ? "My Board" : "Enemy's Board"}
+            {showEnemyBoard ? "自分の盤面" : "相手の盤面"}
           </button>
         </div>
       </div>
@@ -957,11 +953,11 @@ const damageStats = damageSide === "p1"
       textShadow: "0 2px 6px rgba(0,0,0,0.9)"
     }}
   >
-    SYNERGY
+    シナジー
   </div>
 
   {player.synergies.length === 0 ? (
-    <div style={{ opacity: 0.35, fontSize: 12 }}>1 Synergy per turn (Free, Max 2)</div>
+    <div style={{ opacity: 0.35, fontSize: 12 }}>ユニットは、ここにドラッグするとシナジーになります。(1ターンに1枚。無料。 最高２枚。上限を超えると古いものから上書き。)</div>
   ) : (
     <div
       style={{
@@ -1058,7 +1054,7 @@ const damageStats = damageSide === "p1"
       textShadow: "0 2px 6px rgba(0,0,0,0.9)"
     }}
   >
-    EQUIPMENT
+    装備ストック
   </div>
 
   {player.equipmentStock.length === 0 ? (
@@ -1072,8 +1068,8 @@ const damageStats = damageSide === "p1"
       marginTop: 8,
     }}
   >
-    Drag a unit onto another to turn it into equipment.
-Stored here when sold. Reuse for free.
+   全てのユニットは、盤面に配置された別のユニットに重ねると、コストを消費して装備品になります。
+   そのユニットを売却した場合、装備はストックに保管され、以降は無料で使えます。
   </div>
 
 ) : (
@@ -1450,7 +1446,7 @@ Stored here when sold. Reuse for free.
                   userSelect: "none",
                 }}
               >
-                Sell
+                売却
               </div>
 
               {/* Reroll */}
@@ -1471,7 +1467,7 @@ Stored here when sold. Reuse for free.
                   opacity: player.rerollCharges > 0 || player.pp >= 1 ? 1 : 0.4,
                 }}
               >
-                <div style={{ fontWeight: "bold" }}>Reroll</div>
+                <div style={{ fontWeight: "bold" }}>リロール</div>
                 <div>
                  {player.rerollCharges} / {player.maxRerollCharges}
                 </div>
@@ -1558,7 +1554,7 @@ Stored here when sold. Reuse for free.
         cursor: "pointer",
       }}
     >
-      Rematch
+      もう一度対戦する
     </button>
   </div>
 )}

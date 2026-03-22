@@ -5,7 +5,7 @@ import { Unit, Ability, BattleUnit, PlayerState } from "@/types"
 import { ROLE_AS } from "@/lib/battle/constants"
 import { calculateFinalStats } from "@/lib/battle/statCalculator"
 import { BattleState } from "@/lib/battle/state"
-import { renderAbilitiesENFromRaw } from "@/lib/ui/abilityformatter/renderEN"
+import { abilityToLine } from "@/lib/ui/abilityText"
 
 // DetailMode に album を追加
 export type DetailMode = "hand" | "board" | "equipment" | "synergy" | "album"
@@ -148,7 +148,15 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
           lineHeight: 1.4,
         }}
       >
-        {renderAbilitiesENFromRaw(abilities)}
+        {/* map で一つずつアビリティを取り出して renderAbilityJP に渡す */}
+        {abilities.map((abil, idx) => (
+          <div key={idx} style={{ marginBottom: idx === abilities.length - 1 ? 0 : 8 }}>
+            {abilityToLine(abil, { 
+              battleState, // Propsから渡ってきているもの
+              playerState  // Propsから渡ってきているもの
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -226,14 +234,14 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
         </div>
 
         {/* --- ユニットアビリティ --- */}
-        <SectionTitle>Unit Ability</SectionTitle>
+        <SectionTitle>アビリティ</SectionTitle>
         <AbilityList abilities={(unit as any).abilities} />
 
         {/* --- フォームチェンジ情報 (ハンドまたはアルバム時のみ) --- */}
         {(mode === "hand" || mode === "album") && (
           <>
             {/* 装備形態 */}
-            <SectionTitle color="#4fd1ff">Equipment Form</SectionTitle> 
+            <SectionTitle color="#4fd1ff">装備モード</SectionTitle> 
             {variants?.equipment ? (
               <>
                 <div style={{ fontSize: 12, opacity: 0.8, fontWeight: "bold", marginBottom: 4 }}>
@@ -264,7 +272,7 @@ export function UnitDetailOverlay({ target, mode, x, y, onClose, battleState, pl
             )}
 
             {/* シナジー形態 */}
-            <SectionTitle color="#4ade80">Synergy Form</SectionTitle>
+            <SectionTitle color="#4ade80">シナジーモード</SectionTitle>
             {variants?.synergy ? (
               <>
                 <div style={{ fontSize: 12, opacity: 0.8, fontWeight: "bold", marginBottom: 4 }}>

@@ -4,8 +4,8 @@ export const VARKESH_TOKENS: Unit[] = [
 
 {
  id:"varkesh_ghoul_token",
- baseName:"Ghoul",
- name:"Ghoul",
+ baseName:"グール",
+ name:"グール",
  mode:"unit",
  pack:"Varkesh",
  cost:0,

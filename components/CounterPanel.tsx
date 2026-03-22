@@ -2,19 +2,19 @@ import { useState } from "react"
 import { PlayerState } from "@/types"
 
 export const LABEL: Record<string, string> = {
-  dig: "dig",
-  devour: "devour",
-  teamCurseApplied: "Curse Applied",
-  teamOnDeathTriggerCount: "Ally Deaths",
-  swiftVolley: "Volley Count",
-  corpseCount: "Corpses",
-  equipmentDestroyed: "Equipment Destroyed",
-  equipmentForged: "Equipment Crafted",
-  selfDamage: "Self Damage",
-  selfEquip: "Equip Count",
-  damageReduce: "Damage Reduced",
-  onDeath: "On-Death Triggers",
-  as_stack: "AS Stacks",
+  dig: "探求数",
+  devour: "捕食数",
+  teamCurseApplied: "呪印付与数",
+  teamOnDeathTriggerCount: "死亡時効果発動数",
+  swiftVolley: "連射数",
+  corpseCount: "死体数",
+  equipmentDestroyed: "装備破壊数",
+  equipmentForged: "装備数",
+  selfDamage: "自傷数",
+  selfEquip: "装備数",
+  damageReduce: "ダメージ軽減数",
+  onDeath: "死亡時効果発動数",
+  as_stack: "AS上昇数",
 }
 
 export function CounterPanel({

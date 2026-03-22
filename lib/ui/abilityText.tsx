@@ -2,7 +2,7 @@
 
 import { Ability } from "@/types"
 import { interpretAbility } from "./abilityformatter/interpret"
-import { renderAbilityEN } from "./abilityformatter/renderEN"
+import { renderAbilitiesJPFromRaw } from "./abilityformatter/renderJP"
 
 export function abilityToLine(
   a: Ability,
@@ -12,6 +12,5 @@ export function abilityToLine(
     side?: "p1" | "p2"
   }
 ) {
-  const semantic = interpretAbility(a)
-  return renderAbilityEN(semantic, ctx)
+  return renderAbilitiesJPFromRaw([a], ctx)
 }

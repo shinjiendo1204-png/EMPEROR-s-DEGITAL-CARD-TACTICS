@@ -5,7 +5,7 @@ export const HERO_UNITS: Unit[] = [
   {
   id: "the_hope_alux",
   baseName: "希望の勇者 アルクス",
-  name: "Alux, Hero of Hope",
+  name: "希望の勇者 アルクス",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -41,7 +41,7 @@ export const HERO_UNITS: Unit[] = [
 
   variants: {
     equipment: {
-      name: "Largelight, Legendary Blade",
+      name: "伝説の剣 ラージライト",
       baseStats: {
         atk: 10,
         hp: 10
@@ -63,7 +63,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "Descending Light",
+      name: "舞い降りる光",
       effects: [],
       abilities: [
         {
@@ -85,7 +85,7 @@ export const HERO_UNITS: Unit[] = [
 {
   id: "hero_nightsteel_guard",
   baseName: "国繋ぐ守護者 バルガン",
-  name: "Balgarn, Realm Guadian",
+  name: "国繋ぐ守護者 バルガン",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -114,13 +114,15 @@ export const HERO_UNITS: Unit[] = [
           type: "ADD_STATE",
           stateType: "atk",
           value: 2,
-          maxStack: 30
+          maxStack: 10,
+          maxTotalValue: 20,
         },
         {
           type: "ADD_STATE",
           stateType: "damage_reduce",
           value: 2,
-          maxStack: 10
+          maxStack: 10,
+          maxTotalValue: 20,
         }
       ]
     }
@@ -128,7 +130,7 @@ export const HERO_UNITS: Unit[] = [
 
   variants: {
     equipment: {
-      name: "Evarak, Silver Shield",
+      name: "白銀の盾 エヴァラック",
       baseStats: {
         hp: 12,
         atk: 3
@@ -151,7 +153,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "Iron Fortress",
+      name: "鉄壁の陣",
       effects: [],
       abilities: [
         {
@@ -179,7 +181,7 @@ export const HERO_UNITS: Unit[] = [
 {
   id: "hero_nightsteel_swift",
   baseName: "蒼嵐の速射手 シルヴァ",
-  name: "Sylva, Stormshot Ranger",
+  name: "蒼嵐の速射手 シルヴァ",
   mode: "hero",
   pack: "Knightsteel",
   cost: 0,
@@ -219,7 +221,6 @@ export const HERO_UNITS: Unit[] = [
           value: 0.25,
           target: "self",
           maxStack: 20,
-          maxTotalValue: 5,
         }
       ]
     },
@@ -264,7 +265,7 @@ export const HERO_UNITS: Unit[] = [
   variants: {
 
     equipment: {
-      name: "Valest, Great Longbow",
+      name: "大長弓 ヴァレスト",
       baseStats: {
         atk: 10,
         hp: 6
@@ -288,7 +289,7 @@ export const HERO_UNITS: Unit[] = [
     },
 
     synergy: {
-      name: "Stormhunt",
+      name: "風嵐の狩り",
       effects: [],
       abilities: [
         {
@@ -311,8 +312,8 @@ export const HERO_UNITS: Unit[] = [
 },
 {
   id: "hero_yamato",
-  baseName: "白髪の黒王 ヤマト ",
-  name: "Yamato, Black Sovereign",
+  baseName: "白髪の黒王 ヤマト",
+  name: "白髪の黒王 ヤマト",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -384,7 +385,7 @@ export const HERO_UNITS: Unit[] = [
   ],
   variants: {
   equipment: {
-  name: "Murakumo, Cloaked in Black",
+  name: "黒を纏う叢雲",
   baseStats: {
     atk: 8,
     hp: 6
@@ -429,7 +430,7 @@ export const HERO_UNITS: Unit[] = [
   ]
 },
 synergy: {
-  name: "Rebellion Against the Gods",
+  name: "神への反乱",
   effects: [],
   abilities: [
     {
@@ -454,7 +455,7 @@ synergy: {
 {
   id: "hero_blood_oni_emperor",
   baseName: "鬼の頭領 酒呑童子",
-  name: "Shuten Doji, Oni Overlord",
+  name: "鬼の頭領 酒呑童子",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -583,7 +584,7 @@ synergy: {
     ========================= */
 
     equipment: {
-      name: "Onigoroshi, Demon-Slaying Sake",
+      name: "格別の酒 鬼殺し",
       baseStats: {
         atk: 10,
         hp: 8
@@ -629,7 +630,7 @@ synergy: {
     ========================= */
 
     synergy: {
-      name: "Surging Rage",
+      name: "押し寄せる怒り",
 
       effects: [],
 
@@ -655,7 +656,7 @@ synergy: {
 {
   id: "hero_shikome",
   baseName: "呪いの女神 シコメ",
-  name: "Shikome, Goddess of Curses",
+  name: "呪いの女神 シコメ",
   mode: "hero",
   pack: "Varkesh",
   cost: 0,
@@ -721,7 +722,6 @@ synergy: {
           value: 1,
           target: "all_enemies",
           duration: { type: "time", value: 1 },
-          maxStack: 1
         }
       ]
     }
@@ -735,7 +735,7 @@ synergy: {
     ========================= */
 
     equipment: {
-      name: "Curse Kiss",
+      name: "呪いの口づけ",
 
       baseStats: {
         hp: 10,
@@ -787,7 +787,7 @@ synergy: {
     ========================= */
 
     synergy: {
-      name: "Excessive Devotion",
+      name: "過剰な愛情",
       effects: [],
       abilities: [
 
@@ -827,7 +827,7 @@ synergy: {
 {
   id: "hero_antiqua_dig_relic",
   baseName: "秘宝 アースレリック",
-  name: "Earth Relic",
+  name: "秘宝 アースレリック",
   mode: "hero",
   pack: "Antiqua",
   cost: 0,
@@ -862,7 +862,7 @@ synergy: {
   variants: {
 
     equipment: {
-      name: "Radiant Soul",
+      name: "光輝く魂",
 
       baseStats: {
         atk: 4,
@@ -947,7 +947,7 @@ synergy: {
     },
 
     synergy: {
-      name: "Beyond Legacy",
+      name: "伝承を超えた戦い",
 
       effects: [],
 
@@ -976,7 +976,7 @@ synergy: {
 {
  id: "hero_antiqua_devourer",
  baseName: "過ちの先 テンタクル",
- name: "Tentacle, Beyond the Error",
+ name: "過ちの先 テンタクル",
  mode: "hero",
  pack: "Antiqua",
  cost: 0,
@@ -1045,7 +1045,7 @@ synergy: {
  variants: {
 
     equipment: {
-      name: "Abyssal Relic",
+      name: "漆黒のレリック",
 
       baseStats: {
         atk: 15,
@@ -1058,7 +1058,7 @@ synergy: {
     },
 
     synergy: {
-      name: "All-Consuming Darkness",
+      name: "覆い尽くす闇",
 
       effects: [],
 
@@ -1091,7 +1091,7 @@ synergy: {
  {
   id: "hero_antiqua_overlord",
   baseName: "辿り着いた未来 ルクタンテ",
-  name: "Luctante, Reached Bright Future",
+  name: "辿り着いた未来 ルクタンテ",
   mode: "hero",
   pack: "Antiqua",
   cost: 0,
@@ -1128,7 +1128,7 @@ synergy: {
    variants: {
 
     equipment: {
-      name: "Relic of Hope",
+      name: "希望のレリック",
 
       baseStats: {
         atk: 15,
@@ -1141,7 +1141,7 @@ synergy: {
     },
 
     synergy: {
-      name: "Glimmer Ahead",
+      name: "一寸先の光",
 
       effects: [],
 
@@ -1154,14 +1154,14 @@ synergy: {
             {
               type: "ADD_STATE",
               stateType: "atk",
-              value: -5,
-              target: "equipped_enemy"
+              value: 5,
+              target: "equipped_allies"
             },
             {
               type: "ADD_STATE",
               stateType: "as_stack",
-              value: -0.2,
-              target: "equipped_enemy"
+              value: 0.2,
+              target: "equipped_allies"
             }
           ]
         }
