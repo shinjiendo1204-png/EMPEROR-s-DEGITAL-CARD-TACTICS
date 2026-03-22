@@ -188,8 +188,11 @@ if (texts) {
   const displayMaxHp = Math.round(u.maxHp || u.baseMaxHp);
 
  texts.hpText.text = `${displayHp}`;
-
+  texts.atkText.text = `${displayAtk}`;
   // 色判定：最大HPがベースより高ければ緑にする
+  const isAtkBuffed = displayAtk > (u.baseAtk ?? 0);
+  const isAtkDebuffed = displayAtk < (u.baseAtk ?? 0);
+  texts.atkText.style.fill = isAtkBuffed ? "#6bff8a" : isAtkDebuffed ? "#ff4d4f" : "#ffffff";
   const isBuffed = displayMaxHp > (u.baseMaxHp ?? 100);
   texts.hpText.style.fill = isBuffed ? "#6bff8a" : "#ffffff";
   updateEquipments(container, u.equipments);
