@@ -426,6 +426,11 @@ function convertEffect(e: any): SemanticEffect {
     kind: "create_ancient_weapon",
   }
 
+  case "TAUNT_ALL":
+  return {
+    kind: "taunt_all",
+  }
+
     case "HEAL_PERCENT":
       return {
         kind: "heal",
