@@ -1638,7 +1638,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   pack: "Varkesh",
   cost: 5,
 
-  hp: 13,
+  hp: 10,
   atk: 2,
   attackRange: 4,
   role: "ranged",
@@ -1654,96 +1654,14 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
 
   {
     trigger: "onDeath",
-    condition: { type: "deadRoleIs", value: "tank" },
+    condition: "deadAlly",
     effects: [
-      { type: "ADD_STATE", stateType: "absorbed_tank", target: "self" }
+      { type: "ADD_STATE", stateType: "atk", value: 2, target: "self" },
+      { type: "ADD_STATE", stateType: "hp", value: 2, target: "self" },
+      { type: "ADD_STATE", stateType: "as_stack", value: 0.1, target: "self" }
     ]
   },
 
-  {
-    trigger: "onDeath",
-    condition: { type: "deadRoleIs", value: "bruiser" },
-    effects: [
-      { type: "ADD_STATE", stateType: "absorbed_bruiser", target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onDeath",
-    condition: { type: "deadRoleIs", value: "skirmisher" },
-    effects: [
-      { type: "ADD_STATE", stateType: "absorbed_skirmisher", target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onDeath",
-    condition: { type: "deadRoleIs", value: "ranged" },
-    effects: [
-      { type: "ADD_STATE", stateType: "absorbed_ranged", target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onDeath",
-    condition: { type: "deadRoleIs", value: "support" },
-    effects: [
-      { type: "ADD_STATE", stateType: "absorbed_support", target: "self" }
-    ]
-  },
-
-  /* =========================
-     各ロール吸収強化
-  ========================= */
-
-  {
-    trigger: "onAbsorb_tank",
-    effects: [
-      { type: "ADD_STATE", stateType: "hp", value: 4, target: "self"}
-    ]
-  },
-
-  {
-    trigger: "onAbsorb_bruiser",
-    effects: [
-      { type: "ADD_STATE", stateType: "atk", value: 3, target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onAbsorb_skirmisher",
-    effects: [
-      { type: "ADD_STATE", stateType: "as_stack", value: 0.2, target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onAbsorb_ranged",
-    effects: [
-      { type: "SET_ATTACK_RANGE", value: "next", target: "self" }
-    ]
-  },
-
-  {
-    trigger: "onAbsorb_support",
-    effects: [
-      { type: "ADD_STATE", stateType: "damage_reduce", value: 2, target: "self" }
-    ]
-  },
-
-  /* =========================
-     完全覚醒
-  ========================= */
-
-  {
-    trigger: "onAllRolesAbsorbed",
-    once: true,
-    effects: [
-      { type: "ADD_STATE", stateType: "atk", value: 6, target: "self" },
-      { type: "ADD_STATE", stateType: "hp", value: 6, target: "self" },
-      { type: "ADD_STATE", stateType: "as_stack", value: 0.4, target: "self" }
-    ]
-  }
 
 ],
   variants: {

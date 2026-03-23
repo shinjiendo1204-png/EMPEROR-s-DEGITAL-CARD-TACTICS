@@ -748,7 +748,7 @@ if (effect.maxTotalValue !== undefined) {
 }
 
 
-if (valueToAdd <= 0) break
+if (valueToAdd === 0) break
 
       const isAbsorbState =
         typeof stateType === "string" && stateType.startsWith("absorbed_")

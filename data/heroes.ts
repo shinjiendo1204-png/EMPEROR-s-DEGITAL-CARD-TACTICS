@@ -345,38 +345,15 @@ export const HERO_UNITS: Unit[] = [
       ]
     },
 
-    /* =========================
-       死亡カウント
-    ========================= */
-
-    {
-      id: "yamato_ability2",
-      trigger: "onDeath",
-      condition: "deadAlly",
-      effects: [
-        {
-          type: "INCREMENT_COUNTER",
-          key: "corpseCount",
-          scope: "battle"
-        }
-      ]
-    },
-
-    /* =========================
-       10秒後ネクロ爆発
-    ========================= */
-
     {
       id: "yamato_ability3",
       trigger: "auraTick",
-      tick: { type: "everySeconds", seconds: 3 },
+      tick: { type: "everySeconds", seconds: 10 },
       maxTriggers: 1,
       effects: [
         {
-          type: "DAMAGE_FROM_COUNTER",
-          key: "corpseCount",
-          scope: "battle",
-          multiplier: 2,
+          type: "DAMAGE",
+          value: 15,
           target: "all_enemies"
         }
       ]

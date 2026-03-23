@@ -488,7 +488,7 @@ function handleBattleStart() {
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
-      
+
       const fromStr = (next as any).from ? `${(next as any).from.r}${(next as any).from.c}` : "";
       const toStr = (next as any).to ? `${(next as any).to.r}${(next as any).to.c}` : "";
       const dmgVal = (next as any).damage ?? (next as any).value ?? (next as any).amount ?? "";
@@ -549,9 +549,12 @@ function handleBattleStart() {
           }
           // 2. 【バフ・ステータス更新】
           // 🚩 【バフ・ステータス更新】累積（加算）に対応させる
-          if ((next as any).action === "mod_stat" || (next as any).action === "add_state") {
-            const stat = (next as any).stat;
-            const value = (next as any).value;
+           if (
+  next.action === "add_state" || 
+  (next as any).action === "mod_stat_from_counter" // ← これを追加
+) {
+  const stat = (next as any).stat;
+  const value = (next as any).value;
             const map: Record<string, string> = {
               atk: "atk", 
               hp: "hp", 

@@ -1612,7 +1612,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 {
  trigger:"auraTick",
  condition:{ type:"onEquipCount", value:3 },
- tick:{ type:"everySeconds", seconds:4 },
+ tick:{ type:"everySeconds", seconds:3 },
  effects:[
   {
    type: "DAMAGE",
@@ -1759,7 +1759,6 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
   abilities: [
   {
     trigger: "onEquip",
-    condition: { type: "onEquipCount", value: 1 },
     effects: [
       {
         type: "DESTROY_EQUIPMENT",
@@ -1770,25 +1769,26 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
 
   {
     trigger: "battleStart",
+    condition:{
+      type:"counter",
+      key:"equipmentDestroyed",
+      scope:"match",
+      min:5
+    },
     effects: [
       {
-        type: "MOD_STAT_FROM_COUNTER",
-        stat: "atk",
-        key: "equipmentDestroyed",
-        scope: "match",
-        multiplier: -1,
-        maxStack: 3,
+        type: "ADD_STATE",
+        stateType: "atk",
+        value: -3,
         target: "all_enemies"
       },
       {
-        type: "MOD_STAT_FROM_COUNTER",
-        stat: "hp",
-        key: "equipmentDestroyed",
-        scope: "match",
-        multiplier: -1,
-        maxStack: 3,
+        type: "ADD_STATE",
+        stateType: "hp",
+        value: -3,
         target: "all_enemies"
-      }
+      },
+      
     ]
   }
 ],
