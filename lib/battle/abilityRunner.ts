@@ -1029,10 +1029,8 @@ const amount = capped * (effect.multiplier ?? 1)
   incrementCounter(context, source.side, "selfDamage", "battle", 1)
 
   pushLog(context, {
-    action: "counter",
-    key: "selfDamage",
-    value: 1,
-    scope: "battle",
+    action: "self_damage", 
+    value: amount,         
     instanceId: source.instanceId,
     time: context.now,
     side: source.side,

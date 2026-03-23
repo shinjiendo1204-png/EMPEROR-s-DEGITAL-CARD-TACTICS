@@ -369,7 +369,7 @@ export const HERO_UNITS: Unit[] = [
     {
       id: "yamato_ability3",
       trigger: "auraTick",
-      tick: { type: "everySeconds", seconds: 10 },
+      tick: { type: "everySeconds", seconds: 3 },
       maxTriggers: 1,
       effects: [
         {
@@ -695,7 +695,7 @@ synergy: {
         {
           type: "ADD_STATE",
           stateType: "hp",
-          value: 12,
+          value: 10,
           target: "all_allies"
         },
         {
