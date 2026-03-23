@@ -528,6 +528,8 @@ export type BattleLog = {
   | "skill"
   | "curse"
   | "summon"
+  | "add_state"
+  | "DAMAGE_FROM_COUNTER"
   side?: "p1" | "p2"
   unitId?: string
   unitName?: string

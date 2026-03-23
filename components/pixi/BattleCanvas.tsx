@@ -294,22 +294,61 @@ if (texts) {
       const unit = spriteMapRef.current[log.instanceId];
       if (!unit) return;
 
-      if (log.action === "attack") {
-        const isPlayerSide = (log as any).isPlayer ?? true;
-        const dir = isPlayerSide ? 1 : -1; 
-        const pushAmount = 24 * dir; 
+      // 1. ダメージ・自傷・カウンターの統合判定
+const isDmgAction = ["damage", "self_damage", "DAMAGE_FROM_COUNTER"].includes(log.action);
+
+if (isDmgAction || log.action === "attack") {
+  // 数値の取得（どのキーに入っていても拾う）
+  const value = (log as any).damage ?? (log as any).value ?? (log as any).amount ?? 0;
+  
+  // 通常攻撃(attack)でダメージが0の場合は、数字を出さずに揺れだけ実行
+  if (value <= 0 && log.action !== "attack") return;
+
+  if (value > 0) {
+    const isSelf = log.action === "self_damage" || log.action === "DAMAGE_FROM_COUNTER";
+    const dmgText = new PIXI.Text(`${Math.round(value)}`, {
+      fontSize: isSelf ? 20 : 28, 
+      fontWeight: '900' as any, 
+      fill: isSelf ? '#ffaa00' : '#ff4444', // 自傷・カウンターはオレンジ、通常は赤
+      stroke: { color: '#000000', width: 4 }
+    });
+    dmgText.anchor.set(0.5);
+    dmgText.x = unit.x + CELL_W / 2;
+    dmgText.y = unit.y + CELL_H / 2;
+    app.stage.addChild(dmgText);
+
+    // アニメーションロジック（既存の dmgTicker をそのまま使用）
+    let age = 0;
+    const originalX = unit.x;
+    const dmgTicker = (delta: PIXI.Ticker) => {
+      age += delta.deltaTime;
+      dmgText.y -= 1.2 * delta.deltaTime;
+      dmgText.alpha = 1 - (age / 35);
+      // 被弾時のシェイク（揺れ）
+      if (age < 12) {
+        unit.x = originalX + (Math.random() - 0.5) * 8;
+      } else if (age >= 12 && age < 14) {
+        unit.x = originalX;
+      }
+      if (age > 35) {
+        app.stage.removeChild(dmgText);
+        dmgText.destroy();
+        app.ticker.remove(dmgTicker);
+      }
+    };
+    app.ticker.add(dmgTicker);
+  }
+}
+      
+      // 呪い演出
+      if (log.action === "add_state" && (log as any).stateType === "curse_stack") {
+        const value = (log as any).value || 0;
+        const text = new PIXI.Text(`+${Math.round(value)}`, { fontSize: 22, fontWeight: '900' as any, fill: '#aa00ff', stroke: { color: '#4400cc', width: 4 } });
+        text.anchor.set(0.5); text.x = unit.x + CELL_W / 2; text.y = unit.y + CELL_H / 2;
+        app.stage.addChild(text);
         let age = 0;
-        const attackTicker = (delta: PIXI.Ticker) => {
-          age += delta.deltaTime;
-          if (age < 5) {
-            unit.x += (pushAmount / 5) * delta.deltaTime;
-          } else if (age < 15) {
-            unit.x -= (pushAmount / 10) * delta.deltaTime;
-          } else {
-            app.ticker.remove(attackTicker);
-          }
-        };
-        app.ticker.add(attackTicker);
+        const curTicker = (delta: PIXI.Ticker) => { age += delta.deltaTime; text.y -= 1.2; text.alpha = 1 - (age / 40); if (age > 40) { app.stage.removeChild(text); text.destroy(); app.ticker.remove(curTicker); } };
+        app.ticker.add(curTicker);
       }
 
       if (log.action === "damage" || log.action === "self_damage") {
@@ -346,6 +385,7 @@ if (texts) {
         };
         app.ticker.add(dmgTicker);
       }
+      
 
       if (log.action === "heal") {
         const value = (log as any).value || 0;

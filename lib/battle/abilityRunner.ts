@@ -699,7 +699,8 @@ function applyAbilityEffect(
       incrementCounter(context, source.side, "teamCurseApplied", "match", added)
 
       pushLog(context, {
-        action: "counter",
+        action: "add_state",
+        stateType: "curse_stack",
         key: "teamCurseApplied",
         value: added,
         scope: "battle",
@@ -899,22 +900,13 @@ if (valueToAdd <= 0) break
 
   const count = getCounter(context, source.side, key, scope)
 
-  // ★ これを一時的に入れてください
-  console.log("--- DAMAGE_FROM_COUNTER DEBUG ---", {
-    unit: source.unitId,
-    side: source.side,
-    key: key,
-    count: count,
-    multiplier: effect.multiplier,
-    finalDamage: count * effect.multiplier
-  });
   const damage = count * effect.multiplier
   if (damage <= 0) break
 
   target.prevHp = target.hp
   target.hp -= damage
 
-  const isTeamBased = key === "teamSelfDamage" // ★ここ
+  const isTeamBased = key === "teamSelfDamage" 
 
   pushLog(context, {
     action: "damage",

@@ -488,31 +488,29 @@ function handleBattleStart() {
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
+      
       const fromStr = (next as any).from ? `${(next as any).from.r}${(next as any).from.c}` : "";
-const toStr = (next as any).to ? `${(next as any).to.r}${(next as any).to.c}` : "";
-const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`;
-      if (processedIds.current.has(logId)) return
-      processedIds.current.add(logId)
-
-      // --- GameView.tsx 内の handleBattleStart -> batch.forEach 内 ---
-
-      // --- Summon 処理 (関数型更新に修正) ---
+      const toStr = (next as any).to ? `${(next as any).to.r}${(next as any).to.c}` : "";
+      const dmgVal = (next as any).damage ?? (next as any).value ?? (next as any).amount ?? "";
+      
+      const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr}-${(next as any).stateType ?? ""}-${dmgVal}`;
+      
+      if (processedIds.current.has(logId)) return;
+      processedIds.current.add(logId);
+   
+     // 2. 【Summon 処理】 召喚ユニットを盤面に追加
       if ((next as any).action === "summon" || (next as any).action === "SUMMON") {
         const summonedUnit = (next as any).unit as BattleUnit;
         if (summonedUnit) {
-          // ★最重要: prev => [...] の形式にする
           setBattleBoard((prevBoard) => {
-            // prevBoard は常に「最新の」盤面データになる
             const currentBoard = prevBoard || [];
-            
-          if (currentBoard.some(u => u.instanceId === summonedUnit.instanceId)) return currentBoard;
-            
-            
-        
+            if (currentBoard.some(u => u.instanceId === summonedUnit.instanceId)) return currentBoard;
             return [...currentBoard, summonedUnit];
           });
         }
+        return; // 召喚処理ならここで終了
       }
+      
 
       if (typeof next.instanceId === "string") {
         const targetId = next.instanceId
@@ -559,7 +557,8 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
               hp: "hp", 
               maxHp: "hp",
               attackSpeed: "as_stack", 
-              damageReduce: "damage_reduce"
+              damageReduce: "damage_reduce",
+              curse_stack: "curse_stack"
             };
             const stateType = map[stat] || (next as any).stateType;
             
@@ -616,13 +615,37 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
             // HPそのものの直接変更（回復など）の場合のみ、現在のHPを更新
             if (stat === "hp" && value > 0) unit.hp = value; 
           }
-          // 3. 【ダメージ反映】
-          if (next.action === "attack" || next.action === "damage") {
-            const dmg = (next as any).damage ?? (next as any).value
-            if (typeof dmg === "number") {
-              unit.hp = Math.max(0, unit.hp - dmg)
-            }
-          }
+          // --- 3. 【ダメージ反映】 ---
+if (next.action === "attack" || next.action === "damage" || next.action === "self_damage" || (next as any).action === "DAMAGE_FROM_COUNTER") {
+  const rawDmg = (next as any).damage ?? (next as any).value ?? (next as any).amount ?? 0;
+  const currentTargetId = (next.action === "attack") ? (next as any).targetId : next.instanceId;
+  if (typeof rawDmg === "number" && rawDmg > 0) {
+    const final = calculateFinalStats(unit, next.time); 
+    
+    // calculator が返す名前 "damageReduce" を使う
+    const reduction = final.damageReduce ?? 0;
+    const finalDmg = Math.max(0, rawDmg - reduction);
+
+    // 数値を減らす
+    unit.hp = Math.max(0, (unit.hp ?? 0) - finalDmg);
+
+    // 🚩 演出トリガー（軽減後の数値を出す）
+    if (finalDmg > 0) {
+      const eventKey = `dmg-${currentTargetId}-${Date.now()}-${Math.random()}`;
+      setVisualEvents(prev => [...prev, { 
+        id: currentTargetId, 
+        type: "damage", 
+        value: finalDmg, 
+        eventKey // 重複削除を防止するためのキー
+      } as any]);
+
+      // ここで消去予約
+      setTimeout(() => {
+        setVisualEvents(prev => prev.filter(v => (v as any).eventKey !== eventKey));
+      }, 400);
+    }
+  }
+}
 
           // 4. 【回復】
           if ((next as any).action === "heal") {
@@ -640,14 +663,27 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
           return b
         })
 
-        // 視覚演出
-        if (next.action === "attack" || next.action === "damage") {
-          const dmg = next.action === "attack" ? next.damage : ((next as any).damage ?? (next as any).value)
-          if (typeof dmg === "number") {
-            setVisualEvents(prev => [...prev, { id: targetId, type: "damage", value: dmg } as any])
-            setTimeout(() => setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "damage"))), 400)
-          }
-        }
+        // GameView.tsx 内の演出トリガー部分
+if (next.action === "attack" || next.action === "damage" || next.action === "self_damage") {
+  // 🚩 あらゆるダメージ関連のキー（damage, value, amount）を網羅する
+  const dmg = next.action === "attack" 
+    ? (next as any).damage 
+    : ((next as any).damage ?? (next as any).value ?? (next as any).amount);
+
+  if (typeof dmg === "number" && dmg > 0) {
+    // 🚩 演出用ステートに流し込む
+    setVisualEvents(prev => [...prev, { 
+      id: targetId, 
+      type: "damage", 
+      value: dmg 
+    } as any]);
+
+    // 400ms後に消去
+    setTimeout(() => {
+      setVisualEvents(prev => prev.filter(v => !(v.id === targetId && v.type === "damage")));
+    }, 400);
+  }
+}
 
         // GameView.tsx の handleBattleStart -> batch.forEach 内
 
