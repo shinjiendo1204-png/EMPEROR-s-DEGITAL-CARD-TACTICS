@@ -132,19 +132,10 @@ try {
 
     if (t !== "onDeath" && t !== "battleEnd" && !isAlive(unit)) return
 
-    const seen = new Set<string>()
-const firedThisCall = new Set<string>()
+  
 
 for (let i = 0; i < abilities.length; i++) {
   const ability = abilities[i]
-
-  const key = ability.id ?? `idx_${i}`
-  if (seen.has(key)) continue
-  seen.add(key)
-
-  if (firedThisCall.has(key)) continue
-  firedThisCall.add(key)
-
   // trigger一致
   if (ability.trigger !== t) continue
 
@@ -907,6 +898,16 @@ if (valueToAdd <= 0) break
   const key = effect.key
 
   const count = getCounter(context, source.side, key, scope)
+
+  // ★ これを一時的に入れてください
+  console.log("--- DAMAGE_FROM_COUNTER DEBUG ---", {
+    unit: source.unitId,
+    side: source.side,
+    key: key,
+    count: count,
+    multiplier: effect.multiplier,
+    finalDamage: count * effect.multiplier
+  });
   const damage = count * effect.multiplier
   if (damage <= 0) break
 
