@@ -1286,11 +1286,15 @@ if (cond.type === "allyHpBelow") {
 }
 
 if (cond.type === "allyCrossBelow") {
-  return `味方のHPが${Math.round(cond.percent * 100)}%未満になった時`
+  return `味方のHPが${Math.round(cond.percent * 100)}%未満の場合`
 }
 
 if (cond.type === "selfHpBelowPercent") {
   return `自身のHPが${Math.round(cond.value * 100)}%未満の場合`
+}
+
+if (cond.type === "targetHpBelowPercent") {
+  return `対象のHPが${Math.round(cond.value * 100)}%未満の場合`
 }
 
 if (typeof c === "string") {

@@ -1253,7 +1253,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   pack: "Varkesh",
   cost: 4,
 
-  hp: 11,
+  hp: 15,
   atk: 3,
   attackRange: 1,
   role: "bruiser",
@@ -1412,8 +1412,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   pack: "Varkesh",
   cost: 4,
 
-  hp: 13,
-  atk: 2,
+  hp: 12,
+  atk: 4,
   attackRange: 1,
   role: "bruiser",
 
@@ -1428,9 +1428,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           type: "ADD_STATE",
           stateType: "as_stack",
-          value: 0.4,
+          value: 0.2,
           target: "highest_atk_ally",
-          duration: { type: "time", value: 1 }
         }
       ]
     }
@@ -1449,9 +1448,8 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             {
               type: "MOD_STAT",
               stat: "attackSpeed",
-              value: -0.2,
+              value: -0.15,
               target: "all_enemies",
-              duration: { type: "time", value: 1 }
             }
           ]
         }
@@ -1488,7 +1486,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
   cost: 4,
 
   hp: 13,
-  atk: 2,
+  atk: 3,
   attackRange: 1,
   role: "skirmisher",
 
@@ -1503,7 +1501,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
         {
           type:"ADD_STATE",
           stateType:"atk",
-          value:3,
+          value:4,
           target:"all_allies",
         }
       ]

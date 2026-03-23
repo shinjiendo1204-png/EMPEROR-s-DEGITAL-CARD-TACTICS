@@ -208,7 +208,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           type: "ADD_STATE",
           stateType: "hp",
           value: 2,
-          target: "self"
+          target: "random_ally"
         },
         ],
       }
