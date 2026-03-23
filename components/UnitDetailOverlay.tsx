@@ -42,11 +42,11 @@ type Props = {
 function roleToText(role?: string) {
   if (!role) return ""
   const map: Record<string, string> = {
-    tank: "tank",
-    bruiser: "bruiser",
-    skirmisher: "skirmisher",
-    support: "support",
-    ranged: "ranged",
+    tank: "タンク",
+    bruiser: "ブルーザー",
+    skirmisher: "スカーミッシャー",
+    support: "サポート",
+    ranged: "レンジ",
   }
   return map[role] ?? role
 }

@@ -488,7 +488,6 @@ function handleBattleStart() {
     setBattleLogs((prev) => [...prev, ...batch])
 
     batch.forEach((next) => {
-      console.log("Log Action:", next.action);
       const fromStr = (next as any).from ? `${(next as any).from.r}${(next as any).from.c}` : "";
 const toStr = (next as any).to ? `${(next as any).to.r}${(next as any).to.c}` : "";
 const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr}-${(next as any).stateType ?? ""}-${(next as any).value ?? ""}`;
@@ -499,7 +498,6 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
 
       // --- Summon 処理 (関数型更新に修正) ---
       if ((next as any).action === "summon" || (next as any).action === "SUMMON") {
-        console.log("Summon unit data:", (next as any).unit);
         const summonedUnit = (next as any).unit as BattleUnit;
         if (summonedUnit) {
           // ★最重要: prev => [...] の形式にする
@@ -509,7 +507,6 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
             
           if (currentBoard.some(u => u.instanceId === summonedUnit.instanceId)) return currentBoard;
             
-            console.log("Adding Ghoul to Board:", summonedUnit.instanceId);
             
         
             return [...currentBoard, summonedUnit];
@@ -602,7 +599,7 @@ const logId = `${next.time}-${next.instanceId}-${next.action}-${fromStr}-${toStr
             if (nextMax > prevMax) {
               const diff = nextMax - prevMax;
               unit.hp = (unit.hp ?? 0) + diff; 
-              console.log(`[VIEW_HP_SYNC] ${unit.unitName}: HP Increased +${diff}`);
+
             }
 
             // ② ステータスを最新状態に上書き
@@ -662,7 +659,6 @@ if (next.action === "death") {
   setBattleBoard(prev => {
     if (!prev) return prev;
     const filtered = prev.filter(u => u.instanceId !== targetId);
-    console.log(`Removing dead unit: ${targetId}. Remaining:`, filtered.length);
     return filtered;
   });
 

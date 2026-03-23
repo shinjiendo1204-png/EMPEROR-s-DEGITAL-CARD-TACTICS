@@ -109,14 +109,7 @@ export function runAbilities(
   unit: BattleUnit,
   context: AbilityContext
 ) {
-  // ★ デバッグログを追加
-  if (trigger === "onDeath") {
-    console.log(`[DEBUG] runAbilities(onDeath) called for: ${unit.unitName}`, {
-      hp: unit.hp,
-      abilityCount: unit.abilities?.length,
-      depth: (unit as any).__abilityDepth
-    });
-  }
+  
   const t: BattleTrigger = trigger
 
   // =========================
@@ -134,7 +127,6 @@ export function runAbilities(
 
 try {
   if ((unit as any).__abilityDepth > 5) {
-    console.log("ABILITY LOOP STOP", unit.unitName, (unit as any).__abilityDepth)
     return
   }
 
@@ -368,11 +360,6 @@ function applyAbilityEffects(
       // 2. ただし、自分(source)が死んでいるかどうかは、onDeathの時は無視する
       
       if (!isAlive(t)) continue; 
-
-      // 念のため、DAMAGE効果の時だけログを出すデバッグを入れても良いです
-      if (effect.type === "DAMAGE") {
-        console.log(`[EXECUTE] Damage ${effect.value} from ${source.unitName} to ${t.unitName}`);
-      }
 
       applyAbilityEffect(effect, source, t, context);
     }
@@ -626,7 +613,6 @@ function applyAbilityEffect(
     
   case "CLAIM_HERO": {
 
-  console.log("CLAIM HERO TRY", effect.heroId)
 
   if (!context.playerState) break
   if (!context.gameState) break
@@ -639,8 +625,6 @@ function applyAbilityEffect(
 
   // 既にこのプレイヤーがヒーロー保留している
   if (context.playerState.pendingHero) break
-
-  console.log("CLAIM HERO SUCCESS", hero.id)
 
   context.playerState.pendingHero = hero
   context.gameState.claimedHeroes[hero.id] = source.side
