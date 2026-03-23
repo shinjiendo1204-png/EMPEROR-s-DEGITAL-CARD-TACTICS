@@ -27,7 +27,7 @@ function hexDistance(a: BattleUnit, b: BattleUnit) {
 }
 
 
-function inRange(attacker: BattleUnit, target: BattleUnit) {
+export function inRange(attacker: BattleUnit, target: BattleUnit) {
   return hexDistance(attacker, target) <= attacker.attackRange
 }
 
@@ -71,32 +71,35 @@ function frontlineTanks(
 /* =========================
    遮蔽判定（同じ列）
 ========================= */
-
+/**
+ * 遮蔽判定の最適化版
+ * @param occupiedPositions - 生存している全ユニットの座標を "r-c" 形式で格納した Set
+ */
 function isBlocked(
   attacker: BattleUnit,
   target: BattleUnit,
-  enemies: BattleUnit[]
+  occupiedPositions: Set<string> // ← enemies配列の代わりに座標セットを受け取る
 ) {
   if (!attacker.pos || !target.pos) return false
 
+  // 同じ列（Column）にいないなら、そもそもこのロジックでは遮蔽されない
+  if (attacker.pos.c !== target.pos.c) return false
+
   const dir = attacker.side === "p1" ? -1 : 1
+  const startR = attacker.pos.r
+  const endR = target.pos.r
+  const col = attacker.pos.c
 
-  const targetForward =
-    (target.pos.r - attacker.pos.r) * dir
-
-  for (const e of enemies) {
-    if (!e.pos || e.instanceId === target.instanceId) continue
-
-    const eForward =
-      (e.pos.r - attacker.pos.r) * dir
-
-    if (
-      e.pos.c === target.pos.c &&
-      eForward >= 0 &&
-      eForward < targetForward
-    ) {
-      return true
+  // 攻撃者からターゲットまでの間の「行（Row）」を順番にチェック
+  // 例: attackerが row 5, targetが row 2 なら、4, 3 のマスに誰かいるか見る
+  let currentR = startR + dir
+  
+  // ターゲットのマスに到達するまで、1マスずつ進んでチェック
+  while (dir === -1 ? currentR > endR : currentR < endR) {
+    if (occupiedPositions.has(`${currentR}-${col}`)) {
+      return true // 途中のマスに誰か（敵味方問わず）いれば遮蔽確定
     }
+    currentR += dir
   }
 
   return false
@@ -130,7 +133,8 @@ function findGuard(
 
 export function selectTarget(
   enemies: BattleUnit[],
-  attacker: BattleUnit
+  attacker: BattleUnit,
+  allies: BattleUnit[] = []
 ): BattleUnit | null {
 
   if (!attacker.pos) return null
@@ -141,6 +145,11 @@ export function selectTarget(
   /* =========================
    TAUNT
 ========================= */
+// 敵と味方、両方の生存ユニットの座標を "r-c" の文字列にして Set に入れる
+  const allAlive = [...alive, ...allies.filter(a => a.hp > 0 && a.pos)]
+  const occupiedPositions = new Set(
+    allAlive.map(u => `${u.pos!.r}-${u.pos!.c}`)
+  )
 
 const taunts = alive.filter(e =>
   (e.states ?? []).some(s => s.type === "taunt")
@@ -189,8 +198,9 @@ if (taunts.length) {
   if (!candidates.length) return null
 
   // ② 遮蔽除外
+  // ここでエラーが出ていたはずです。引数を alive から occupiedPositions に変更します
   candidates = candidates.filter(e =>
-    !isBlocked(attacker, e, alive)
+    !isBlocked(attacker, e, occupiedPositions) // ← ここを修正！
   )
   if (!candidates.length) return null
 

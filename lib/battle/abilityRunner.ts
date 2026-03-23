@@ -58,7 +58,7 @@ const MAX_LOG = 300
 function pushLog(context: AbilityContext, log: any) {
   if (!context.battleLogs) return
 
-  if (context.battleLogs.length >= MAX_LOG) {
+  if (context.battleLogs.length >= 400) {
     context.battleLogs.shift()
   }
 
@@ -780,13 +780,13 @@ if (valueToAdd <= 0) break
       })
 
       if (stateType === "hp") {
-  target.maxHp += valueToAdd
-  target.hp += valueToAdd
-}
+        target.baseMaxHp = (target.baseMaxHp ?? 0) + valueToAdd;
+        target.hp += valueToAdd; 
+      }
 
-if (stateType === "atk") {
-  target.atk += valueToAdd
-}
+      if (stateType === "atk") {
+        target.baseAtk = (target.baseAtk ?? 0) + valueToAdd;
+      }
       if (stateType === "damage_reduce" && target.side === source.side) {
     incrementCounter(context, source.side, "damageReduce", "match")
   }
