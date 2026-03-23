@@ -313,7 +313,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             id: "varkesh_hex_priestess_synergy",
             scope: "team",
             trigger: "auraTick",
-            tick: { type: "everySeconds", seconds: 2},
+            tick: { type: "everySeconds", seconds: 3},
             effects: [
               {
                 type: "ADD_STATE",
