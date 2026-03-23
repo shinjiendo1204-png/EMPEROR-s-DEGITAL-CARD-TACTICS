@@ -1436,7 +1436,7 @@ function statShort(stat?: string): string {
     atk: "ATK",
     hp: "HP",
     attackSpeed: "AS",
-    damageReduce: "DR",
+    damageReduce: "ダメージ軽減",
     attackRange: "Range",
   }
   return map[stat ?? ""] ?? (stat ?? "")

@@ -133,7 +133,7 @@ export function runAbilities(
 ;(unit as any).__abilityDepth++
 
 try {
-  if ((unit as any).__abilityDepth > 3) {
+  if ((unit as any).__abilityDepth > 5) {
     console.log("ABILITY LOOP STOP", unit.unitName, (unit as any).__abilityDepth)
     return
   }
@@ -202,18 +202,15 @@ for (let i = 0; i < abilities.length; i++) {
       // onDeath counter
       // =========================
       if (t === "onDeath") {
-  const isSelf = !isAlive(unit); // 自分が死んでいるか
-  const isOther = context.deadUnit && context.deadUnit.instanceId !== unit.instanceId; // 死んだのが自分以外か
+        const isSelfDeath = context.deadUnit?.instanceId === unit.instanceId
+        const isOtherDeath = context.deadUnit && context.deadUnit.instanceId !== unit.instanceId
 
-  // 1. "遺言"アビリティ（conditionなし）の場合
-  if (!ability.condition) {
-    if (!isSelf) continue; // 自分が生きてるなら、自分の遺言は流さない
-  }
+        // --- ここを修正 ---
+        // 1. 条件なし（遺言）なのに、死んだのが自分じゃないならスキップ
+        if (!ability.condition && !isSelfDeath) continue
 
-  // 2. "味方が死んだ時"アビリティ（deadAllyなど）の場合
-  if (ability.condition === "deadAlly") {
-    if (!isOther) continue; // 死んだのが自分自身なら、"味方の死"としてはカウントしない
-  }
+        // 2. deadAlly 条件なのに、死んだのが他人じゃないならスキップ
+        if (ability.condition === "deadAlly" && !isOtherDeath) continue
         incrementCounter(context, unit.side, "onDeath", "match", 1)
         incrementCounter(context, unit.side, "onDeath", "battle", 1)
 
@@ -227,7 +224,6 @@ for (let i = 0; i < abilities.length; i++) {
           side: unit.side,
         })
       }
-
       // =========================
       // maxTriggers
       // =========================
@@ -658,9 +654,7 @@ function applyAbilityEffect(
     /* =========================
        通常ステータス変更（state化）
     ========================= */
-    /* =========================
-       通常ステータス変更（state化）
-    ========================= */
+ 
     case "MOD_STAT": {
       const v = effect.value
       const expiresAt =
@@ -802,9 +796,13 @@ if (valueToAdd <= 0) break
       })
 
       if (stateType === "hp") {
-        target.maxHp += valueToAdd
-        target.hp += valueToAdd
-      }
+  target.maxHp += valueToAdd
+  target.hp += valueToAdd
+}
+
+if (stateType === "atk") {
+  target.atk += valueToAdd
+}
       if (stateType === "damage_reduce" && target.side === source.side) {
     incrementCounter(context, source.side, "damageReduce", "match")
   }
@@ -816,7 +814,7 @@ if (valueToAdd <= 0) break
 
       // 吸収ごとの専用トリガー（数値はユニット側で自由に）
       // 例: absorbed_tank → onAbsorb_tank
-      if (isAbsorbState && isSelfTarget && !preHadThis) {
+      if (isAbsorbState && isSelfTarget) {
         const roleKey = String(stateType).replace("absorbed_", "")
         const absorbTrigger = `onAbsorb_${roleKey}`
         runAbilities(absorbTrigger as BattleTrigger, target, context)

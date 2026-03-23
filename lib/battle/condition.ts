@@ -249,8 +249,11 @@ if (condition.type === "customBoardCount") {
 
     case "deadAlly":
   if (!context?.deadUnit) return false
-  return context.deadUnit.side === unit.side
 
+  return (
+    context.deadUnit.side === unit.side &&
+    context.deadUnit.instanceId !== unit.instanceId
+  )
 case "deadEnemy":
   if (!context?.deadUnit) return false
   return context.deadUnit.side !== unit.side

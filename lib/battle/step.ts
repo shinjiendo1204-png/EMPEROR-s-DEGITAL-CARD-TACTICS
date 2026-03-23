@@ -259,17 +259,27 @@ export function stepBattle(
       const aliveP1Now = getAliveUnits(state.p1Units)
       const aliveP2Now = getAliveUnits(state.p2Units)
 
-      runAbilities("onDeath", realTarget, {
-        allies: realTarget.side === "p1" ? aliveP1Now : aliveP2Now,
-        enemies: realTarget.side === "p1" ? aliveP2Now : aliveP1Now,
-        now: state.now,
-        target: realTarget,
-        battleState: state,
-        playerState: realTarget.side === "p1" ? p1 : p2,
-        battleLogs,
-        deadUnit: realTarget,
-      })
+      const ctx = {
+  allies: realTarget.side === "p1" ? aliveP1Now : aliveP2Now,
+  enemies: realTarget.side === "p1" ? aliveP2Now : aliveP1Now,
+  now: state.now,
+  target: realTarget,
+  battleState: state,
+  playerState: realTarget.side === "p1" ? p1 : p2,
+  battleLogs,
+  deadUnit: realTarget,
+}
 
+// ① 死んだ本人
+runAbilities("onDeath", realTarget, ctx)
+
+// ② 🔥 全ユニットに通知（これが足りてない）
+const allUnits = [...state.p1Units, ...state.p2Units]
+  .filter((u): u is BattleUnit => !!u)
+
+for (const u of allUnits) {
+  runAbilities("onDeath", u, ctx)
+}
       removeStatesLinkedToDeadUnit([...p1Alive, ...p2Alive], realTarget.instanceId)
 
       const units = realTarget.side === "p1" ? state.p1Units : state.p2Units

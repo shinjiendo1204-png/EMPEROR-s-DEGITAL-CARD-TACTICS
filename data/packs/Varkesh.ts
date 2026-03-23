@@ -246,7 +246,7 @@ export const VARKESH_PACK: Unit[] = ensureAbilityIds([
             id: "varkesh_blood_ghoul_synergy",
             scope: "team",
             trigger: "onKill",
-            effects: [{ type: "ADD_STATE", stateType: "atk", value: 1, target: "self"}],
+            effects: [{ type: "ADD_STATE", stateType: "atk", value: 1, target: "random_ally"}],
           },
         ],
       },
