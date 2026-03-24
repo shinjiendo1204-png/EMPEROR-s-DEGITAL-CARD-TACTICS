@@ -1188,13 +1188,13 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           type: "MOD_STAT",
           stat: "attackSpeed",
-          value: -0.05,
+          value: -0.15,
           target: "target",
         },
         {
           type: "ADD_STATE",
           stateType: "atk",
-          value: 1,
+          value: 2,
           target: "self",
         },
       ],
@@ -1283,7 +1283,7 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           type: "ADD_STATE",
           stateType: "atk",
-          value: 2, 
+          value: 4, 
           target: "highest_range_ally",
         },
       ],
@@ -1348,8 +1348,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   pack: "Knightsteel",
   cost: 4,
 
-  hp: 9,
-  atk: 1,
+  hp: 10,
+  atk: 3,
   attackRange: 4,
   role: "ranged",
 
@@ -1364,9 +1364,9 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           type: "ADD_STATE",
           stateType: "as_stack",
-          value: 0.1,
+          value: 0.15,
           maxStack: 3,
-          maxTotalValue: 0.3, // 30%
+          maxTotalValue: 0.6, // 30%
           target: "all_allies"
         }
 
@@ -1519,8 +1519,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   pack: "Knightsteel",
   cost: 4,
 
-  hp: 13,
-  atk: 4,
+  hp: 11,
+  atk: 5,
   attackRange: 1,
   role: "bruiser",
 
@@ -1594,8 +1594,8 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
   pack: "Knightsteel",
   cost: 4,
 
-  hp: 12,
-  atk: 2,
+  hp: 11,
+  atk: 3,
   attackRange: 3,
   role: "support",
 
@@ -1758,9 +1758,9 @@ export const KNIGHTSTEEL_PACK: Unit[] = ensureAbilityIds([
         {
           type: "ADD_STATE",
           stateType: "as_stack",
-          value: 0.2,
+          value: 0.3,
           maxStack: 3,
-          maxTotalValue: 0.6,
+          maxTotalValue: 0.9,
           target: "all_allies",
         },
       ],

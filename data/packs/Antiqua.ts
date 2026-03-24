@@ -206,8 +206,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         },
         {
           type: "ADD_STATE",
-          stateType: "hp",
-          value: 2,
+          stateType: "atk",
+          value: 1,
           target: "random_ally"
         },
         ],
@@ -940,7 +940,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     {
       trigger: "onEquip",
       effects: [
-        { type: "ADD_STATE", stateType: "as_stack", value: 0.1, target: "random_ally" },
+        { type: "ADD_STATE", stateType: "as_stack", value: 0.15, target: "random_ally" },
       ]
     }
   ],
@@ -1015,8 +1015,8 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
  trigger:"battleStart",
  condition:{ type:"counter", key:"dig", scope:"match", min:6 },
  effects:[
-  { type:"ADD_STATE", stateType:"atk", value:4, target:"self"},
-  { type:"ADD_STATE", stateType:"hp", value:4, target:"self"}
+  { type:"ADD_STATE", stateType:"atk", value:3, target:"self"},
+  { type:"ADD_STATE", stateType:"hp", value:3, target:"self"}
  ]
 },
 {
@@ -1172,14 +1172,14 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     {
       trigger:"onEquip",
       effects:[
-        { type:"ADD_STATE", stateType:"as_stack", value:0.1, target:"self"}
+        { type:"ADD_STATE", stateType:"as_stack", value:0.2, target:"self"}
       ]
       },
       {
       trigger:"onAttack",
       condition:{ type:"onEquipCount", value:2 },
       effects:[
-        { type:"DAMAGE", value:1, target:"enemy_column"}
+        { type:"DAMAGE", value:2, target:"enemy_column"}
       ]
       }
   ],
@@ -1394,7 +1394,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
     {
       trigger: "onEquip",
       effects: [
-        { type: "ADD_STATE", stateType: "atk", value: 2, target: "self" },
+        { type: "ADD_STATE", stateType: "atk", value: 3, target: "self" },
         { type: "ADD_STATE", stateType: "hp", value: 2, target: "self" },
       ]
     }
@@ -1411,7 +1411,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
           condition: "deadAlly",
           effects: [
             { type: "ADD_STATE", stateType: "atk", value: 2, target: "self" },
-            { type: "ADD_STATE", stateType: "hp", value: 2, target: "self" }
+            { type: "ADD_STATE", stateType: "hp", value: 1, target: "self" }
           ]
         }
       ]
@@ -1454,9 +1454,9 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
       trigger: "battleStart",
       condition: { type: "onEquipCount", value: 3 },
       effects: [
-        { type: "ADD_STATE", stateType: "atk", value: 4, target: "self" },
-        { type: "ADD_STATE", stateType: "as_stack", value: 0.3, target: "self" },
-        { type: "ADD_STATE", stateType: "damage_reduce", value: 2, target: "self" }
+        { type: "ADD_STATE", stateType: "atk", value: 6, target: "self" },
+        { type: "ADD_STATE", stateType: "as_stack", value: 0.4, target: "self" },
+        { type: "ADD_STATE", stateType: "damage_reduce", value: 3, target: "self" }
       ]
     }
   ],
@@ -1470,7 +1470,7 @@ export const ANTIQUA_PACK: Unit[] = ensureAbilityIds([
         {
           trigger: "battleStart",
           effects: [
-            { type: "ADD_STATE", stateType: "as_stack", value: 0.15, target: "self" }
+            { type: "ADD_STATE", stateType: "as_stack", value: 0.3, target: "self" }
           ]
         }
       ]
